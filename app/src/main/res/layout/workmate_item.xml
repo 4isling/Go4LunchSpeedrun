@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/workmate_item_avatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/workmate_item_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/workmate_item_avatar"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Johnny Deep"/>
+
+        <TextView
+            android:id="@+id/workmate_item_type_food"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/workmate_item_name"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text=" is eating 'French food' at: "
+            />
+
+        <TextView
+            android:id="@+id/workmate_item_restaurent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/workmate_item_avatar"
+            tools:text="(Le Moulin Rouge)" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

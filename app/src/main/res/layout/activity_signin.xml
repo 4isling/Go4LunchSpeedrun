@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/dark_gray">
+
+    <ImageView
+        android:id="@+id/sign_in_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_go4lunch_logo"/>
+    <TextView
+        android:id="@+id/sign_in_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="48sp"/>
+    <TextView
+        android:id="@+id/sign_in_app_slogan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/app_slogan"
+        android:textSize="12sp"
+        android:textColor="@color/white"/>
+
+
+</LinearLayout>

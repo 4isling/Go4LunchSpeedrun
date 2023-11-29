@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/restaurant_item_picture"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/restaurant_item_name"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:textAlignment="viewStart"
+            android:textStyle="bold"
+            android:text="@string/restaurant_name"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@id/restaurant_item_distance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/restaurant_item_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:textAlignment="viewEnd"
+            app:layout_constraintEnd_toStartOf="@id/restaurant_item_picture"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+
+        <TextView
+            android:id="@+id/restaurant_item_food"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:text="@string/type_of_food"
+            app:layout_constraintTop_toTopOf="@id/restaurant_item_address"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/restaurant_item_address"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/restaurant_address"
+            app:layout_constraintBottom_toTopOf="@+id/restaurant_item_time"
+            app:layout_constraintEnd_toEndOf="@id/restaurant_item_name"
+            app:layout_constraintStart_toEndOf="@id/restaurant_item_food"
+            app:layout_constraintTop_toBottomOf="@+id/restaurant_item_name" />
+
+        <TextView
+            android:id="@+id/restaurant_item_time"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/open_until_xpm"
+            app:layout_constraintEnd_toStartOf="@id/restaurant_item_picture"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            />
+
+        <TextView
+            android:id="@+id/restaurant_item_number_coworker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/coworker_number"
+            app:layout_constraintEnd_toStartOf="@id/restaurant_item_picture"
+            app:layout_constraintTop_toTopOf="@id/restaurant_item_address"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
