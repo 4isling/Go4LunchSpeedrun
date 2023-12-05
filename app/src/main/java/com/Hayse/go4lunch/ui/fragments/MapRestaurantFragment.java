@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentMapBinding;
+import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.services.permission_checker.PermissionUtils;
 import com.Hayse.go4lunch.ui.viewmodel.MapViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
@@ -26,6 +27,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -41,7 +43,9 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     private MapViewModel mapViewModel;
 
     private static final String TAG = MapRestaurantFragment.class.getSimpleName();
-    GoogleMap mapsView;
+    private GoogleMap mapsView;
+
+    private GoogleMapOptions mapOptions;
 
     SupportMapFragment supportMapFragment;
 
@@ -73,8 +77,8 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         binding = FragmentMapBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
         if(getLocationPermission()) {
+            this.mapOptions = new GoogleMapOptions();
             initMap();
-
             this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         }
     }
@@ -109,14 +113,28 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
 
     private void initMap() {
         Log.d(TAG, "initMap: ");
-        supportMapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map_view);
-        Objects.requireNonNull(supportMapFragment).getMapAsync(this);
-        updateLocationUI();
+        this.mapOptions = new GoogleMapOptions();
+        this.mapOptions.mapType(GoogleMap.MAP_TYPE_NORMAL)
+                .compassEnabled(true)
+                .rotateGesturesEnabled(true)
+                .tiltGesturesEnabled(true);
+
+        this.supportMapFragment = SupportMapFragment.newInstance(mapOptions);
+        requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view,supportMapFragment).commit();
+        if (supportMapFragment != null) {
+
+            Log.d(TAG, "initMap: supportMapFragment != null");
+            (supportMapFragment).getMapAsync(this);
+            this.mapOptions.mapType(GoogleMap.MAP_TYPE_NORMAL)
+                    .compassEnabled(true)
+                    .rotateGesturesEnabled(true)
+                    .tiltGesturesEnabled(true);
+        }
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady: ");
         this.mapsView = googleMap;
         mapsView.setOnMyLocationButtonClickListener(this);
         mapsView.setOnMyLocationClickListener(this);
@@ -126,21 +144,25 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     /**
      * Enables the My Location layer if the fine location permission has been granted.
      */
-
     @SuppressLint("MissingPermission")
     private void enableMyLocation() {
         // [START maps_check_location_permission]
+        Log.d(TAG, "enableMyLocation: ");
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "enableMyLocation: access user location enable");
             if (mapsView != null) {
+                Log.d(TAG, "enableMyLocation: mapView != null");
                 mapsView.setMyLocationEnabled(true);
             }
         } else {
+            Log.d(TAG, "enableMyLocation: location permission not enable");
             // Permission to access the location is missing. Show rationale and request permission
             PermissionUtils.requestPermission((AppCompatActivity) getActivity(), LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
         }
         // [END maps_check_location_permission]
+        updateLocationUI();
     }
 
 
@@ -174,37 +196,22 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     }
 
 
-    public MapRestaurantFragment() {
-
-    }
-
-    public static MapRestaurantFragment newInstance() {
-        return new MapRestaurantFragment();
-    }
-
-
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
 
-    //maps data
-
-
-
     private void getMapViewModel() {
         mapViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MapViewModel.class);
     }
-/*
+
     private void setUpMarker() {
         mapViewModel.getRestaurantMapViewStateLiveData().observe(getViewLifecycleOwner(), restaurantMapViewState -> {
             displayMarker(restaurantMapViewState.getRestaurantMapResult());
         });
-    }*/
-/*
+    }
+
     private void displayMarker(List<Result> results) {
 
         for (Result result : results) {
@@ -235,7 +242,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
             mapsView.getUiSettings().setZoomGesturesEnabled(true);
         }
     }
-*/
+
 
 
     @Override

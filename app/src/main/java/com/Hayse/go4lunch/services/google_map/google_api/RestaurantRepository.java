@@ -31,6 +31,7 @@ public class RestaurantRepository {
     private String sUserLocation;
     public RestaurantRepository(GMapsApi gMapsApi){
         this.gMapsApi = gMapsApi;
+
         resultMutableLiveData = new MutableLiveData<>();
     }
 
@@ -54,6 +55,7 @@ public class RestaurantRepository {
                 return resultMutableLiveData;
             } else {
                 // Sinon, faites la requête à l'API et mettez à jour la liste des restaurants
+                Log.d(TAG, "getNearbyPlaces: key" + API_KEY+ " suserLocation: "+ sUserLocation);
                 gMapsApi.getListOfRestaurants(sUserLocation, radius, type, API_KEY).enqueue(new Callback<RestaurantResult>() {
                     @Override
                     public void onResponse(Call<RestaurantResult> call, Response<RestaurantResult> response) {

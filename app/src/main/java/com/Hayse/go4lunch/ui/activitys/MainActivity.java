@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         this.checkUserLocationPermission();
         if (this.isGoogleServiceOK()) {
             this.initViewModel();
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             int pItem = item.getItemId();
             if (pItem == R.id.navigation_map) {
                     replaceFragment(mapFragment);
-                Toast.makeText(this, "not implemented yet", Toast.LENGTH_SHORT);
+                Log.d(TAG, "configureBottomNavView: map");
                 return true;
             } else if (pItem == R.id.navigation_restaurant) {
 //                    replaceFragment(restaurantListFragment);
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             else if (pItem == R.id.navigation_workmate) {
                 replaceFragment(workmateFragment);
-                Toast.makeText(this, "onTest", Toast.LENGTH_SHORT);
+                Log.d(TAG, "configureBottomNavView: workmates");
                 return true;
             }
 
@@ -148,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 }
 
     private void replaceFragment(Fragment fragment) {
-        Log.d(TAG, "replaceFragment: "+ fragment.getTag());
+        Log.d(TAG, "replaceFragment: "+ fragment);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.activity_main_frame_layout, fragment);
