@@ -29,10 +29,15 @@ public class RestaurantRepository {
     private final String API_KEY = String.valueOf(R.string.MAPS_API_KEY);
     private List<Result> results;
     private String sUserLocation;
+
+    /**
+     * TODO CallNearbyPlaces recup et stocker le result et getRestaurents return resultMutableLiveData
+     * @param gMapsApi
+     */
     public RestaurantRepository(GMapsApi gMapsApi){
         this.gMapsApi = gMapsApi;
-
         resultMutableLiveData = new MutableLiveData<>();
+        resultMutableLiveData = getNearbyPlaces();
     }
 
 
@@ -114,4 +119,7 @@ public class RestaurantRepository {
         }
         return restaurantMutableLiveData;
     }
+
+
+
 }

@@ -7,9 +7,14 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface GMapsApi {
-
-
-    @GET("nearbysearch/json?" )
+/*
+    https://maps.googleapis.com/maps/api/place/nearbysearch/json?
+    location=-33.8670522%2C151.1957362&
+    radius=1500&
+    type=restaurant&
+    keyword=cruise&
+    key=AIzaSyB4CUJAVDf1K4E-HHBInbgMKfz7JDh377w
+ */   @GET("nearbysearch/json" )
     Call<RestaurantResult> getListOfRestaurants(@Query("location") String location,
                                                 @Query("radius") int radius,
                                                 @Query("type") String type,

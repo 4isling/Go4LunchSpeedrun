@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentMapBinding;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
+import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
 import com.Hayse.go4lunch.services.permission_checker.PermissionUtils;
 import com.Hayse.go4lunch.ui.viewmodel.MapViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -78,7 +80,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         View root = binding.getRoot();
         if(getLocationPermission()) {
             this.mapOptions = new GoogleMapOptions();
-            initMap();
+
             this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         }
     }
@@ -132,6 +134,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         Log.d(TAG, "onMapReady: ");
@@ -139,6 +142,15 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         mapsView.setOnMyLocationButtonClickListener(this);
         mapsView.setOnMyLocationClickListener(this);
         enableMyLocation();
+        PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
+        if(permissionChecker.hasLocationPermission()){
+            getMapViewModel();
+            setUpMarker();
+        }
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
+        initMap();
     }
 
     /**
@@ -184,11 +196,6 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
-    }
-
-
 
     @Override
     public void onResume() {
@@ -213,8 +220,9 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void displayMarker(List<Result> results) {
-
+        Log.d(TAG, "displayMarker: ");
         for (Result result : results) {
+            Log.d(TAG, "displayMarker: result : " + result.getName());
             LatLng latLngMarker = new LatLng(
                     (result.getGeometry()
                             .getLocation()
@@ -223,10 +231,11 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                             .getLocation()
                             .getLng()));
             //get LatLong to Marker
-            mapsView.addMarker(new MarkerOptions()
+            Marker restaurant = mapsView.addMarker(new MarkerOptions()
                     .position(latLngMarker)
                     .icon(BitmapDescriptorFactory.defaultMarker())
                     .title(result.getName()));
+            restaurant.showInfoWindow();
             //show marker
             LatLng latLngResult = new LatLng(
                     (result.getGeometry()

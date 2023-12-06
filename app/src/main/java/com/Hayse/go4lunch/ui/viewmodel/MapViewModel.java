@@ -34,7 +34,7 @@ public class MapViewModel extends ViewModel {
             @NonNull RestaurantRepository restaurantRepository
     ){
         this.locationRepository = locationRepository;
-        currentLocationLiveData = locationRepository.getLocationLiveData();
+        this.currentLocationLiveData = locationRepository.getLocationLiveData();
         this.restaurantRepository = restaurantRepository;
 
 
