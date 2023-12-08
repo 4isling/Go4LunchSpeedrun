@@ -43,7 +43,7 @@ public class MapViewModel extends ViewModel {
         //if the LiveData that contains the current user location information change
         this.mapViewStateLiveData  = Transformations.switchMap(currentLocationLiveData, currentLocation ->
                 // query the repository to get the user location (with a Transformations.switchMap)
-                Transformations.map(restaurantRepository.getNearbyPlaces(currentLocation, 5000, "restaurant"), restaurants ->
+                Transformations.map(restaurantRepository.getRestaurantLiveData(), restaurants ->
                         mapDataToViewState(restaurants.getResults(), currentLocation)
                 )
         );
