@@ -58,16 +58,10 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 999;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-
     private boolean permissionDenied = false;
     int REQ_PERMISSION = 100;
 
-
-    // The geographical location where the device is currently located. That is, the last-known
-    // location retrieved by the Fused Location Provider.
     private Location lastKnownLocation;
-
-    //Keys for storing activity state
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
 
@@ -80,8 +74,8 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         View root = binding.getRoot();
         if(getLocationPermission()) {
             this.mapOptions = new GoogleMapOptions();
-
             this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+            initMap();
         }
     }
 

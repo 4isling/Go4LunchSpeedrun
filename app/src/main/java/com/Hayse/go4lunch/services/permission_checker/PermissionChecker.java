@@ -17,6 +17,11 @@ public class PermissionChecker {
         this.application = application;
     }
 
+    /***
+     * check if permission to user location is enable
+     * @return boolean
+     *
+     */
     public boolean hasLocationPermission(){
         return ContextCompat.checkSelfPermission(application, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
     }

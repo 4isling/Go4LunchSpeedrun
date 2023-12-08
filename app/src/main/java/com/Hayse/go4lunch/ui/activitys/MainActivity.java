@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initViewModel() {
         Log.d(TAG, "initViewModel: ");
 
-        this.viewModelFactory = ViewModelFactory.getInstance(userl);
+        this.viewModelFactory = ViewModelFactory.getInstance();
         workmateViewModel = new ViewModelProvider(this, viewModelFactory).get(WorkmateViewModel.class);
     }
 

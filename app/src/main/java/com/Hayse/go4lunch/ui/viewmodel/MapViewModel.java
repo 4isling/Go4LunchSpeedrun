@@ -1,5 +1,6 @@
 package com.Hayse.go4lunch.ui.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.location.Location;
 
@@ -19,34 +20,33 @@ import com.Hayse.go4lunch.ui.view_state.MapViewState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MapViewModel extends ViewModel {
-    @NonNull
-    private final LocationRepository locationRepository;
-    @NonNull
-    private final RestaurantRepository restaurantRepository;
-    private final LiveData<Location> currentLocationLiveData;
+    private LiveData<MapViewState> mapViewStateLiveData;
 
-    private final LiveData<MapViewState> mapViewStateLiveData;
+    @SuppressLint("MissingPermission")
     public MapViewModel(
             @NonNull PermissionChecker permissionChecker,
             @NonNull LocationRepository locationRepository,
             @NonNull RestaurantRepository restaurantRepository
     ){
-        this.locationRepository = locationRepository;
-        this.currentLocationLiveData = locationRepository.getLocationLiveData();
-        this.restaurantRepository = restaurantRepository;
+        LiveData<Location> currentLocationLiveData = locationRepository.getLocationLiveData();
 
-
-
-        String key = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
-        //if the LiveData that contains the current user location information change
-        this.mapViewStateLiveData  = Transformations.switchMap(currentLocationLiveData, currentLocation ->
-                // query the repository to get the user location (with a Transformations.switchMap)
-                Transformations.map(restaurantRepository.getRestaurantLiveData(), restaurants ->
-                        mapDataToViewState(restaurants.getResults(), currentLocation)
-                )
-        );
+        if(permissionChecker.hasLocationPermission()){
+            locationRepository.startLocationRequest();
+            Location userLocation = Objects.requireNonNull(locationRepository.getLocationLiveData().getValue());
+            restaurantRepository.setUserLocation(userLocation.toString());
+            //if the LiveData that contains the current user location information change
+            this.mapViewStateLiveData = Transformations.switchMap(currentLocationLiveData, currentLocation ->
+                    // query the repository to get the user location (with a Transformations.switchMap)
+                    Transformations.map(restaurantRepository.getRestaurantLiveData(userLocation), restaurants ->
+                            mapDataToViewState(restaurants, currentLocation)
+                    )
+            );
+            
+        }
+     
     }
 
     private MapViewState mapDataToViewState(@Nullable List<Result> restaurants, Location currentLocation) {

@@ -42,7 +42,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                                     )
                             ),
                             new RestaurantRepository(
-                                    RetrofitService.getGMapsApi(),
+                                    RetrofitService.getGMapsApi()
                             ),
                             new WorkmateRepository()
 
@@ -62,8 +62,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     ) {
         this.restaurantRepository = restaurantRepository;
-        this.locationRepository = locationRepository;
         this.permissionChecker = permissionChecker;
+        this.locationRepository = locationRepository;
         this.workmateRepository = workmateRepository;
     }
 

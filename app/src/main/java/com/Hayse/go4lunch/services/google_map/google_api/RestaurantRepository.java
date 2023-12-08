@@ -36,12 +36,14 @@ public class RestaurantRepository {
      *
      * @param gMapsApi
      */
-    public RestaurantRepository(GMapsApi gMapsApi, String userLocation) {
+    public RestaurantRepository(GMapsApi gMapsApi) {
         this.gMapsApi = gMapsApi;
-        this.sUserLocation = userLocation;
-        getNearbyPlaces();
     }
 
+    public void setUserLocation(String userLocation){
+        sUserLocation = userLocation;
+        getNearbyPlaces();
+    }
 
     /**
      * @return le but de la fonction est de faire appel a l'api si le resultat n'as pas deja été demander
