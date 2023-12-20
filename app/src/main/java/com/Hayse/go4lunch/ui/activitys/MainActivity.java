@@ -2,6 +2,8 @@ package com.Hayse.go4lunch.ui.activitys;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -22,6 +24,7 @@ import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.ActivityMainBinding;
 import com.Hayse.go4lunch.ui.fragments.MapRestaurantFragment;
 import com.Hayse.go4lunch.ui.fragments.WorkmateFragment;
+import com.Hayse.go4lunch.ui.viewmodel.MapViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
 import com.google.android.gms.common.ConnectionResult;
@@ -30,15 +33,20 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+
     private static final String TAG = "MainActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private ActivityMainBinding binding;
     private NavigationView drawerNavView;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
+
+    boolean mGPSEnable;
     private ViewModelFactory viewModelFactory;
 
     private WorkmateViewModel workmateViewModel;
+
+    private MapViewModel mapViewModel;
     private WorkmateFragment workmateFragment;
 
     private MapRestaurantFragment mapFragment;
@@ -49,24 +57,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        this.checkUserLocationPermission();
-        if (this.isGoogleServiceOK()) {
-            this.initViewModel();
-            this.createFragments();
-            this.configureToolbar();
-            this.configureBottomNavView();
-            this.configureDrawerLayout();
-            this.configureDrawerNavView();
+        if(checkUserLocationPermission()){
+            if (isGoogleServiceOK()) {
+                this.initViewModel();
+                this.createFragments();
+                this.configureToolbar();
+                this.configureBottomNavView();
+                this.configureDrawerLayout();
+                this.configureDrawerNavView();
+            }
         }
     }
 
-    private void checkUserLocationPermission() {
+    private boolean checkUserLocationPermission() {
         Log.d(TAG, "checkUserLocationPermission: ");
-        ActivityCompat.requestPermissions(
-                this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                0
-        );
+        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mGPSEnable = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(!mGPSEnable){
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    0
+            );
+            mGPSEnable = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+        return mGPSEnable;
     }
 
     private boolean isGoogleServiceOK() {
@@ -91,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d(TAG, "initViewModel: ");
 
         this.viewModelFactory = ViewModelFactory.getInstance();
-        workmateViewModel = new ViewModelProvider(this, viewModelFactory).get(WorkmateViewModel.class);
+        mapViewModel = new ViewModelProvider(this, viewModelFactory).get(MapViewModel.class);
     }
 
 

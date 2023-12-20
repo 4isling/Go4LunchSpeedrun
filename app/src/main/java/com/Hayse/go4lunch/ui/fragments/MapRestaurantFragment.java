@@ -6,7 +6,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -70,13 +72,14 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
+        getMapViewModel();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(getLayoutInflater());
-        View root = binding.getRoot();
-        if(getLocationPermission()) {
-            this.mapOptions = new GoogleMapOptions();
-            this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-            initMap();
-        }
+        return binding.getRoot();
     }
 
     /**
@@ -135,42 +138,20 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         this.mapsView = googleMap;
         mapsView.setOnMyLocationButtonClickListener(this);
         mapsView.setOnMyLocationClickListener(this);
-        enableMyLocation();
         PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
         if(permissionChecker.hasLocationPermission()){
-            getMapViewModel();
+            updateLocationUI();
             setUpMarker();
         }
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
-        initMap();
-    }
-
-    /**
-     * Enables the My Location layer if the fine location permission has been granted.
-     */
-    @SuppressLint("MissingPermission")
-    private void enableMyLocation() {
-        // [START maps_check_location_permission]
-        Log.d(TAG, "enableMyLocation: ");
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "enableMyLocation: access user location enable");
-            if (mapsView != null) {
-                Log.d(TAG, "enableMyLocation: mapView != null");
-                mapsView.setMyLocationEnabled(true);
-            }
-        } else {
-            Log.d(TAG, "enableMyLocation: location permission not enable");
-            // Permission to access the location is missing. Show rationale and request permission
-            PermissionUtils.requestPermission((AppCompatActivity) getActivity(), LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        if(getLocationPermission()) {
+            this.mapOptions = new GoogleMapOptions();
+            this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+            initMap();
         }
-        // [END maps_check_location_permission]
-        updateLocationUI();
     }
-
 
     /**
      * move camera on user
@@ -190,13 +171,6 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -213,7 +187,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         });
     }
 
-    private void displayMarker(List<Result> results) {
+    private void displayMarker(@NonNull List<Result> results) {
         Log.d(TAG, "displayMarker: ");
         for (Result result : results) {
             Log.d(TAG, "displayMarker: result : " + result.getName());
@@ -246,26 +220,6 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        this.permissionDenied = true;
-        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                permissionDenied = false;
-                enableMyLocation();
-            } else {
-                Toast.makeText(getContext(), "Permission not granted", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (mapsView != null) {
@@ -293,6 +247,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                 Log.d(TAG, "updateLocationUI: permission guaranteed");
                 mapsView.setMyLocationEnabled(true);
                 mapsView.getUiSettings().setMyLocationButtonEnabled(true);
+                setUpMarker();
             } else {
                 Log.d(TAG, "updateLocationUI: permission denied");
                 mapsView.setMyLocationEnabled(false);
@@ -302,6 +257,14 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(mapViewModel != null){
+            mapViewModel.refresh();
         }
     }
 }

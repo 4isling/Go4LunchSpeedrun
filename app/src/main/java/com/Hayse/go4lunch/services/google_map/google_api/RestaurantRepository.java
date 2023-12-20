@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 
+import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.RestaurantResult;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
@@ -27,7 +28,7 @@ public class RestaurantRepository {
     private final MutableLiveData<RestaurantResult> resultMutableLiveData = new MutableLiveData<>();
     ;
 
-    private final String API_KEY = String.valueOf(R.string.MAPS_API_KEY);
+    private final String API_KEY = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
     private List<Result> results;
     private String sUserLocation;
 
@@ -74,7 +75,7 @@ public class RestaurantRepository {
 
     public LiveData<List<Result>> getRestaurantLiveData(Location location) {
         MutableLiveData<List<Result>> restaurantMutableLiveData = new MutableLiveData<>();
-        String sUserLocation = location.toString();
+        String sUserLocation = String.valueOf(location.getLatitude()+","+location.getLongitude());
 
         RestaurantResult restaurantResult = alreadyFetchedResponses.get(location);
 
@@ -95,6 +96,7 @@ public class RestaurantRepository {
                         @Override
                         public void onFailure(Call<RestaurantResult> call, Throwable t) {
                             restaurantMutableLiveData.setValue(null);
+                            Log.e(TAG, "onFailure: " + t );
                         }
                     });
         }

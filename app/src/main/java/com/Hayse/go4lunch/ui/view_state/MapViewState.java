@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Location;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,8 +13,10 @@ public class MapViewState {
     @NonNull
     private final List<Result> restaurants;
 
-    private List<Location> restaurantLocation;
+    private List<Location> restaurantLocation = new ArrayList<>();
     private android.location.Location currentLocation;
+
+ //TODO find the problem after the request we get result but marker setup don't work
 
     public MapViewState(
             @NonNull List<Result> restaurants,
@@ -30,7 +33,7 @@ public class MapViewState {
     }
 
     private List<Location> setRestaurantLocation(){
-        for (Result restaurant: restaurants) {
+        for (Result restaurant: this.restaurants) {
             restaurantLocation.add(restaurant.getGeometry().getLocation());
         }
         return restaurantLocation;
