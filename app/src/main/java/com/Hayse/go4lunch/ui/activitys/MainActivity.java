@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initViewModel() {
         Log.d(TAG, "initViewModel: ");
-
         this.viewModelFactory = ViewModelFactory.getInstance();
         mapViewModel = new ViewModelProvider(this, viewModelFactory).get(MapViewModel.class);
     }
@@ -113,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void createFragments() {
         Log.d(TAG, "createFragments: ");
-        this.workmateFragment = new WorkmateFragment();
         this.mapFragment = new MapRestaurantFragment();
+        this.workmateFragment = new WorkmateFragment();
     }
 
     private void configureToolbar() {

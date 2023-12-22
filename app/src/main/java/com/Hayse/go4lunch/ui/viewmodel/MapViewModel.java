@@ -70,4 +70,9 @@ public class MapViewModel extends ViewModel {
             locationRepository.stopLocationRequest();
         }
     }
+
+    @SuppressLint("MissingPermission")
+    public Location getLastKnowLocation(){
+        return locationRepository.getLastLocation().getValue();
+    }
 }

@@ -28,6 +28,7 @@ import com.Hayse.go4lunch.ui.viewmodel.MapViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -82,6 +83,27 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         return binding.getRoot();
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
+        if(getLocationPermission()) {
+            this.mapOptions = new GoogleMapOptions();
+            this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+            initMap();
+        }
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady: ");
+        this.mapsView = googleMap;
+        mapsView.setOnMyLocationButtonClickListener(this);
+        mapsView.setOnMyLocationClickListener(this);
+        PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
+        if(permissionChecker.hasLocationPermission()){
+            updateLocationUI();
+        }
+    }
+
     /**
      * if user already authorised location permission
      * @return true
@@ -117,10 +139,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                 .compassEnabled(true)
                 .rotateGesturesEnabled(true)
                 .tiltGesturesEnabled(true);
-
-        this.supportMapFragment = SupportMapFragment.newInstance(mapOptions);
-        requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view,supportMapFragment).commit();
-        if (supportMapFragment != null) {
+       /* if (supportMapFragment != null) {
 
             Log.d(TAG, "initMap: supportMapFragment != null");
             (supportMapFragment).getMapAsync(this);
@@ -128,30 +147,14 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                     .compassEnabled(true)
                     .rotateGesturesEnabled(true)
                     .tiltGesturesEnabled(true);
-        }
+        }*/
+        this.supportMapFragment = SupportMapFragment.newInstance(mapOptions);
+        requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view,supportMapFragment).commit();
+
     }
 
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        Log.d(TAG, "onMapReady: ");
-        this.mapsView = googleMap;
-        mapsView.setOnMyLocationButtonClickListener(this);
-        mapsView.setOnMyLocationClickListener(this);
-        PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
-        if(permissionChecker.hasLocationPermission()){
-            updateLocationUI();
-            setUpMarker();
-        }
-    }
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
-        if(getLocationPermission()) {
-            this.mapOptions = new GoogleMapOptions();
-            this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-            initMap();
-        }
-    }
+
 
     /**
      * move camera on user
@@ -160,15 +163,17 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public boolean onMyLocationButtonClick() {
         Toast.makeText(getContext(), "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+
+        mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mapViewModel.getLastKnowLocation().getLatitude(),mapViewModel.getLastKnowLocation().getLongitude()),15f));
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
         return false;
     }
 
-
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
+        mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mapViewModel.getLastKnowLocation().getLatitude(),mapViewModel.getLastKnowLocation().getLongitude()),15f));
     }
 
     @Override
@@ -247,6 +252,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                 Log.d(TAG, "updateLocationUI: permission guaranteed");
                 mapsView.setMyLocationEnabled(true);
                 mapsView.getUiSettings().setMyLocationButtonEnabled(true);
+                mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mapViewModel.getLastKnowLocation().getLatitude(),mapViewModel.getLastKnowLocation().getLongitude()),15f));
                 setUpMarker();
             } else {
                 Log.d(TAG, "updateLocationUI: permission denied");
