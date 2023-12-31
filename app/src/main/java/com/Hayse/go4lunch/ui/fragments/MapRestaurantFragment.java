@@ -80,18 +80,19 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(getLayoutInflater());
+        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        this.mapOptions = new GoogleMapOptions();
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
-        if(getLocationPermission()) {
-            this.mapOptions = new GoogleMapOptions();
-            this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-            initMap();
-        }
+        initMap();
+
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         Log.d(TAG, "onMapReady: ");
@@ -100,6 +101,8 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         mapsView.setOnMyLocationClickListener(this);
         PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
         if(permissionChecker.hasLocationPermission()){
+            mapsView.setMyLocationEnabled(true);
+            Log.d(TAG, "onMapReady: location permission guaranteed");
             updateLocationUI();
         }
     }
@@ -139,10 +142,11 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                 .compassEnabled(true)
                 .rotateGesturesEnabled(true)
                 .tiltGesturesEnabled(true);
-       /* if (supportMapFragment != null) {
+/*
+        if (supportMapFragment != null) {
 
             Log.d(TAG, "initMap: supportMapFragment != null");
-            (supportMapFragment).getMapAsync(this);
+            (supportMapFragment).getMapAsync(this::onMapReady);
             this.mapOptions.mapType(GoogleMap.MAP_TYPE_NORMAL)
                     .compassEnabled(true)
                     .rotateGesturesEnabled(true)
@@ -150,7 +154,7 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         }*/
         this.supportMapFragment = SupportMapFragment.newInstance(mapOptions);
         requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view,supportMapFragment).commit();
-
+        (supportMapFragment).getMapAsync(this::onMapReady);
     }
 
 
@@ -249,10 +253,15 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         }
         try {
             if (!permissionDenied) {
+
                 Log.d(TAG, "updateLocationUI: permission guaranteed");
                 mapsView.setMyLocationEnabled(true);
                 mapsView.getUiSettings().setMyLocationButtonEnabled(true);
-                mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mapViewModel.getLastKnowLocation().getLatitude(),mapViewModel.getLastKnowLocation().getLongitude()),15f));
+                mapViewModel.getRestaurantMapViewStateLiveData().observe(getViewLifecycleOwner(), restaurantMapViewState -> {
+                    if (restaurantMapViewState.getCurrentLocation() != null){
+                        mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(restaurantMapViewState.getCurrentLocation().getLatitude(), restaurantMapViewState.getCurrentLocation().getLongitude()),15f));
+                    }
+                });
                 setUpMarker();
             } else {
                 Log.d(TAG, "updateLocationUI: permission denied");

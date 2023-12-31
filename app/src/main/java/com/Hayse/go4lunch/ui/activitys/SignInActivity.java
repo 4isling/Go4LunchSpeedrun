@@ -50,7 +50,7 @@ public class SignInActivity extends AppCompatActivity {
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();;
 
     private FirebaseAuth.AuthStateListener listener;
-
+    private Intent intent;
 
 
     @Override
@@ -61,10 +61,13 @@ public class SignInActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: ");
         FirebaseApp.initializeApp(this);
         boolean isMain = isMainProcess(this);
+        intent = new Intent(this, MainActivity.class);
         listener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
+                if(isCurrentUserLogged()){
+                    startActivity(intent);
+                }
             }
         };
     }
@@ -142,7 +145,7 @@ public class SignInActivity extends AppCompatActivity {
                 Toast.makeText(this,"@string/welcome_back", Toast.LENGTH_SHORT).show();
 
             }
-            Intent intent = new Intent(this, MainActivity.class);
+
             startActivity(intent);
         }else{
             if(response==null){
@@ -169,9 +172,9 @@ public class SignInActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 //on User signin = true;
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d(TAG, "onActivityResult:" + Objects.requireNonNull(user).getEmail());
+                Log.d(TAG, "onActivityResult:" + user.getEmail());
 
-                if(Objects.requireNonNull(user.getMetadata()).getCreationTimestamp() == user.getMetadata().getLastSignInTimestamp()){
+                if(user.getMetadata().getCreationTimestamp() == user.getMetadata().getLastSignInTimestamp()){
 
                     Toast.makeText(this,"@string/welcome_new_user", Toast.LENGTH_SHORT).show();
                 }else{
@@ -179,7 +182,6 @@ public class SignInActivity extends AppCompatActivity {
                 }
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
-
             }else{
                 IdpResponse response = IdpResponse.fromResultIntent(data);
                 if(response==null){

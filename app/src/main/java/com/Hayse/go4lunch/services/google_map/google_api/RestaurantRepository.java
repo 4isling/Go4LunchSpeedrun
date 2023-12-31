@@ -88,7 +88,6 @@ public class RestaurantRepository {
                         public void onResponse(Call<RestaurantResult> call, Response<RestaurantResult> response) {
                             if (response.body() != null) {
                                 alreadyFetchedResponses.put(location, response.body());
-
                                 restaurantMutableLiveData.setValue(response.body().getResults());
                             }
                         }

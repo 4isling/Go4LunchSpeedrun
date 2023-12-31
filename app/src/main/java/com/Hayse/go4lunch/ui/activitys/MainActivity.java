@@ -29,11 +29,12 @@ import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-
+    private static GoogleMap mGoogleMap;
     private static final String TAG = "MainActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private ActivityMainBinding binding;
@@ -57,17 +58,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        this.initViewModel();
+        this.createFragments();
+        this.configureToolbar();
+        this.configureBottomNavView();
+        this.configureDrawerLayout();
+        this.configureDrawerNavView();
         if(checkUserLocationPermission()){
             if (isGoogleServiceOK()) {
-                this.initViewModel();
-                this.createFragments();
-                this.configureToolbar();
-                this.configureBottomNavView();
-                this.configureDrawerLayout();
-                this.configureDrawerNavView();
+                replaceFragment(mapFragment);
             }
         }
+
     }
+
 
     private boolean checkUserLocationPermission() {
         Log.d(TAG, "checkUserLocationPermission: ");
@@ -166,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.activity_main_frame_layout, fragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 

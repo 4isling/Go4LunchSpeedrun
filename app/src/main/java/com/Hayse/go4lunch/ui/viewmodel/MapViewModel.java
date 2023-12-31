@@ -38,11 +38,14 @@ public class MapViewModel extends ViewModel {
             LiveData<Location> userLocation = this.locationRepository.getLastLocation();
             Log.d("MapViewModel", "MapViewModel: userLocation = " + userLocation.getValue());
             //if the LiveData that contains the current user location information change
-            this.mapViewStateLiveData = Transformations.switchMap(userLocation, currentLocation ->
-                    // query the repository to get the user location (with a Transformations.switchMap)
-                    Transformations.map(restaurantRepository.getRestaurantLiveData(currentLocation), restaurants ->
-                            mapDataToViewState(restaurants, currentLocation)
-                    )
+            this.mapViewStateLiveData = Transformations.switchMap(userLocation, currentLocation -> {
+                        // query the repository to get the user location (with a Transformations.switchMap)
+                        if (currentLocation != null)
+                            Transformations.map(restaurantRepository.getRestaurantLiveData(currentLocation), restaurants ->
+                                        mapDataToViewState(restaurants, currentLocation)
+                            );
+                        return null;
+                    }
             );
 
         }
@@ -62,17 +65,19 @@ public class MapViewModel extends ViewModel {
     public LiveData<MapViewState> getRestaurantMapViewStateLiveData() {
         return mapViewStateLiveData;
     }
+
     @SuppressLint("MissingPermission")
     public void refresh() {
         if (this.permissionChecker.hasLocationPermission()) {
             locationRepository.startLocationRequest();
-        }else{
+
+        } else {
             locationRepository.stopLocationRequest();
         }
     }
 
     @SuppressLint("MissingPermission")
-    public Location getLastKnowLocation(){
+    public Location getLastKnowLocation() {
         return locationRepository.getLastLocation().getValue();
     }
 }
