@@ -1,6 +1,10 @@
 package com.Hayse.go4lunch.ui.view_state;
 
+
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Location;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
@@ -10,8 +14,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class MapViewState {
-    @NonNull
-    private final List<Result> restaurants;
+
+    private List<Result> restaurants;
 
     private List<Location> restaurantLocation = new ArrayList<>();
     private android.location.Location currentLocation;
@@ -19,12 +23,12 @@ public class MapViewState {
  //TODO find the problem after the request we get result but marker setup don't work
 
     public MapViewState(
-            @NonNull List<Result> restaurants,
-            android.location.Location userLocation
+          @Nullable List<Result> restaurants
     ){
-        this.restaurants = restaurants;
-        setRestaurantLocation();
-        setCurrentLocation(userLocation);
+        if (restaurants != null){
+            this.restaurants = restaurants;
+            setRestaurantLocation();
+        }
     }
 
     @NonNull
@@ -32,11 +36,10 @@ public class MapViewState {
         return restaurants;
     }
 
-    private List<Location> setRestaurantLocation(){
+    private void setRestaurantLocation(){
         for (Result restaurant: this.restaurants) {
             restaurantLocation.add(restaurant.getGeometry().getLocation());
         }
-        return restaurantLocation;
     }
 
     private void setCurrentLocation(android.location.Location userLocation){

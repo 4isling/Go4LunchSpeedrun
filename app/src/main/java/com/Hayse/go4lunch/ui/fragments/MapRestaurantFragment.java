@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.R;
@@ -24,6 +25,7 @@ import com.Hayse.go4lunch.databinding.FragmentMapBinding;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
 import com.Hayse.go4lunch.services.permission_checker.PermissionUtils;
+import com.Hayse.go4lunch.ui.view_state.MapViewState;
 import com.Hayse.go4lunch.ui.viewmodel.MapViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -40,9 +42,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-public class MapRestaurantFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+
+public class MapRestaurantFragment extends Fragment {
 
     private FragmentMapBinding binding;
     private MapViewModel mapViewModel;
@@ -54,16 +62,11 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
 
     SupportMapFragment supportMapFragment;
 
-    // The entry point to the Fused Location Provider.
-    private FusedLocationProviderClient fusedLocationProviderClient;
 
-    private final LatLng defaultLocation = new LatLng(48.888053, 2.343312);
-    private static final int DEFAULT_ZOOM = 15;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 999;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private boolean permissionDenied = false;
+    private final boolean permissionDenied = false;
     int REQ_PERMISSION = 100;
 
+    private final Disposable disposable = null;
     private Location lastKnownLocation;
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
@@ -75,40 +78,26 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         Log.d(TAG, "onCreate: ");
         getMapViewModel();
     }
+    private void getMapViewModel() {
+        mapViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MapViewModel.class);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(getLayoutInflater());
-        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        this.mapOptions = new GoogleMapOptions();
 
         return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initMap();
-
-    }
-
-    @SuppressLint("MissingPermission")
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        Log.d(TAG, "onMapReady: ");
-        this.mapsView = googleMap;
-        mapsView.setOnMyLocationButtonClickListener(this);
-        mapsView.setOnMyLocationClickListener(this);
-        PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
-        if(permissionChecker.hasLocationPermission()){
-            mapsView.setMyLocationEnabled(true);
-            Log.d(TAG, "onMapReady: location permission guaranteed");
-            updateLocationUI();
-        }
     }
 
     /**
      * if user already authorised location permission
+     *
      * @return true
      * else ask user permission and
      * @return true
@@ -122,14 +111,14 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_PERMISSION);
             if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                    && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "getLocationPermission: return true2");
                 return true;
-            }else {
+            } else {
                 Log.d(TAG, "getLocationPermission: return false");
                 return false;
             }
-        }else {
+        } else {
             Log.d(TAG, "getLocationPermission: return true1");
             return true;
         }
@@ -142,42 +131,22 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                 .compassEnabled(true)
                 .rotateGesturesEnabled(true)
                 .tiltGesturesEnabled(true);
-/*
-        if (supportMapFragment != null) {
+        this.supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_view);
+        //requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view, supportMapFragment).commit();
 
-            Log.d(TAG, "initMap: supportMapFragment != null");
-            (supportMapFragment).getMapAsync(this::onMapReady);
-            this.mapOptions.mapType(GoogleMap.MAP_TYPE_NORMAL)
-                    .compassEnabled(true)
-                    .rotateGesturesEnabled(true)
-                    .tiltGesturesEnabled(true);
-        }*/
-        this.supportMapFragment = SupportMapFragment.newInstance(mapOptions);
-        requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view,supportMapFragment).commit();
-        (supportMapFragment).getMapAsync(this::onMapReady);
-    }
-
-
-
-
-    /**
-     * move camera on user
-     * @return
-     */
-    @Override
-    public boolean onMyLocationButtonClick() {
-        Toast.makeText(getContext(), "MyLocation button clicked", Toast.LENGTH_SHORT).show();
-
-        mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mapViewModel.getLastKnowLocation().getLatitude(),mapViewModel.getLastKnowLocation().getLongitude()),15f));
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
-        return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
-        mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mapViewModel.getLastKnowLocation().getLatitude(),mapViewModel.getLastKnowLocation().getLongitude()),15f));
+        this.supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onMapReady(@NonNull GoogleMap googleMap) {
+                Log.d(TAG, "onMapReady: ");
+                mapsView = googleMap;
+                PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
+                if (permissionChecker.hasLocationPermission()) {
+                    Log.d(TAG, "onMapReady: location permission guaranteed");
+                    subscribeToObservables();
+                }
+            }
+        });
     }
 
     @Override
@@ -186,14 +155,45 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
         binding = null;
     }
 
-    private void getMapViewModel() {
-        mapViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MapViewModel.class);
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mapsView != null) {
+            outState.putParcelable(KEY_CAMERA_POSITION, mapsView.getCameraPosition());
+            outState.putParcelable(KEY_LOCATION, lastKnownLocation);
+        }
+        super.onSaveInstanceState(outState);
     }
 
-    private void setUpMarker() {
-        mapViewModel.getRestaurantMapViewStateLiveData().observe(getViewLifecycleOwner(), restaurantMapViewState -> {
-            displayMarker(restaurantMapViewState.getRestaurantMapResult());
-        });
+
+    /**
+     * Updates the map's UI settings based on whether the user has granted location permission.
+     */
+    // [START maps_current_place_update_location_ui]
+    @SuppressLint("MissingPermission")
+    private void updateLocationUI(List<Result> resultList) {
+        if (mapsView == null) {
+            Log.d(TAG, "updateLocationUI: mapsView == null");
+            return;
+        }
+        try {
+            if (!permissionDenied) {
+                Log.d(TAG, "updateLocationUI: permission guaranteed");
+                mapsView.setMyLocationEnabled(true);
+                mapsView.getUiSettings().setMyLocationButtonEnabled(true);
+                if (resultList != null) {
+                    displayMarker(resultList);
+                }
+
+            } else {
+                Log.d(TAG, "updateLocationUI: permission denied");
+                lastKnownLocation = null;
+                getLocationPermission();
+            }
+        } catch (SecurityException e) {
+            Log.e("Exception: %s", e.getMessage());
+        }
     }
 
     private void displayMarker(@NonNull List<Result> results) {
@@ -222,64 +222,26 @@ public class MapRestaurantFragment extends Fragment implements OnMapReadyCallbac
                             .getLocation()
                             .getLng()));
             //set position marker
-            mapsView.moveCamera(CameraUpdateFactory.newLatLng(latLngResult));
-            mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngResult, 14));
             mapsView.getUiSettings().setAllGesturesEnabled(true);
             mapsView.getUiSettings().setZoomGesturesEnabled(true);
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (mapsView != null) {
-            outState.putParcelable(KEY_CAMERA_POSITION, mapsView.getCameraPosition());
-            outState.putParcelable(KEY_LOCATION, lastKnownLocation);
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-
-
-    /**
-     * Updates the map's UI settings based on whether the user has granted location permission.
-     */
-    // [START maps_current_place_update_location_ui]
-
-    @SuppressLint("MissingPermission")
-    private void updateLocationUI() {
-        if (mapsView == null) {
-            Log.d(TAG, "updateLocationUI: mapsView == null");
-            return;
-        }
-        try {
-            if (!permissionDenied) {
-
-                Log.d(TAG, "updateLocationUI: permission guaranteed");
-                mapsView.setMyLocationEnabled(true);
-                mapsView.getUiSettings().setMyLocationButtonEnabled(true);
-                mapViewModel.getRestaurantMapViewStateLiveData().observe(getViewLifecycleOwner(), restaurantMapViewState -> {
-                    if (restaurantMapViewState.getCurrentLocation() != null){
-                        mapsView.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(restaurantMapViewState.getCurrentLocation().getLatitude(), restaurantMapViewState.getCurrentLocation().getLongitude()),15f));
-                    }
-                });
-                setUpMarker();
-            } else {
-                Log.d(TAG, "updateLocationUI: permission denied");
-                mapsView.setMyLocationEnabled(false);
-                mapsView.getUiSettings().setMyLocationButtonEnabled(false);
-                lastKnownLocation = null;
-                getLocationPermission();
-            }
-        } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
-        }
-    }
-
-    @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        if(mapViewModel != null){
-            mapViewModel.refresh();
-        }
+    }
+
+    private void subscribeToObservables() {
+        mapViewModel.getLocationMutableLiveData().observe(
+                this, location -> {
+                    if(location!= null){
+                        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                        mapsView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    }
+                    mapViewModel.getRestaurant(location).observe(this, this::updateLocationUI);
+                }
+        );
     }
 }

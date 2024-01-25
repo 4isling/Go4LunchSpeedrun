@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private MapRestaurantFragment mapFragment;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,7 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initViewModel() {
         Log.d(TAG, "initViewModel: ");
         this.viewModelFactory = ViewModelFactory.getInstance();
-        mapViewModel = new ViewModelProvider(this, viewModelFactory).get(MapViewModel.class);
+        this.mapViewModel = new ViewModelProvider(this, viewModelFactory).get(MapViewModel.class);
+        this.workmateViewModel = new ViewModelProvider(this, viewModelFactory).get(WorkmateViewModel.class);
     }
 
 

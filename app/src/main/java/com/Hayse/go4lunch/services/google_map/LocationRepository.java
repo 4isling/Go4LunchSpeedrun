@@ -20,10 +20,14 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import io.reactivex.rxjava3.core.Observable;
+
 public class LocationRepository {
 
     private static final int LOCATION_REQUEST_INTERVAL_MS = 10_000;
     private static final float SMALLEST_DISPLACEMENT_THRESHOLD_METER = 25;
+
+    private Location userLocation;
 
     @NonNull
     private final FusedLocationProviderClient fusedLocationProviderClient;
@@ -41,6 +45,13 @@ public class LocationRepository {
         return locationMutableLiveData;
     }
 
+    public Location getLastUserLocation(){
+        return userLocation;
+    }
+
+    /**
+     * Start to get userLocation and update it in variable with the callback
+     */
     @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public void startLocationRequest() {
         Log.d(TAG, "startLocationRequest: ");
@@ -51,6 +62,7 @@ public class LocationRepository {
                     Location location = locationResult.getLastLocation();
                     if (location != null) {
                         locationMutableLiveData.setValue(location);
+                        userLocation = location;
                     }
                 }
             };

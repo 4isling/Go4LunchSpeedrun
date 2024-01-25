@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.Hayse.go4lunch.databinding.FragmentWorkmateBinding;
 import com.Hayse.go4lunch.ui.adapter.WorkmateAdapter;
+import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
 
 public class WorkmateFragment extends Fragment {
@@ -24,7 +25,7 @@ public class WorkmateFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        workmateViewModel = new ViewModelProvider(this).get(WorkmateViewModel.class);
+        workmateViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(WorkmateViewModel.class);
         //restaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
 
         binding = FragmentWorkmateBinding.inflate(inflater, container, false);
