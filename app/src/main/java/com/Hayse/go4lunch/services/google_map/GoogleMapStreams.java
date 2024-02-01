@@ -30,7 +30,6 @@ public class GoogleMapStreams {
     public GoogleMapStreams(RestaurantRepository pRestaurantRepository, LocationRepository pLocationRepository){
         restaurantRepository = pRestaurantRepository;
         locationRepository = pLocationRepository;
-        locationRepository.startLocationRequest();
     }
 
     private Observable<Location> streamGetUserLocation(){

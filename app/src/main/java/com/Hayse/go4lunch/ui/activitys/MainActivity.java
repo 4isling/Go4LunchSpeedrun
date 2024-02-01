@@ -23,8 +23,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.ActivityMainBinding;
 import com.Hayse.go4lunch.ui.fragments.MapRestaurantFragment;
+import com.Hayse.go4lunch.ui.fragments.RestaurantListFragment;
 import com.Hayse.go4lunch.ui.fragments.WorkmateFragment;
-import com.Hayse.go4lunch.ui.viewmodel.MapViewModel;
+import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
 import com.google.android.gms.common.ConnectionResult;
@@ -47,10 +48,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private WorkmateViewModel workmateViewModel;
 
-    private MapViewModel mapViewModel;
+    private HomeRestaurantSharedViewModel homeRestaurantSharedViewModel;
     private WorkmateFragment workmateFragment;
 
     private MapRestaurantFragment mapFragment;
+
+    private RestaurantListFragment listFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initViewModel() {
         Log.d(TAG, "initViewModel: ");
         this.viewModelFactory = ViewModelFactory.getInstance();
-        this.mapViewModel = new ViewModelProvider(this, viewModelFactory).get(MapViewModel.class);
+        this.homeRestaurantSharedViewModel = new ViewModelProvider(this, viewModelFactory).get(HomeRestaurantSharedViewModel.class);
         this.workmateViewModel = new ViewModelProvider(this, viewModelFactory).get(WorkmateViewModel.class);
     }
 
@@ -117,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void createFragments() {
         Log.d(TAG, "createFragments: ");
         this.mapFragment = new MapRestaurantFragment();
+        this.listFragment = new RestaurantListFragment();
         this.workmateFragment = new WorkmateFragment();
     }
 
@@ -147,20 +151,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding.bottomNavView.setOnItemSelectedListener(item -> {
             int pItem = item.getItemId();
             if (pItem == R.id.navigation_map) {
-                    replaceFragment(mapFragment);
                 Log.d(TAG, "configureBottomNavView: map");
+                replaceFragment(mapFragment);
                 return true;
             } else if (pItem == R.id.navigation_restaurant) {
-//                    replaceFragment(restaurantListFragment);
+                Log.d(TAG, "configureBottomNavView: list");
+                replaceFragment(listFragment);
                 Toast.makeText(this, "not implemented yet", Toast.LENGTH_SHORT);
                 return true;
             }
             else if (pItem == R.id.navigation_workmate) {
-                replaceFragment(workmateFragment);
                 Log.d(TAG, "configureBottomNavView: workmates");
+                replaceFragment(workmateFragment);
                 return true;
             }
-
             return false;
         });
 }

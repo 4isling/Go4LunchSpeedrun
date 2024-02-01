@@ -44,7 +44,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
             restaurantFoodType = itemView.findViewById(R.id.restaurant_item_food);
 
         }
-
+//@todo find why null pointer exception
         public void bind(Result restaurant) {
             restaurantName.setText(restaurant.getName());
             restaurantAddress.setText(restaurant.getVicinity());

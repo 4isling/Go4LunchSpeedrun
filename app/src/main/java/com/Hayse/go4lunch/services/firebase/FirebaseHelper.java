@@ -6,11 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.Hayse.go4lunch.domain.entites.Workmate;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -66,9 +68,14 @@ public class FirebaseHelper {
         workmate.put("restaurantAddress","");
         workmate.put("restaurantName", "");
         workmate.put("restaurantTypeOfFood", "");
-        db.collection("workmates")
-                .document(uData.getId())
+        workmateRef.document(uData.getId())
                 .set(workmate)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Document successfully written!: user:"+uData.getName()+" added");
+                    }
+                })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -118,9 +125,38 @@ public class FirebaseHelper {
         return null;
     }
 
+    /**
+     *
+     * @param userUID
+     * @return true if user with this Id exist
+     */
+    public Boolean checkIfUserIdExist(String userUID){
+        final boolean[] result = new boolean[1];
+        workmateRef.document("userUID").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        result[0] = true;
+                        Log.d(TAG, "onComplete:DocumentExist: UserData: "+ document.getData());
+                    } else {
+                        result[0] = false;
+                        Log.d(TAG, "onComplete:no such Document");
+                    }
+                }else {
+                    Log.d(TAG, "onComplete: Failed with", task.getException());
+                }
+            }
+        });
+        return result[0];
+    }
 /*
     public static Task<Void> createUser(Workmate workmate){
         return FirebaseFirestore
     }*/
+    private void saveNewWorkmate(Workmate workmate){
+
+    }
 
 }

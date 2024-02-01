@@ -9,28 +9,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentMapBinding;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
-import com.Hayse.go4lunch.services.permission_checker.PermissionUtils;
-import com.Hayse.go4lunch.ui.view_state.MapViewState;
-import com.Hayse.go4lunch.ui.viewmodel.MapViewModel;
+import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -42,18 +33,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.observers.DisposableObserver;
 
 public class MapRestaurantFragment extends Fragment {
 
     private FragmentMapBinding binding;
-    private MapViewModel mapViewModel;
+    private HomeRestaurantSharedViewModel homeRestaurantSharedViewModel;
 
     private static final String TAG = MapRestaurantFragment.class.getSimpleName();
     private GoogleMap mapsView;
@@ -79,7 +65,7 @@ public class MapRestaurantFragment extends Fragment {
         getMapViewModel();
     }
     private void getMapViewModel() {
-        mapViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MapViewModel.class);
+        homeRestaurantSharedViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(HomeRestaurantSharedViewModel.class);
     }
 
     @Nullable
@@ -233,14 +219,14 @@ public class MapRestaurantFragment extends Fragment {
     }
 
     private void subscribeToObservables() {
-        mapViewModel.getLocationMutableLiveData().observe(
+        homeRestaurantSharedViewModel.getLocationMutableLiveData().observe(
                 this, location -> {
                     if(location!= null){
                         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
                         mapsView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                     }
-                    mapViewModel.getRestaurant(location).observe(this, this::updateLocationUI);
+                    homeRestaurantSharedViewModel.getRestaurant(location).observe(this, this::updateLocationUI);
                 }
         );
     }

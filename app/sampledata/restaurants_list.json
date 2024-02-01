@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "placeId": "ChIJxUf2lnm6j4ARf-dI1c4L9sA",
+      "buisnessStatus": "OPERATIONAL",
+      "geometry": "com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Geometry@9a14e11[location=com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Location@19d9b76[lat=37.407463,lng=-122.1203],viewport=com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Viewport@8bd5577[northeast=com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Northeast@9b1d5e4[lat=37.408684,lng=-122.119026],southwest=com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Southwest@23bba4d[lat=37.405987,lng=-122.12173]]]",
+      "name": "Dinah's Garden Hotel",
+      "photos": " size = 1"
+    }
+
+
+  ]
+}

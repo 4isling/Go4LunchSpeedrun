@@ -82,8 +82,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     permissionChecker
             );
         }*/
-        if (modelClass.isAssignableFrom(MapViewModel.class)) {
-            return (T) new MapViewModel(
+        if (modelClass.isAssignableFrom(HomeRestaurantSharedViewModel.class)) {
+            return (T) new HomeRestaurantSharedViewModel(
                     permissionChecker,
                     locationRepository,
                     restaurantRepository

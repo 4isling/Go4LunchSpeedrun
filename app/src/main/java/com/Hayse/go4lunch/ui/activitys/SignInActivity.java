@@ -66,7 +66,16 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(isCurrentUserLogged()){
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(!FirebaseHelper.getInstance().checkIfUserIdExist(user.getUid())){
+                        FirebaseHelper.getInstance().setNewWorkmate();
+                        Toast.makeText(getApplicationContext(),"@string/welcome_new_user", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(),"@string/welcome_back", Toast.LENGTH_SHORT).show();
+                    }
                     startActivity(intent);
+                }else{
+
                 }
             }
         };
@@ -111,6 +120,7 @@ public class SignInActivity extends AppCompatActivity {
     );
 
     private void initFirebaseAuth(){
+        Log.d(TAG, "initFirebaseAuth: ");
         if(firebaseAuth.getCurrentUser() != null){
             startActivity(new Intent(this, MainActivity.class));
             this.finish();
@@ -132,26 +142,23 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
+        Log.d(TAG, "onSignInResult: ");
         IdpResponse response = result.getIdpResponse();
         if(result.getResultCode() == RESULT_OK){
-            //on User SignIn = true;
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            Log.d(TAG, "onActivityResult:" + user.getEmail());
-
-            if(Objects.requireNonNull(user.getMetadata()).getCreationTimestamp() == user.getMetadata().getLastSignInTimestamp()){
+            Log.d(TAG, "onSignInResult:" + user.getEmail());
+            if(!FirebaseHelper.getInstance().checkIfUserIdExist(user.getUid())){
                 FirebaseHelper.getInstance().setNewWorkmate();
                 Toast.makeText(this,"@string/welcome_new_user", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(this,"@string/welcome_back", Toast.LENGTH_SHORT).show();
-
             }
-
             startActivity(intent);
         }else{
             if(response==null){
-                Log.d(TAG, "onActivityResult: User cancel sign in request");
+                Log.d(TAG, "onSignInResult: User cancel sign in request");
             }else{
-                Log.d(TAG, "onActivityResult:", response.getError());
+                Log.d(TAG, "onSignInResult:", response.getError());
             }
         }
     }
@@ -168,14 +175,14 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
+        Log.d(TAG, "onActivityResult: ");
         if(requestCode == RC_SIGN_IN){
             if(resultCode == RESULT_OK){
                 //on User signin = true;
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(TAG, "onActivityResult:" + user.getEmail());
-
-                if(user.getMetadata().getCreationTimestamp() == user.getMetadata().getLastSignInTimestamp()){
-
+                if(!FirebaseHelper.getInstance().checkIfUserIdExist(user.getUid())){
+                    FirebaseHelper.getInstance().setNewWorkmate();
                     Toast.makeText(this,"@string/welcome_new_user", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(this,"@string/welcome_back", Toast.LENGTH_SHORT).show();
