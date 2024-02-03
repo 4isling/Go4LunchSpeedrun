@@ -27,44 +27,35 @@ import java.util.List;
 
 public class RestaurantListFragment extends Fragment {
     private String TAG = "com.Hayse.go4lunch.ui.fragments.RestaurantListFragment";
-    private FragmentRestaurantBinding binding;
-    private RestaurantAdapter adapter;
     private HomeRestaurantSharedViewModel viewModel;
+    private RestaurantAdapter adapter;
+    private RecyclerView recyclerView;
+    private FragmentRestaurantBinding binding;
+
     @NonNull
     private TextView noRestaurant;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        viewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(HomeRestaurantSharedViewModel.class);
         binding = FragmentRestaurantBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         noRestaurant = binding.listNoRestaurants;
-        viewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(HomeRestaurantSharedViewModel.class);
+        initRecyclerView();
         return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (new PermissionChecker(getActivity().getApplication()).hasLocationPermission()) {
-            initRecyclerView();
-            //    getBaseList();
-        } else {
-            Log.d(TAG, "no location permission");
-            // getLocationPermission();
-        }
     }
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: ");
+        recyclerView = binding.restaurantList;
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
         adapter = new RestaurantAdapter();
-        binding.restaurantList.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.restaurantList.setAdapter(adapter);
-        binding.restaurantList.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
         subscribeToObservables();
         /*
-         * @TODO itemTouchListener get detail
+         * @TODO itemTouchListener get detail restaurant
          */
-        binding.restaurantList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+        /*binding.restaurantList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 Log.d(TAG, "onInterceptTouchEvent: ");
@@ -80,7 +71,7 @@ public class RestaurantListFragment extends Fragment {
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
                 Log.d(TAG, "onRequestDisallowInterceptTouchEvent: ");
             }
-        });
+        });*/
     }
     private void subscribeToObservables() {
         Log.d(TAG, "subscribeToObservables: ");
@@ -88,8 +79,8 @@ public class RestaurantListFragment extends Fragment {
                 getViewLifecycleOwner(), location -> {
                     if(location!= null){
                         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                        viewModel.getRestaurant(location).observe(getViewLifecycleOwner(), this::updateRecyclerView);
                     }
-                    viewModel.getRestaurant(location).observe(getViewLifecycleOwner(), this::updateRecyclerView);
                 }
         );
 
@@ -106,5 +97,11 @@ public class RestaurantListFragment extends Fragment {
                 binding.restaurantList.setVisibility(View.VISIBLE);
                 adapter.submitList(resultList);
             }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

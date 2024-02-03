@@ -18,7 +18,6 @@ import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
 
 public class WorkmateFragment extends Fragment {
     private WorkmateViewModel workmateViewModel;
-    //private RestaurantListViewModel restaurantListViewModel;
     private WorkmateAdapter adapter;
     private RecyclerView recyclerView;
     private FragmentWorkmateBinding binding;
@@ -28,7 +27,6 @@ public class WorkmateFragment extends Fragment {
         workmateViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(WorkmateViewModel.class);
         binding = FragmentWorkmateBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         initRecyclerView();
         return root;
     }
@@ -45,6 +43,7 @@ public class WorkmateFragment extends Fragment {
         workmateViewModel.getAllWorkmates().observe(getViewLifecycleOwner(), workmates -> {
             adapter.submitList(workmates);
         });
+        //@todo item touch open workmate detail
     }
 
     @Override
