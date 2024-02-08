@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.Hayse.go4lunch.databinding.FragmentRestaurantBinding;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
+import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
 import com.Hayse.go4lunch.ui.adapter.RestaurantAdapter;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
@@ -52,6 +53,10 @@ public class RestaurantListFragment extends Fragment {
         adapter = new RestaurantAdapter();
         recyclerView.setAdapter(adapter);
         subscribeToObservables();
+        adapter.setOnItemClickListener(restaurant -> RestaurantListFragment.this.startActivity(RestaurantDetailActivity.navigate(
+                RestaurantListFragment.this.requireContext(),
+                restaurant.getPlaceId()
+        )));
         /*
          * @TODO itemTouchListener get detail restaurant
          */

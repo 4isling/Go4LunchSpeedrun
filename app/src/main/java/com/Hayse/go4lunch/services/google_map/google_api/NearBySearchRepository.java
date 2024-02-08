@@ -10,11 +10,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
-import com.Hayse.go4lunch.domain.entites.map_api.detail.DetailResponse;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.RestaurantResult;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +22,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RestaurantRepository {
-    private static final String TAG = "RestaurantRepository: ";
+public class NearBySearchRepository {
+    private static final String TAG = "NearBySearchRepository: ";
     private final GMapsApi gMapsApi;
     private final Map<Location, RestaurantResult> alreadyFetchedResponses = new HashMap<>();
     private final MutableLiveData<RestaurantResult> resultMutableLiveData = new MutableLiveData<>();
@@ -44,7 +42,7 @@ public class RestaurantRepository {
      *
      * @param gMapsApi
      */
-    public RestaurantRepository(GMapsApi gMapsApi) {
+    public NearBySearchRepository(GMapsApi gMapsApi) {
         this.gMapsApi = gMapsApi;
     }
 
@@ -171,23 +169,6 @@ public class RestaurantRepository {
             }
         }
         return results;
-    }
-
-    public LiveData<com.Hayse.go4lunch.domain.entites.map_api.detail.Result> getDetail(String place_id){
-        gMapsApi.getPlaceDetails(place_id,API_KEY).enqueue(new Callback<DetailResponse>() {
-            @Override
-            public void onResponse(Call<DetailResponse> call, Response<DetailResponse> response) {
-                Log.d(TAG, "onResponse: "+response.body().getResult());
-                detailResult.setValue(response.body().getResult());
-            }
-
-            @Override
-            public void onFailure(Call<DetailResponse> call, Throwable t) {
-                detailResult = null;
-                Log.e(TAG, "onFailure: ", t);
-            }
-        });
-        return detailResult;
     }
 
     public RestaurantResult getAlreadyFetchedResponses(){

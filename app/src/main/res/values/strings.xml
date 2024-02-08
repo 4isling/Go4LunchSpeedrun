@@ -25,5 +25,10 @@
     <string name="no_restaurant">No Restaurant to show</string>
     <string name="is_open">Open</string>
     <string name="is_close">Close</string>
+    <string name="restaurant_check">button to chose the restaurant of the day</string>
+    <string name="web_icon">website</string>
+    <string name="favorite_button">Fav Button</string>
+    <string name="details_favorite_button">Button to Fav and save restaurant</string>
+    <string name="call_button">call</string>
 
 </resources>

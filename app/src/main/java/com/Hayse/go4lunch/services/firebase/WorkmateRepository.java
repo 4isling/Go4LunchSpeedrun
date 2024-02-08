@@ -61,23 +61,29 @@ public class WorkmateRepository {
             public void onFailure(@NonNull Exception e){
                 //handle error
                 Log.d("WorkmateRepError", "Error getting documents", e);
-                listOfWorkmate.postValue(null);
+                listOfWorkmate.postValue(new ArrayList<>());
             }
         });
         Log.d(TAG, "getAllWorkmate: before return");
         return listOfWorkmate;
     }
-    public FirebaseUser getCurrentUser(){
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
 
-
-    public void createWorkmate(){
-        FirebaseUser workmate = getCurrentUser();
-    }
-
-
-    public void initData(){
-
+    public LiveData<List<Workmate>> getWorkmateByRestaurant(String placeId) {
+        MutableLiveData<List<Workmate>> listDetailWorkmate = new MutableLiveData<>();
+        mFirebaseHelper.getWorkmateByPlaceId(placeId).addOnCompleteListener(task ->{
+            if(task.isSuccessful()){
+                ArrayList<Workmate> workmateArrayList = new ArrayList<>();
+                for (QueryDocumentSnapshot documentSnapshot: task.getResult()){
+                    workmateArrayList.add(documentSnapshot.toObject(Workmate.class));
+                }
+                listDetailWorkmate.postValue(workmateArrayList);
+            }else {
+                Log.e(TAG, "getWorkmateByRestaurant: ", task.getException());
+            }
+        }).addOnFailureListener(e -> {
+            listDetailWorkmate.postValue(new ArrayList<>());
+            Log.d(TAG, "onFailure: ", e);
+        });
+        return listDetailWorkmate;
     }
 }

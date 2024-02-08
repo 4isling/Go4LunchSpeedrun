@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,12 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
 public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.ViewHolder> {
-
-    List<Result> restaurantList;
+    private List<Result> restaurantList;
+    private OnRestaurantItemClickListener onRestaurantItemClickListener;
     public RestaurantAdapter(){
         super(new ListRestaurantItemCallback());
     }
@@ -34,11 +36,17 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(getItem(position));
+        holder.itemView.setOnClickListener(v -> onRestaurantItemClickListener.onRestaurantItemClick(getItem(position)));
     }
     @SuppressLint("NotifyDataSetChanged")
     public void setList(List<Result> restaurantList){
         this.restaurantList = restaurantList;
     }
+
+    public void setOnItemClickListener(OnRestaurantItemClickListener onRestaurantItemClickListener) {
+        this.onRestaurantItemClickListener = onRestaurantItemClickListener;
+    }
+
     private static class ListRestaurantItemCallback extends DiffUtil.ItemCallback<Result>{
 
         @Override
@@ -53,6 +61,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView restaurantImage;
         private final TextView restaurantName;
         private final TextView restaurantAddress;
         private final TextView restaurantOpenHour;
@@ -60,6 +69,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            restaurantImage = itemView.findViewById(R.id.restaurant_item_picture);
             restaurantName = itemView.findViewById(R.id.restaurant_item_name);
             restaurantAddress = itemView.findViewById(R.id.restaurant_item_address);
             restaurantOpenHour = itemView.findViewById(R.id.restaurant_item_time);
@@ -69,6 +79,11 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
 //@todo find why null pointer exception
         public void bind(Result restaurant) {
             if(restaurant != null){
+                if(restaurant.getPhotos().get(0)!= null){
+                    Glide.with(restaurantImage.getContext())
+                            .load(restaurant.getPhotos().get(0))
+                            .into(restaurantImage);
+                }
                 if(restaurant.getName()!= null){
                     restaurantName.setText(restaurant.getName());
                 }else{
@@ -98,5 +113,9 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
                 }
             }
        }
+    }
+
+    public interface OnRestaurantItemClickListener{
+        void onRestaurantItemClick(Result result);
     }
 }

@@ -14,9 +14,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,6 +54,8 @@ public class FirebaseHelper {
 
     public final CollectionReference workmateRef = db.collection("workmates");
 
+    public final CollectionReference favRestaurantRef = db.collection("favorite_restaurant");
+
     public Task<QuerySnapshot> getAllWorkmate(){
         return workmateRef.get();
     }
@@ -70,18 +74,8 @@ public class FirebaseHelper {
         workmate.put("restaurantTypeOfFood", "");
         workmateRef.document(uData.getId())
                 .set(workmate)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Document successfully written!: user:"+uData.getName()+" added");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Document successfully written!: user:"+uData.getName()+" added"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
     }
 
 
@@ -109,19 +103,8 @@ public class FirebaseHelper {
         }
         workmateRef.document(uData.getId())
                 .update(updateData)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
-
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
         return null;
     }
 
@@ -132,21 +115,18 @@ public class FirebaseHelper {
      */
     public Boolean checkIfUserIdExist(String userUID){
         final boolean[] result = new boolean[1];
-        workmateRef.document("userUID").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        result[0] = true;
-                        Log.d(TAG, "onComplete:DocumentExist: UserData: "+ document.getData());
-                    } else {
-                        result[0] = false;
-                        Log.d(TAG, "onComplete:no such Document");
-                    }
-                }else {
-                    Log.d(TAG, "onComplete: Failed with", task.getException());
+        workmateRef.document("userUID").get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                DocumentSnapshot document = task.getResult();
+                if(document.exists()){
+                    result[0] = true;
+                    Log.d(TAG, "onComplete:DocumentExist: UserData: "+ document.getData());
+                } else {
+                    result[0] = false;
+                    Log.d(TAG, "onComplete:no such Document");
                 }
+            }else {
+                Log.d(TAG, "onComplete: Failed with", task.getException());
             }
         });
         return result[0];
@@ -159,4 +139,8 @@ public class FirebaseHelper {
 
     }
 
+    public Task<QuerySnapshot> getWorkmateByPlaceId(String placeId) {
+        return workmateRef.whereEqualTo("placeId", placeId)
+                .get();
+    }
 }

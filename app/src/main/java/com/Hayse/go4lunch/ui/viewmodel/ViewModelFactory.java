@@ -10,7 +10,7 @@ import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
 import com.Hayse.go4lunch.services.google_map.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.RetrofitService;
-import com.Hayse.go4lunch.services.google_map.google_api.RestaurantRepository;
+import com.Hayse.go4lunch.services.google_map.google_api.NearBySearchRepository;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
 import com.google.android.gms.location.LocationServices;
 
@@ -25,7 +25,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final WorkmateRepository workmateRepository;
 
     @NonNull
-    private final RestaurantRepository restaurantRepository;
+    private final NearBySearchRepository nearBySearchRepository;
 
     public static ViewModelFactory getInstance() {
         if (factory == null) {
@@ -41,7 +41,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                                             application
                                     )
                             ),
-                            new RestaurantRepository(
+                            new NearBySearchRepository(
                                     RetrofitService.getGMapsApi()
                             ),
                             new WorkmateRepository()
@@ -57,11 +57,11 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private ViewModelFactory(
             @NonNull PermissionChecker permissionChecker,
             @NonNull LocationRepository locationRepository,
-            @NonNull RestaurantRepository restaurantRepository,
+            @NonNull NearBySearchRepository nearBySearchRepository,
             @NonNull WorkmateRepository workmateRepository
 
     ) {
-        this.restaurantRepository = restaurantRepository;
+        this.nearBySearchRepository = nearBySearchRepository;
         this.permissionChecker = permissionChecker;
         this.locationRepository = locationRepository;
         this.workmateRepository = workmateRepository;
@@ -86,7 +86,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             return (T) new HomeRestaurantSharedViewModel(
                     permissionChecker,
                     locationRepository,
-                    restaurantRepository
+                    nearBySearchRepository
                     );
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass);

@@ -6,14 +6,12 @@ import android.location.Location;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.domain.usecases.GetNearBySearchResultUseCase;
-import com.Hayse.go4lunch.services.google_map.GoogleMapStreams;
 import com.Hayse.go4lunch.services.google_map.LocationRepository;
-import com.Hayse.go4lunch.services.google_map.google_api.RestaurantRepository;
+import com.Hayse.go4lunch.services.google_map.google_api.NearBySearchRepository;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
 
 import java.util.List;
@@ -22,7 +20,7 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     private final static String TAG = "MapViewModel";
 
     private LocationRepository locationRepository;
-    private RestaurantRepository restaurantRepository;
+    private NearBySearchRepository nearBySearchRepository;
     private PermissionChecker permissionChecker;
     private GetNearBySearchResultUseCase getNearBySearchResultUseCase;
     private final Location defaultLocation = new Location("48.888053, 2.343312");
@@ -40,10 +38,10 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     public HomeRestaurantSharedViewModel(
             @NonNull PermissionChecker permissionChecker,
             @NonNull LocationRepository locationRepository,
-            @NonNull RestaurantRepository restaurantRepository
+            @NonNull NearBySearchRepository nearBySearchRepository
     ) {
         this.locationRepository = locationRepository;
-        this.restaurantRepository = restaurantRepository;
+        this.nearBySearchRepository = nearBySearchRepository;
 
         locationRepository.startLocationRequest();
     }
@@ -54,6 +52,6 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     }
 
     public LiveData<List<Result>> getRestaurant(Location location){
-        return restaurantRepository.getRestaurantLiveData(location);
+        return nearBySearchRepository.getRestaurantLiveData(location);
     }
 }
