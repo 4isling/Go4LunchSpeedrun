@@ -10,6 +10,7 @@ import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
 import com.Hayse.go4lunch.services.google_map.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.RetrofitService;
+import com.Hayse.go4lunch.services.google_map.google_api.DetailRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.NearBySearchRepository;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
 import com.google.android.gms.location.LocationServices;
@@ -23,6 +24,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final LocationRepository locationRepository;
     @NonNull
     private final WorkmateRepository workmateRepository;
+
+    @NonNull
+    private final DetailRepository detailRepository;
 
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
@@ -44,9 +48,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                             new NearBySearchRepository(
                                     RetrofitService.getGMapsApi()
                             ),
-                            new WorkmateRepository()
-
-
+                            new WorkmateRepository(),
+                            new DetailRepository(
+                                    RetrofitService.getGMapsApi()
+                            )
                     );
                 }
             }
@@ -58,13 +63,15 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             @NonNull PermissionChecker permissionChecker,
             @NonNull LocationRepository locationRepository,
             @NonNull NearBySearchRepository nearBySearchRepository,
-            @NonNull WorkmateRepository workmateRepository
+            @NonNull WorkmateRepository workmateRepository,
+            @NonNull DetailRepository detailRepository
 
     ) {
         this.nearBySearchRepository = nearBySearchRepository;
         this.permissionChecker = permissionChecker;
         this.locationRepository = locationRepository;
         this.workmateRepository = workmateRepository;
+        this.detailRepository = detailRepository;
     }
 
     @SuppressWarnings("unchecked")
@@ -74,20 +81,18 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(WorkmateViewModel.class)) {
             return (T) new WorkmateViewModel();
         }
-        /*
-        if (modelClass.isAssignableFrom(RestaurantListViewModel.class)) {
-            return (T) new RestaurantListViewModel(
-                    restaurantRepository,
-                    locationRepository,
-                    permissionChecker
-            );
-        }*/
         if (modelClass.isAssignableFrom(HomeRestaurantSharedViewModel.class)) {
             return (T) new HomeRestaurantSharedViewModel(
                     permissionChecker,
                     locationRepository,
                     nearBySearchRepository
                     );
+        }
+        if (modelClass.isAssignableFrom(RestaurantDetailViewModel.class)){
+            return (T) new RestaurantDetailViewModel(
+                    detailRepository,
+                    workmateRepository
+            );
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass);
     }

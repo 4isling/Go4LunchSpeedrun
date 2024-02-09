@@ -17,6 +17,9 @@ public class RestaurantDetailViewModel extends ViewModel {
     private WorkmateRepository workmateRepository;
     private DetailRepository detailRepository;
 
+    LiveData<Result> restaurantLiveData;
+    LiveData<List<Workmate>> listWorkmateLiveData;
+
     public RestaurantDetailViewModel(DetailRepository detailRepository,
                                      WorkmateRepository workmateRepository){
         this.workmateRepository = workmateRepository;
@@ -24,8 +27,8 @@ public class RestaurantDetailViewModel extends ViewModel {
     }
 
     public void init(String placeId){
-        LiveData<Result> restaurantLiveData = detailRepository.getDetail(placeId);
-        LiveData<List<Workmate>> listWorkmateLiveData = workmateRepository.getWorkmateByRestaurant(placeId);
+        this.restaurantLiveData = detailRepository.getDetail(placeId);
+        this.listWorkmateLiveData = workmateRepository.getWorkmateByRestaurant(placeId);
     }
 
     private void combine(@Nullable Result restaurant,
@@ -34,4 +37,14 @@ public class RestaurantDetailViewModel extends ViewModel {
 
         }
     }
+
+    public LiveData<Result> getRestaurantDetail(){
+        return restaurantLiveData;
+    }
+
+    public LiveData<List<Workmate>> getListWorkmateLiveData(){
+        return listWorkmateLiveData;
+    }
+
+    public
 }

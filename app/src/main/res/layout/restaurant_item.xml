@@ -68,9 +68,20 @@
             android:layout_height="18dp"
             android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/restaurant_item_picture"
+            app:layout_constraintEnd_toStartOf="@id/restaurant_item_rating"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="@string/open_until_xpm"/>
+
+        <RatingBar
+            android:id="@+id/restaurant_item_rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:numStars="3"
+            app:layout_constraintEnd_toStartOf="@id/restaurant_item_picture"
+            app:layout_constraintTop_toTopOf="@+id/restaurant_item_time" />
 
         <TextView
             android:id="@+id/restaurant_item_number_coworker"
