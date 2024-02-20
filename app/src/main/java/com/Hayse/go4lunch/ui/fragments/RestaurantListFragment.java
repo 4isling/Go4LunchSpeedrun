@@ -54,7 +54,7 @@ public class RestaurantListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         subscribeToObservables();
         adapter.setOnItemClickListener(restaurant -> RestaurantListFragment.this.startActivity(RestaurantDetailActivity.navigate(
-                RestaurantListFragment.this.requireContext(),
+                RestaurantListFragment.this.getContext(),
                 restaurant.getPlaceId()
         )));
         /*

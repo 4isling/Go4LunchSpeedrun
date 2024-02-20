@@ -9,7 +9,7 @@ public class Result {
     private String website;
     private String businessStatus;
     private String icon;
-    private int rating;
+    private float rating;
     private String iconBackgroundColor;
     private List<AddressComponentsItem> addressComponents;
     private List<PhotosItem> photos;
@@ -80,7 +80,7 @@ public class Result {
         this.rating = rating;
     }
 
-    public int getRating(){
+    public float getRating(){
         return rating;
     }
 

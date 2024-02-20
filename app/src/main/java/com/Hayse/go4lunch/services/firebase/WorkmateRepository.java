@@ -14,19 +14,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class WorkmateRepository {
     private static final String TAG = "WorkmateRepository";
     private final MutableLiveData<List<Workmate>> listOfWorkmate = new MutableLiveData<>();
 
     private static WorkmateRepository sWorkmateRepository;
-    private static FirebaseHelper mFirebaseHelper;
 
-    private static final String COLLECTION_NAME = "workmates";
-    private static final String SUCCESS = "success";
-    private static final String ERROR = "error";
-    private static final String RESTAURANT_CHOICE_NAME = "restaurantChoiceName";
-    private static final String LIKES = "likes";
+    private MutableLiveData<Workmate> userData = new MutableLiveData<>();
+    private static FirebaseHelper mFirebaseHelper;
 
 
     public static WorkmateRepository getInstance(){
@@ -40,6 +37,7 @@ public class WorkmateRepository {
         mFirebaseHelper = FirebaseHelper.getInstance();
         // Uncomment this method to populate your firebase database, it will upload some data
         // Comment it again after the first launch
+        userData = getUserData();
     }
 
     public MutableLiveData<List<Workmate>> getAllWorkmate(){
@@ -70,20 +68,28 @@ public class WorkmateRepository {
 
     public LiveData<List<Workmate>> getWorkmateByRestaurant(String placeId) {
         MutableLiveData<List<Workmate>> listDetailWorkmate = new MutableLiveData<>();
-        mFirebaseHelper.getWorkmateByPlaceId(placeId).addOnCompleteListener(task ->{
-            if(task.isSuccessful()){
-                ArrayList<Workmate> workmateArrayList = new ArrayList<>();
-                for (QueryDocumentSnapshot documentSnapshot: task.getResult()){
-                    workmateArrayList.add(documentSnapshot.toObject(Workmate.class));
-                }
-                listDetailWorkmate.postValue(workmateArrayList);
-            }else {
-                Log.e(TAG, "getWorkmateByRestaurant: ", task.getException());
-            }
-        }).addOnFailureListener(e -> {
-            listDetailWorkmate.postValue(new ArrayList<>());
-            Log.d(TAG, "onFailure: ", e);
-        });
+        mFirebaseHelper.getWorkmateByPlaceId(placeId);
         return listDetailWorkmate;
+    }
+
+    public MutableLiveData<Workmate> getUserData(){
+        MutableLiveData<Workmate> userData = new MutableLiveData<>();
+        mFirebaseHelper.getUserDataFireStore().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                    userData.postValue(task.getResult().toObject(Workmate.class));
+            }
+        });
+        return userData;
+    }
+
+    public void updateRestaurantChoice(String placeId, String name, String address) {
+        Workmate uData = getUserData().getValue();
+        if (uData.getPlaceId()== null || !Objects.equals(uData.getPlaceId(), placeId) || uData.getPlaceId().equals("")){
+            Log.d(TAG, "updateRestaurantChoice: addRestaurantChoice");
+            mFirebaseHelper.updateUserData(null, placeId, name,address,null);
+        }else{
+            Log.d(TAG, "updateRestaurantChoice: suppressRestaurantChoice");
+            mFirebaseHelper.updateUserData(null,"","","",null);
+        }
     }
 }

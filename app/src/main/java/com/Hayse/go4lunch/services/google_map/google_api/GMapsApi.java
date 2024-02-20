@@ -23,6 +23,7 @@ public interface GMapsApi {
                                                  @Query("key") String key);
     @GET("details/json" )
     Call<DetailResponse> getPlaceDetails(@Query("place_id")String placeId,
+                                         @Query("fields")String fields,
                                          @Query("key") String key);
 
 

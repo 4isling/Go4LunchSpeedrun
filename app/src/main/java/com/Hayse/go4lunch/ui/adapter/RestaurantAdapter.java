@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.bumptech.glide.Glide;
@@ -79,9 +80,12 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
 //@todo find why null pointer exception
         public void bind(Result restaurant) {
             if(restaurant != null){
-                if(restaurant.getPhotos().get(0)!= null){
+                if(restaurant.getPhotos().get(0).getPhotoReference()!= null){
+                    String photoRef = restaurant.getPhotos().get(0).getPhotoReference();
+                    String html_attributions = restaurant.getPhotos().get(0).getHtmlAttributions().get(0);
+
                     Glide.with(restaurantImage.getContext())
-                            .load(restaurant.getPhotos().get(0))
+                            .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+photoRef+"&key="+ MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY))
                             .into(restaurantImage);
                 }
                 if(restaurant.getName()!= null){
@@ -107,7 +111,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
                 }
 
                 if (restaurant.getTypes() != null){
-                    restaurantFoodType.setText(restaurant.getTypes().toString());
+                    restaurantFoodType.setText(restaurant.getTypes().get(1));
                 }else {
                     restaurantFoodType.setText("");
                 }

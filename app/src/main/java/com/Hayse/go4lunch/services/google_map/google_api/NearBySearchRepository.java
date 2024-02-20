@@ -23,58 +23,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class NearBySearchRepository {
-    private static final String TAG = "NearBySearchRepository: ";
+    private static final String TAG = "NearBySearchRep: ";
     private final GMapsApi gMapsApi;
     private final Map<Location, RestaurantResult> alreadyFetchedResponses = new HashMap<>();
     private final MutableLiveData<RestaurantResult> resultMutableLiveData = new MutableLiveData<>();
-    ;
-
     private final String API_KEY = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
     private Observable<List<Result>> observableResult;
-
     private List<Result> results;
-    private MutableLiveData<com.Hayse.go4lunch.domain.entites.map_api.detail.Result> detailResult;
     private final Map<String, RestaurantResult> cache = new HashMap<>(2000);
     private String sUserLocation;
 
-    /**
-     * TODO CallNearbyPlaces recup et stocker le result et getRestaurents return resultMutableLiveData
-     *
-     * @param gMapsApi
-     */
     public NearBySearchRepository(GMapsApi gMapsApi) {
         this.gMapsApi = gMapsApi;
-    }
-
-    public void setUserLocation(String userLocation) {
-        sUserLocation = userLocation;
-        getNearbyPlaces();
-    }
-
-    /**
-     * @return le but de la fonction est de faire appel a l'api si le resultat n'as pas deja été demander
-     */
-    private MutableLiveData<RestaurantResult> getNearbyPlaces() {
-        Log.d(TAG, "getNearbyPlaces: key" + API_KEY + " suserLocation: " + sUserLocation);
-        gMapsApi.getListOfRestaurants(sUserLocation, 5000, "restaurant", API_KEY).enqueue(new Callback<RestaurantResult>() {
-            @Override
-            public void onResponse(Call<RestaurantResult> call, Response<RestaurantResult> response) {
-                if (response.isSuccessful()) {
-                    results = response.body().getResults();
-                    resultMutableLiveData.setValue(response.body());
-                } else {
-                    // Gérez les erreurs ici
-                    Log.e("restaurant repo", "there is an error in getNearbyPlaces");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RestaurantResult> call, Throwable t) {
-                // Gérez les erreurs ici
-                Log.e("restaurant repo", "there is an error in getNearbyPlaces 2");
-            }
-        });
-        return resultMutableLiveData;
     }
 
 
@@ -134,7 +94,6 @@ public class NearBySearchRepository {
                             t.printStackTrace();
                         }
                     });
-
         }
         return RestaurantResultMutableLiveData;
     }

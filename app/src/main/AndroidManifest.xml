@@ -24,13 +24,12 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}"/>
+            android:value="${MAPS_API_KEY}" />
 
         <activity
             android:name=".ui.activitys.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
 
         <activity
             android:name=".ui.activitys.SignInActivity"
@@ -42,8 +41,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activitys.ProfilActivity"
-            android:parentActivityName=".ui.activitys.MainActivity"/>
+        <activity
+            android:name=".ui.activitys.RestaurantDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+
+        <activity
+            android:name=".ui.activitys.ProfilActivity"
+            android:parentActivityName=".ui.activitys.MainActivity" />
 
     </application>
 </manifest>

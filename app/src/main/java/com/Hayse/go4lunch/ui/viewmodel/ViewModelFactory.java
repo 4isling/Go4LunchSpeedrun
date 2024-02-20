@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.MainApplication;
+import com.Hayse.go4lunch.services.firebase.FavRepository;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
 import com.Hayse.go4lunch.services.google_map.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.RetrofitService;
@@ -24,6 +25,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final LocationRepository locationRepository;
     @NonNull
     private final WorkmateRepository workmateRepository;
+
+    @NonNull
+    private final FavRepository favRepository;
 
     @NonNull
     private final DetailRepository detailRepository;
@@ -51,7 +55,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                             new WorkmateRepository(),
                             new DetailRepository(
                                     RetrofitService.getGMapsApi()
-                            )
+                            ),
+                            new FavRepository()
                     );
                 }
             }
@@ -64,7 +69,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             @NonNull LocationRepository locationRepository,
             @NonNull NearBySearchRepository nearBySearchRepository,
             @NonNull WorkmateRepository workmateRepository,
-            @NonNull DetailRepository detailRepository
+            @NonNull DetailRepository detailRepository,
+            @NonNull FavRepository favRepository
 
     ) {
         this.nearBySearchRepository = nearBySearchRepository;
@@ -72,6 +78,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.locationRepository = locationRepository;
         this.workmateRepository = workmateRepository;
         this.detailRepository = detailRepository;
+        this.favRepository = favRepository;
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +98,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(RestaurantDetailViewModel.class)){
             return (T) new RestaurantDetailViewModel(
                     detailRepository,
-                    workmateRepository
+                    workmateRepository,
+                    favRepository
             );
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass);

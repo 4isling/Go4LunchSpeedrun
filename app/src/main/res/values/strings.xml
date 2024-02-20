@@ -30,5 +30,6 @@
     <string name="favorite_button">Fav Button</string>
     <string name="details_favorite_button">Button to Fav and save restaurant</string>
     <string name="call_button">call</string>
+    <string name="place_details_fields">formatted_address,photo,type,formatted_phone_number,opening_hours,website,place_id,rating</string>
 
 </resources>
