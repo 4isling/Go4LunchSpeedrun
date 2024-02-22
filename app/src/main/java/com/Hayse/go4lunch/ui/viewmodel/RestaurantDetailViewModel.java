@@ -63,7 +63,7 @@ public class RestaurantDetailViewModel extends ViewModel {
     public void onClickRestaurantChoice(){
         workmateRepository.updateRestaurantChoice(restaurantLiveData.getValue().getPlaceId(),
                 restaurantLiveData.getValue().getName(),
-                restaurantLiveData.getValue().getAdrAddress()
+                restaurantLiveData.getValue().getFormattedAddress()
                 );
     }
     

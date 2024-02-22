@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.Nullable;
 
-import com.Hayse.go4lunch.domain.entites.map_api.detail.PhotosItem;
+import com.Hayse.go4lunch.domain.entites.map_api.detail.Photo;
 
 import java.util.Objects;
 
@@ -27,7 +27,7 @@ public class FavRestaurant {
     public FavRestaurant(String user_id,
                          String place_id,
                          String restaurant_name,
-                         PhotosItem restaurant_pic,
+                         Photo restaurant_pic,
                          int restaurant_rating,
                          String restaurant_address,
                          @Nullable String restaurant_phone,

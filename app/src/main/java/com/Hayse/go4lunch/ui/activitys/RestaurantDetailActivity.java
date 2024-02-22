@@ -72,8 +72,8 @@ private final String TAG = "ResDetailActivity: ";
                     binding.restaurantDetailName.setText(restaurantInfo.getName());
 
                 }
-                if (restaurantInfo.getAdrAddress() != null) {
-                    binding.restaurantDetailAddress.setText(restaurantInfo.getAdrAddress());
+                if (restaurantInfo.getFormattedAddress() != null) {
+                    binding.restaurantDetailAddress.setText(restaurantInfo.getFormattedAddress());
                 }
                 binding.restaurantDetailsRating.setRating((float) (restaurantInfo.getRating() * 3) / 5);
                 binding.callIcon.setOnClickListener(v -> {

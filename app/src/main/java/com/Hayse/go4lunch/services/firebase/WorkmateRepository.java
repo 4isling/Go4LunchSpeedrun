@@ -84,7 +84,7 @@ public class WorkmateRepository {
 
     public void updateRestaurantChoice(String placeId, String name, String address) {
         Workmate uData = getUserData().getValue();
-        if (uData.getPlaceId()== null || !Objects.equals(uData.getPlaceId(), placeId) || uData.getPlaceId().equals("")){
+        if (Objects.equals(uData.getPlaceId(), placeId) || uData.getPlaceId().equals("")){
             Log.d(TAG, "updateRestaurantChoice: addRestaurantChoice");
             mFirebaseHelper.updateUserData(null, placeId, name,address,null);
         }else{

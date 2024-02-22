@@ -1,253 +1,128 @@
+
 package com.Hayse.go4lunch.domain.entites.map_api.detail;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Result {
-    private int utcOffset;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class Result implements Serializable
+{
+    @SerializedName("formatted_address")
+    @Expose
     private String formattedAddress;
-    private List<String> types;
-    private String website;
-    private String businessStatus;
-    private String icon;
-    private float rating;
-    private String iconBackgroundColor;
-    private List<AddressComponentsItem> addressComponents;
-    private List<PhotosItem> photos;
-    private String url;
-    private String reference;
-    private int userRatingsTotal;
-    private List<ReviewsItem> reviews;
-    private String name;
-    private OpeningHours openingHours;
-    private Geometry geometry;
-    private String iconMaskBaseUri;
-    private String vicinity;
-    private String adrAddress;
-    private PlusCode plusCode;
+    @SerializedName("formatted_phone_number")
+    @Expose
     private String formattedPhoneNumber;
-    private String internationalPhoneNumber;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    @SerializedName("photos")
+    @Expose
+    private List<Photo> photos;
+    @SerializedName("place_id")
+    @Expose
     private String placeId;
+    @SerializedName("rating")
+    @Expose
+    private Float rating;
+    @SerializedName("types")
+    @Expose
+    private List<String> types;
+    @SerializedName("website")
+    @Expose
+    private String website;
+    private final static long serialVersionUID = 4590850312801698114L;
 
-    public void setUtcOffset(int utcOffset){
-        this.utcOffset = utcOffset;
-    }
-
-    public int getUtcOffset(){
-        return utcOffset;
-    }
-
-    public void setFormattedAddress(String formattedAddress){
-        this.formattedAddress = formattedAddress;
-    }
-
-    public String getFormattedAddress(){
+    public String getFormattedAddress() {
         return formattedAddress;
     }
 
-    public void setTypes(List<String> types){
-        this.types = types;
+    public void setFormattedAddress(String formattedAddress) {
+        this.formattedAddress = formattedAddress;
     }
 
-    public List<String> getTypes(){
-        return types;
-    }
-
-    public void setWebsite(String website){
-        this.website = website;
-    }
-
-    public String getWebsite(){
-        return website;
-    }
-
-    public void setBusinessStatus(String businessStatus){
-        this.businessStatus = businessStatus;
-    }
-
-    public String getBusinessStatus(){
-        return businessStatus;
-    }
-
-    public void setIcon(String icon){
-        this.icon = icon;
-    }
-
-    public String getIcon(){
-        return icon;
-    }
-
-    public void setRating(int rating){
-        this.rating = rating;
-    }
-
-    public float getRating(){
-        return rating;
-    }
-
-    public void setIconBackgroundColor(String iconBackgroundColor){
-        this.iconBackgroundColor = iconBackgroundColor;
-    }
-
-    public String getIconBackgroundColor(){
-        return iconBackgroundColor;
-    }
-
-    public void setAddressComponents(List<AddressComponentsItem> addressComponents){
-        this.addressComponents = addressComponents;
-    }
-
-    public List<AddressComponentsItem> getAddressComponents(){
-        return addressComponents;
-    }
-
-    public void setPhotos(List<PhotosItem> photos){
-        this.photos = photos;
-    }
-
-    public List<PhotosItem> getPhotos(){
-        return photos;
-    }
-
-    public void setUrl(String url){
-        this.url = url;
-    }
-
-    public String getUrl(){
-        return url;
-    }
-
-    public void setReference(String reference){
-        this.reference = reference;
-    }
-
-    public String getReference(){
-        return reference;
-    }
-
-    public void setUserRatingsTotal(int userRatingsTotal){
-        this.userRatingsTotal = userRatingsTotal;
-    }
-
-    public int getUserRatingsTotal(){
-        return userRatingsTotal;
-    }
-
-    public void setReviews(List<ReviewsItem> reviews){
-        this.reviews = reviews;
-    }
-
-    public List<ReviewsItem> getReviews(){
-        return reviews;
-    }
-
-    public void setName(String name){
-        this.name = name;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public void setOpeningHours(OpeningHours openingHours){
-        this.openingHours = openingHours;
-    }
-
-    public OpeningHours getOpeningHours(){
-        return openingHours;
-    }
-
-    public void setGeometry(Geometry geometry){
-        this.geometry = geometry;
-    }
-
-    public Geometry getGeometry(){
-        return geometry;
-    }
-
-    public void setIconMaskBaseUri(String iconMaskBaseUri){
-        this.iconMaskBaseUri = iconMaskBaseUri;
-    }
-
-    public String getIconMaskBaseUri(){
-        return iconMaskBaseUri;
-    }
-
-    public void setVicinity(String vicinity){
-        this.vicinity = vicinity;
-    }
-
-    public String getVicinity(){
-        return vicinity;
-    }
-
-    public void setAdrAddress(String adrAddress){
-        this.adrAddress = adrAddress;
-    }
-
-    public String getAdrAddress(){
-        return adrAddress;
-    }
-
-    public void setPlusCode(PlusCode plusCode){
-        this.plusCode = plusCode;
-    }
-
-    public PlusCode getPlusCode(){
-        return plusCode;
-    }
-
-    public void setFormattedPhoneNumber(String formattedPhoneNumber){
-        this.formattedPhoneNumber = formattedPhoneNumber;
-    }
-
-    public String getFormattedPhoneNumber(){
+    public String getFormattedPhoneNumber() {
         return formattedPhoneNumber;
     }
 
-    public void setInternationalPhoneNumber(String internationalPhoneNumber){
-        this.internationalPhoneNumber = internationalPhoneNumber;
+    public void setFormattedPhoneNumber(String formattedPhoneNumber) {
+        this.formattedPhoneNumber = formattedPhoneNumber;
     }
 
-    public String getInternationalPhoneNumber(){
-        return internationalPhoneNumber;
+    public String getName() {
+        return name;
     }
 
-    public void setPlaceId(String placeId){
-        this.placeId = placeId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPlaceId(){
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
+    }
+
+    public String getPlaceId() {
         return placeId;
     }
 
-    @Override
-    public String toString(){
-        return
-                "Result{" +
-                        "utc_offset = '" + utcOffset + '\'' +
-                        ",formatted_address = '" + formattedAddress + '\'' +
-                        ",types = '" + types + '\'' +
-                        ",website = '" + website + '\'' +
-                        ",business_status = '" + businessStatus + '\'' +
-                        ",icon = '" + icon + '\'' +
-                        ",rating = '" + rating + '\'' +
-                        ",icon_background_color = '" + iconBackgroundColor + '\'' +
-                        ",address_components = '" + addressComponents + '\'' +
-                        ",photos = '" + photos + '\'' +
-                        ",url = '" + url + '\'' +
-                        ",reference = '" + reference + '\'' +
-                        ",user_ratings_total = '" + userRatingsTotal + '\'' +
-                        ",reviews = '" + reviews + '\'' +
-                        ",name = '" + name + '\'' +
-                        ",opening_hours = '" + openingHours + '\'' +
-                        ",geometry = '" + geometry + '\'' +
-                        ",icon_mask_base_uri = '" + iconMaskBaseUri + '\'' +
-                        ",vicinity = '" + vicinity + '\'' +
-                        ",adr_address = '" + adrAddress + '\'' +
-                        ",plus_code = '" + plusCode + '\'' +
-                        ",formatted_phone_number = '" + formattedPhoneNumber + '\'' +
-                        ",international_phone_number = '" + internationalPhoneNumber + '\'' +
-                        ",place_id = '" + placeId + '\'' +
-                        "}";
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
+
+    public Float getRating() {
+        return rating;
+    }
+
+    public void setRating(Float rating) {
+        this.rating = rating;
+    }
+
+    public List<String> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<String> types) {
+        this.types = types;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = ((result* 31)+((this.formattedPhoneNumber == null)? 0 :this.formattedPhoneNumber.hashCode()));
+        result = ((result* 31)+((this.types == null)? 0 :this.types.hashCode()));
+        result = ((result* 31)+((this.website == null)? 0 :this.website.hashCode()));
+        result = ((result* 31)+((this.formattedAddress == null)? 0 :this.formattedAddress.hashCode()));
+        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
+        result = ((result* 31)+((this.placeId == null)? 0 :this.placeId.hashCode()));
+        result = ((result* 31)+((this.rating == null)? 0 :this.rating.hashCode()));
+        result = ((result* 31)+((this.photos == null)? 0 :this.photos.hashCode()));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if ((other instanceof Result) == false) {
+            return false;
+        }
+        Result rhs = ((Result) other);
+        return (((((((((this.formattedPhoneNumber == rhs.formattedPhoneNumber)||((this.formattedPhoneNumber!= null)&&this.formattedPhoneNumber.equals(rhs.formattedPhoneNumber)))&&((this.types == rhs.types)||((this.types!= null)&&this.types.equals(rhs.types))))&&((this.website == rhs.website)||((this.website!= null)&&this.website.equals(rhs.website))))&&((this.formattedAddress == rhs.formattedAddress)||((this.formattedAddress!= null)&&this.formattedAddress.equals(rhs.formattedAddress))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.placeId == rhs.placeId)||((this.placeId!= null)&&this.placeId.equals(rhs.placeId))))&&((this.rating == rhs.rating)||((this.rating!= null)&&this.rating.equals(rhs.rating))))&&((this.photos == rhs.photos)||((this.photos!= null)&&this.photos.equals(rhs.photos))));
+    }
+
 }
