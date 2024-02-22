@@ -22,6 +22,7 @@ public class RestaurantDetailViewModel extends ViewModel {
     private DetailRepository detailRepository;
 
     LiveData<Result> restaurantLiveData;
+    LiveData<Workmate> userData;
     LiveData<List<Workmate>> listWorkmateLiveData;
 
     public RestaurantDetailViewModel(DetailRepository detailRepository,
@@ -53,6 +54,13 @@ public class RestaurantDetailViewModel extends ViewModel {
         return listWorkmateLiveData;
     }
 
+    public LiveData<Workmate> getUserData() {
+        return workmateRepository.getRealTimeUserData();
+    }
+
+    public LiveData<List<FavRestaurant>>  getUserFavList(){
+        return favRepository.getFavList();
+    }
 
     //todo update userfav list
     public void onClickFav() {
@@ -65,6 +73,6 @@ public class RestaurantDetailViewModel extends ViewModel {
                 restaurantLiveData.getValue().getName(),
                 restaurantLiveData.getValue().getFormattedAddress()
                 );
+
     }
-    
 }

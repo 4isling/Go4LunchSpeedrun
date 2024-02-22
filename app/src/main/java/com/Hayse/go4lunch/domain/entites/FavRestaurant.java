@@ -16,7 +16,7 @@ public class FavRestaurant {
     private String restaurant_name;
 
     private String restaurant_pic;
-    private int restaurant_rating;
+    private float restaurant_rating;
     private String restaurant_address;
     private String restaurant_phone;
     private String restaurant_website;
@@ -28,7 +28,7 @@ public class FavRestaurant {
                          String place_id,
                          String restaurant_name,
                          Photo restaurant_pic,
-                         int restaurant_rating,
+                         float restaurant_rating,
                          String restaurant_address,
                          @Nullable String restaurant_phone,
                          @Nullable String restaurant_website){
@@ -99,7 +99,7 @@ public class FavRestaurant {
         this.restaurant_name = restaurant_name;
     }
 
-    public int getRestaurant_rating() {
+    public float getRestaurant_rating() {
         return restaurant_rating;
     }
     //Setter

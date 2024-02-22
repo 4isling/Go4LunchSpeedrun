@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.work.WorkManager;
 
 import com.Hayse.go4lunch.domain.entites.Workmate;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -73,13 +74,16 @@ public class WorkmateRepository {
     }
 
     public MutableLiveData<Workmate> getUserData(){
-        MutableLiveData<Workmate> userData = new MutableLiveData<>();
         mFirebaseHelper.getUserDataFireStore().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
                     userData.postValue(task.getResult().toObject(Workmate.class));
             }
         });
         return userData;
+    }
+
+    public LiveData<Workmate> getRealTimeUserData(){
+        return mFirebaseHelper.getFirestoreUserDataRT();
     }
 
     public void updateRestaurantChoice(String placeId, String name, String address) {

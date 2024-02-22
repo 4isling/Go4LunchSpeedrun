@@ -38,8 +38,7 @@ public class FavRepository {
     }
 
     public Boolean updateFavRestaurant(FavRestaurant favRestaurant) {
-        boolean favStatus = false;
-        favStatus = mFirebaseHelper.updateFavRestaurant(favRestaurant);
+        boolean favStatus = mFirebaseHelper.updateFavRestaurant(favRestaurant);
         return favStatus;
     }
 }

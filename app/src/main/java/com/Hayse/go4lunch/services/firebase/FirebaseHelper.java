@@ -3,6 +3,7 @@ package com.Hayse.go4lunch.services.firebase;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.Hayse.go4lunch.domain.entites.FavRestaurant;
@@ -12,7 +13,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -54,6 +59,22 @@ public class FirebaseHelper {
         userUID = workmate.getId();
         Log.d(TAG, "getUserData: userUID" + userUID);
         return workmate;
+    }
+
+    public MutableLiveData<Workmate> getFirestoreUserDataRT() {
+        MutableLiveData<Workmate> realTimeUserData = new MutableLiveData<>();
+        workmateRef.document(userUID).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.w(TAG, "onEvent: listener failed", error);
+                            return;
+                        }
+                        realTimeUserData.postValue(value.toObject(Workmate.class));
+                    }
+                }
+        );
+        return realTimeUserData;
     }
 
     public String getUserUID() {
@@ -158,8 +179,7 @@ public class FirebaseHelper {
 
     public Task<DocumentSnapshot> getUserDataFireStore() {
         Workmate userData = new Workmate();
-        return workmateRef.document("userUID").get();
-
+        return workmateRef.document(userUID).get();
     }
 
     public MutableLiveData<List<FavRestaurant>> getUserFavList(String userID) {
@@ -204,6 +224,7 @@ public class FirebaseHelper {
 
     /**
      * add favRestaurant to database if it dont exist delete it if it exist
+     *
      * @param favRestaurant
      * @return true if restaurant added in db false if it isn't
      */
@@ -216,13 +237,13 @@ public class FirebaseHelper {
                         Log.d(TAG, "updateFavRestaurant: restaurantAdded");
                         restaurantAdded.set(true);
                     })
-                    .addOnFailureListener(e ->{
+                    .addOnFailureListener(e -> {
                         Log.d(TAG, "updateFavRestaurant: add fav Failed");
-                       restaurantAdded.set(false);
+                        restaurantAdded.set(false);
                     });
         } else {
             favRestaurantRef.document(favRestaurant.getId()).delete()
-                    .addOnSuccessListener(aVoid ->{
+                    .addOnSuccessListener(aVoid -> {
                         Log.d(TAG, "updateFavRestaurant: favRestaurant deleted");
                         restaurantAdded.set(false);
                     })
