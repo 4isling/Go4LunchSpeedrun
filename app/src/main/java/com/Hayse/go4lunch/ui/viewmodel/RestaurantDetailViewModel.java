@@ -17,7 +17,7 @@ import java.util.List;
 public class RestaurantDetailViewModel extends ViewModel {
     private WorkmateRepository workmateRepository;
 
-    private FavRestaurant favRestaurant;
+    private FavRestaurant favRestaurant = new FavRestaurant();
     private FavRepository favRepository;
     private DetailRepository detailRepository;
 
@@ -41,9 +41,6 @@ public class RestaurantDetailViewModel extends ViewModel {
 
     private void combine(@Nullable Result restaurant,
                          @Nullable List<Workmate> workmates){
-        if(restaurant != null){
-
-        }
     }
 
     public LiveData<Result> getRestaurantDetail(){
@@ -64,6 +61,11 @@ public class RestaurantDetailViewModel extends ViewModel {
 
     //todo update userfav list
     public void onClickFav() {
+        favRestaurant.setPlace_id(restaurantLiveData.getValue().getPlaceId());
+        favRestaurant.setRestaurant_address(restaurantLiveData.getValue().getFormattedAddress());
+        favRestaurant.setRestaurant_name(restaurantLiveData.getValue().getName());
+        favRestaurant.setRestaurant_phone(restaurantLiveData.getValue().getFormattedPhoneNumber());
+        favRestaurant.setRestaurant_pic(restaurantLiveData.getValue().getPhotos().get(0).getPhotoReference());//todo verif dans list
         favRepository.updateFavRestaurant(favRestaurant);
     }
 
