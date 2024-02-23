@@ -178,7 +178,6 @@ public class FirebaseHelper {
     }
 
     public Task<DocumentSnapshot> getUserDataFireStore() {
-        Workmate userData = new Workmate();
         return workmateRef.document(userUID).get();
     }
 
@@ -204,7 +203,7 @@ public class FirebaseHelper {
     }
 
     private Boolean checkIfFavRestaurantExist(String placeId) {
-        final boolean[] result = new boolean[1];
+        boolean[] result = new boolean[1];
         favRestaurantRef.document(userUID + placeId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot documentSnapshot = task.getResult();
@@ -229,8 +228,6 @@ public class FirebaseHelper {
      * @return true if restaurant added in db false if it isn't
      */
     public boolean updateFavRestaurant(FavRestaurant favRestaurant) {
-        favRestaurant.setUser_id(userUID);
-
         AtomicBoolean restaurantAdded = new AtomicBoolean(false);
         if (!checkIfFavRestaurantExist(favRestaurant.getPlace_id())) {
             favRestaurantRef.document(favRestaurant.getId())

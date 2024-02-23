@@ -39,6 +39,7 @@ public class FavRepository {
 
     public Boolean updateFavRestaurant(FavRestaurant favRestaurant) {
         favRestaurant.setUser_id(userId);
+        favRestaurant.setId();
         boolean favStatus = mFirebaseHelper.updateFavRestaurant(favRestaurant);
         return favStatus;
     }

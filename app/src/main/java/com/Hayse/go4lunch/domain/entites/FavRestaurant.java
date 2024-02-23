@@ -75,6 +75,9 @@ public class FavRestaurant {
         this.id = id;
     }
 
+    public void setId() {
+        this.id = user_id+place_id;
+    }
     public String getUser_id() {
         return user_id;
     }
@@ -103,7 +106,7 @@ public class FavRestaurant {
         return restaurant_rating;
     }
     //Setter
-    public void setRestaurant_rating(int restaurant_rating) {
+    public void setRestaurant_rating(float restaurant_rating) {
         this.restaurant_rating = restaurant_rating;
     }
 

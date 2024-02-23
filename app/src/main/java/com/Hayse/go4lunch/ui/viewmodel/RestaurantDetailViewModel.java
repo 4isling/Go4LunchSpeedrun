@@ -65,6 +65,8 @@ public class RestaurantDetailViewModel extends ViewModel {
         favRestaurant.setRestaurant_address(restaurantLiveData.getValue().getFormattedAddress());
         favRestaurant.setRestaurant_name(restaurantLiveData.getValue().getName());
         favRestaurant.setRestaurant_phone(restaurantLiveData.getValue().getFormattedPhoneNumber());
+        favRestaurant.setRestaurant_rating(restaurantLiveData.getValue().getRating());
+        favRestaurant.setRestaurant_website(restaurantLiveData.getValue().getWebsite());
         favRestaurant.setRestaurant_pic(restaurantLiveData.getValue().getPhotos().get(0).getPhotoReference());//todo verif dans list
         favRepository.updateFavRestaurant(favRestaurant);
     }

@@ -38,7 +38,6 @@ public class WorkmateRepository {
         mFirebaseHelper = FirebaseHelper.getInstance();
         // Uncomment this method to populate your firebase database, it will upload some data
         // Comment it again after the first launch
-        userData = getUserData();
     }
 
     public MutableLiveData<List<Workmate>> getAllWorkmate(){
