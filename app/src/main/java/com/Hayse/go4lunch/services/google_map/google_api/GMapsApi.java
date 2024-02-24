@@ -1,5 +1,7 @@
 package com.Hayse.go4lunch.services.google_map.google_api;
 
+import com.Hayse.go4lunch.domain.entites.map_api.autocomplete.AutocompleteResponse;
+import com.Hayse.go4lunch.domain.entites.map_api.autocomplete.Prediction;
 import com.Hayse.go4lunch.domain.entites.map_api.detail.DetailResponse;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.RestaurantResult;
 
@@ -33,4 +35,12 @@ public interface GMapsApi {
                                                      @Query("type") String type,
                                                      @Query("key") String key
     );
+
+    @GET("autocomplete/json")
+    Call<AutocompleteResponse> getAutocompleteResult(@Query("location") String location,
+                                                     @Query("type") String type,
+                                                     @Query("radius")int radius,
+                                                     @Query("language")String language,
+                                                     @Query("input")String input,
+                                                     @Query("key")String key);
 }

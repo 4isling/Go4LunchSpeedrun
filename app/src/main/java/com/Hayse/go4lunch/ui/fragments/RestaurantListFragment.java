@@ -57,26 +57,6 @@ public class RestaurantListFragment extends Fragment {
                 RestaurantListFragment.this.getContext(),
                 restaurant.getPlaceId()
         )));
-        /*
-         * @TODO itemTouchListener get detail restaurant
-         */
-        /*binding.restaurantList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                Log.d(TAG, "onInterceptTouchEvent: ");
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                Log.d(TAG, "onTouchEvent: ");
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-                Log.d(TAG, "onRequestDisallowInterceptTouchEvent: ");
-            }
-        });*/
     }
     private void subscribeToObservables() {
         Log.d(TAG, "subscribeToObservables: ");

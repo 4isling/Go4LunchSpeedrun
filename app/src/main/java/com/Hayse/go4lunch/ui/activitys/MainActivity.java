@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -128,7 +129,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d(TAG, "configureToolbar: ");
         this.toolbar = binding.activityMainToolbar;
         binding.activityMainToolbar.setNavigationIcon(R.drawable.baseline_list_24);
+        binding.activityMainToolbarSearchIcon.setClickable(true);
+        binding.activityMainToolbarSearchIcon.setOnClickListener(v->{
+            //todo autocomplete integration
+        });
         setSupportActionBar(binding.activityMainToolbar);
+
     }
 
     private void configureDrawerLayout() {

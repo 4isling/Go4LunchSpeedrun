@@ -13,6 +13,7 @@ import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.RestaurantResult;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +27,9 @@ public class NearBySearchRepository {
     private static final String TAG = "NearBySearchRep: ";
     private final GMapsApi gMapsApi;
     private final Map<Location, RestaurantResult> alreadyFetchedResponses = new HashMap<>();
-    private final MutableLiveData<RestaurantResult> resultMutableLiveData = new MutableLiveData<>();
     private final String API_KEY = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
-    private Observable<List<Result>> observableResult;
-    private List<Result> results;
+
     private final Map<String, RestaurantResult> cache = new HashMap<>(2000);
-    private String sUserLocation;
 
     public NearBySearchRepository(GMapsApi gMapsApi) {
         this.gMapsApi = gMapsApi;
@@ -49,7 +47,7 @@ public class NearBySearchRepository {
             if (restaurantResult != null) {
                 restaurantMutableLiveData.setValue(restaurantResult.getResults());
             } else {
-                gMapsApi.getListOfRestaurants(sUserLocation, 5000, "restaurant", API_KEY)
+                gMapsApi.getListOfRestaurants(sUserLocation, 5000, MainApplication.getApplication().getString(R.string.type_gmap_query), API_KEY)
                         .enqueue(new Callback<RestaurantResult>() {
                             @Override
                             public void onResponse(Call<RestaurantResult> call, Response<RestaurantResult> response) {
@@ -97,41 +95,4 @@ public class NearBySearchRepository {
         }
         return RestaurantResultMutableLiveData;
     }
-
-    public List<Result> getRestaurantList(Location location) {
-
-        if (location != null) {
-            Log.d(TAG, "getRestaurantLiveData: location !=null");
-            String sUserLocation = String.valueOf(location.getLatitude() + "," + location.getLongitude());
-
-            RestaurantResult restaurantResult = alreadyFetchedResponses.get(location);
-
-            if (restaurantResult != null) {
-                results = restaurantResult.getResults();
-            } else {
-                gMapsApi.getListOfRestaurants(sUserLocation, 5000, "Restaurants", API_KEY)
-                        .enqueue(new Callback<RestaurantResult>() {
-                            @Override
-                            public void onResponse(Call<RestaurantResult> call, Response<RestaurantResult> response) {
-                                if (response.body() != null) {
-                                    alreadyFetchedResponses.put(location, response.body());
-                                    results = response.body().getResults();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<RestaurantResult> call, Throwable t) {
-                                results = null;
-                                Log.e(TAG, "onFailure: " + t);
-                            }
-                        });
-            }
-        }
-        return results;
-    }
-
-    public RestaurantResult getAlreadyFetchedResponses(){
-        return alreadyFetchedResponses.get(sUserLocation);
-    }
-
 }

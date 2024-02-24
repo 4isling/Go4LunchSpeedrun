@@ -77,6 +77,5 @@ public class RestaurantDetailViewModel extends ViewModel {
                 restaurantLiveData.getValue().getName(),
                 restaurantLiveData.getValue().getFormattedAddress()
                 );
-
     }
 }

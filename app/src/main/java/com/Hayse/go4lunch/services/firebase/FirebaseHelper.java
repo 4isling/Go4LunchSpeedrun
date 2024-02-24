@@ -202,23 +202,10 @@ public class FirebaseHelper {
         return favRestaurantResult;
     }
 
-    private Boolean checkIfFavRestaurantExist(String placeId) {
-        boolean[] result = new boolean[1];
-        favRestaurantRef.document(userUID + placeId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if (documentSnapshot.exists()) {
-                    result[0] = true;
-                    Log.d(TAG, "onComplete:DocumentExist: UserData: " + documentSnapshot.getData());
-                } else {
-                    result[0] = false;
-                    Log.d(TAG, "onComplete:no such Document");
-                }
-            } else {
-                Log.d(TAG, "onComplete: Failed with", task.getException());
-            }
-        });
-        return result[0];
+    private LiveData<Boolean> checkIfFavRestaurantExist(String placeId) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+
+        return result;
     }
 
     /**
@@ -227,30 +214,38 @@ public class FirebaseHelper {
      * @param favRestaurant
      * @return true if restaurant added in db false if it isn't
      */
-    public boolean updateFavRestaurant(FavRestaurant favRestaurant) {
+    public void updateFavRestaurant(FavRestaurant favRestaurant) {
         AtomicBoolean restaurantAdded = new AtomicBoolean(false);
-        if (!checkIfFavRestaurantExist(favRestaurant.getPlace_id())) {
-            favRestaurantRef.document(favRestaurant.getId())
-                    .set(favRestaurant)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "updateFavRestaurant: restaurantAdded");
-                        restaurantAdded.set(true);
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.d(TAG, "updateFavRestaurant: add fav Failed");
-                        restaurantAdded.set(false);
-                    });
-        } else {
-            favRestaurantRef.document(favRestaurant.getId()).delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "updateFavRestaurant: favRestaurant deleted");
-                        restaurantAdded.set(false);
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.d(TAG, "updateFavRestaurant: failed to delete favRestaurant");
-                        restaurantAdded.set(true);
-                    });
-        }
-        return restaurantAdded.get();
+        favRestaurantRef.document(userUID + favRestaurant.getPlace_id()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (!documentSnapshot.exists()) {
+                    favRestaurantRef.document(favRestaurant.getId())
+                            .set(favRestaurant)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "updateFavRestaurant: restaurantAdded");
+                                restaurantAdded.set(true);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.d(TAG, "updateFavRestaurant: add fav Failed");
+                                restaurantAdded.set(false);
+                            });
+                    Log.d(TAG, "onComplete:DocumentExist: UserData: " + documentSnapshot.getData());
+                } else {
+                    favRestaurantRef.document(favRestaurant.getId()).delete()
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "updateFavRestaurant: favRestaurant deleted");
+                                restaurantAdded.set(false);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.d(TAG, "updateFavRestaurant: failed to delete favRestaurant");
+                                restaurantAdded.set(true);
+                            });
+                    Log.d(TAG, "onComplete:no such Document");
+                }
+            } else {
+                Log.d(TAG, "onComplete: Failed with", task.getException());
+            }
+        });
     }
 }
