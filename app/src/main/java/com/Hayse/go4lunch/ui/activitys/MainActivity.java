@@ -3,6 +3,7 @@ package com.Hayse.go4lunch.ui.activitys;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding.activityMainToolbar.setNavigationIcon(R.drawable.baseline_list_24);
         binding.activityMainToolbarSearchIcon.setClickable(true);
         binding.activityMainToolbarSearchIcon.setOnClickListener(v->{
-            //todo autocomplete integration
+            //@todo autocomplete integration
         });
         setSupportActionBar(binding.activityMainToolbar);
 
@@ -196,11 +197,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if(id == R.id.your_lunch ) {
+
             return true;
         }
         else if (id== R.id.settings) {
+            final Intent intentSetting = new Intent(this, SettingActivity.class);
+            startActivity(intentSetting);
             return true;
         }
         else if (id == R.id.logout ) {
