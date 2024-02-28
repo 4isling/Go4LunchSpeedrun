@@ -11,6 +11,7 @@ import com.Hayse.go4lunch.services.firebase.FavRepository;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
 import com.Hayse.go4lunch.services.google_map.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.RetrofitService;
+import com.Hayse.go4lunch.services.google_map.google_api.AutocompleteRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.DetailRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.NearBySearchRepository;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
@@ -31,6 +32,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     @NonNull
     private final DetailRepository detailRepository;
+
+    @NonNull
+    private final AutocompleteRepository autocompleteRepository;
 
     @NonNull
     private final NearBySearchRepository nearBySearchRepository;
@@ -56,7 +60,11 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                             new DetailRepository(
                                     RetrofitService.getGMapsApi()
                             ),
-                            new FavRepository()
+                            new FavRepository(),
+                            new AutocompleteRepository(
+                                    RetrofitService.getGMapsApi(),
+                                    application
+                            )
                     );
                 }
             }
@@ -70,7 +78,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             @NonNull NearBySearchRepository nearBySearchRepository,
             @NonNull WorkmateRepository workmateRepository,
             @NonNull DetailRepository detailRepository,
-            @NonNull FavRepository favRepository
+            @NonNull FavRepository favRepository,
+            @NonNull AutocompleteRepository autocompleteRepository
 
     ) {
         this.nearBySearchRepository = nearBySearchRepository;
@@ -79,6 +88,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.workmateRepository = workmateRepository;
         this.detailRepository = detailRepository;
         this.favRepository = favRepository;
+        this.autocompleteRepository = autocompleteRepository;
     }
 
     @SuppressWarnings("unchecked")
@@ -90,9 +100,12 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         }
         if (modelClass.isAssignableFrom(HomeRestaurantSharedViewModel.class)) {
             return (T) new HomeRestaurantSharedViewModel(
+                    application,
                     permissionChecker,
                     locationRepository,
-                    nearBySearchRepository
+                    nearBySearchRepository,
+                    workmateRepository,
+                    autocompleteRepository
                     );
         }
         if (modelClass.isAssignableFrom(RestaurantDetailViewModel.class)){
@@ -101,6 +114,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     workmateRepository,
                     favRepository
             );
+        }
+        if (modelClass.isAssignableFrom(SettingViewModel.class)){
+            return (T) new SettingViewModel();
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass);
     }

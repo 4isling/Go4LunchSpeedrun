@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -67,6 +68,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
         private final TextView restaurantAddress;
         private final TextView restaurantOpenHour;
         private final TextView restaurantFoodType;
+        private final RatingBar restaurantRating;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +77,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
             restaurantAddress = itemView.findViewById(R.id.restaurant_item_address);
             restaurantOpenHour = itemView.findViewById(R.id.restaurant_item_time);
             restaurantFoodType = itemView.findViewById(R.id.restaurant_item_food);
+            restaurantRating = itemView.findViewById(R.id.restaurant_item_rating);
         }
 
 //@todo find why null pointer exception
@@ -115,6 +118,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
                 }else {
                     restaurantFoodType.setText("");
                 }
+                    restaurantRating.setRating(restaurant.getRating());
             }
        }
     }

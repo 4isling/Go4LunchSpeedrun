@@ -14,10 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentMapBinding;
+import com.Hayse.go4lunch.domain.entites.Workmate;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
@@ -135,11 +137,7 @@ public class MapRestaurantFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
+
 
 
 
@@ -207,16 +205,19 @@ public class MapRestaurantFragment extends Fragment {
                     (result.getGeometry()
                             .getLocation()
                             .getLng()));
+            mapsView.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(@NonNull Marker marker) {
+                    return false;
+                }
+            });
             //set position marker
             mapsView.getUiSettings().setAllGesturesEnabled(true);
             mapsView.getUiSettings().setZoomGesturesEnabled(true);
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
+
 
     private void subscribeToObservables() {
         homeRestaurantSharedViewModel.getLocationMutableLiveData().observe(
@@ -227,7 +228,29 @@ public class MapRestaurantFragment extends Fragment {
                         mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                     }
                     homeRestaurantSharedViewModel.getRestaurant(location).observe(this, this::updateLocationUI);
+                    homeRestaurantSharedViewModel.getWorkmates().observe(this, this::updateMarkers);
                 }
         );
+    }
+
+    private void updateMarkers(List<Workmate> workmates) {
+        //@todo update markers with the right icon
+
+    }
+
+    private void unsubscribeToObservables(){
+        homeRestaurantSharedViewModel.getLocationMutableLiveData().removeObservers(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unsubscribeToObservables();
+        binding = null;
     }
 }

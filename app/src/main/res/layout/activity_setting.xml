@@ -1,21 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/activity_setting_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/baseline_arrow_back_24"
-        android:background="@color/red">
+        app:navigationIcon="@drawable/baseline_arrow_back_24">
 
     </androidx.appcompat.widget.Toolbar>
 
+    <TextView
+        android:id="@+id/language_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/colorPrimary"
+        tools:text="@string/language"
+        android:text="@string/language"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_setting_toolbar" />
+
+    <TextView
+        android:id="@+id/language_choice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="0dp"
+        android:padding="8dp"
+        android:outlineProvider="bounds"
+        tools:text="English"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/language_title" />
+
+    <TextView
+        android:id="@+id/notification_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/notification_title_string"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@id/language_choice"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="197dp" />
+
+    <TextView
+        android:id="@+id/notification_choice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        tools:text="@string/notification_choice"
+        app:layout_constraintTop_toBottomOf="@id/notification_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

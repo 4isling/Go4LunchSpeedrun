@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -49,6 +50,10 @@
         <activity
             android:name=".ui.activitys.ProfilActivity"
             android:parentActivityName=".ui.activitys.MainActivity" />
+
+        <activity android:name=".ui.activitys.SettingActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="true"/>
 
     </application>
 </manifest>

@@ -2,6 +2,7 @@ package com.Hayse.go4lunch.services.firebase;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.Hayse.go4lunch.domain.entites.FavRestaurant;
@@ -33,7 +34,7 @@ public class FavRepository {
 
     }
 
-    public MutableLiveData<List<FavRestaurant>> getFavList(){
+    public LiveData<List<FavRestaurant>> getFavList(){
         return mFirebaseHelper.getUserFavList(userId);
     }
 

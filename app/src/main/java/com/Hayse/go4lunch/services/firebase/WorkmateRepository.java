@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.work.WorkManager;
 
+import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.domain.entites.Workmate;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,13 +87,18 @@ public class WorkmateRepository {
     }
 
     public void updateRestaurantChoice(String placeId, String name, String address) {
-        Workmate uData = getUserData().getValue();
-        if (Objects.equals(uData.getPlaceId(), placeId) || uData.getPlaceId().equals("")){
-            Log.d(TAG, "updateRestaurantChoice: addRestaurantChoice");
-            mFirebaseHelper.updateUserData(null, placeId, name,address,null);
-        }else{
-            Log.d(TAG, "updateRestaurantChoice: suppressRestaurantChoice");
-            mFirebaseHelper.updateUserData(null,"","","",null);
-        }
+        mFirebaseHelper.getUserDataFireStore().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                Workmate user = task.getResult().toObject(Workmate.class);
+                if (!Objects.equals(user.getPlaceId(), placeId) || user.getPlaceId().equals("")){
+                    Log.d(TAG, "updateRestaurantChoice: addRestaurantChoice");
+                    mFirebaseHelper.updateUserData(null, placeId, name,address,null);
+                }else{
+                    Log.d(TAG, "updateRestaurantChoice: suppressRestaurantChoice");
+                    mFirebaseHelper.updateUserData(null,"","","",null);
+                }
+            }
+        });
+
     }
 }

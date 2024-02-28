@@ -31,6 +31,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     private ActivityRestaurantDetailBinding binding;
     private ViewModelFactory viewModelFactory;
 
+    private String placeId;
+
     private RestaurantDetailViewModel viewModel;
     private RecyclerView recyclerView;
     private WorkmateAdapter adapter;
@@ -56,6 +58,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         initWorkmatesUI();
         initFavUI();
         initUserDataUI();
+        placeId = getIntent().getStringExtra(PLACE_ID);
     }
 
 
@@ -84,9 +87,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 binding.restaurantDetailsRating.setRating((float) (restaurantInfo.getRating() * 3) / 5);
                 binding.callIcon.setOnClickListener(v -> {
                     if (restaurantInfo.getFormattedPhoneNumber() != null || restaurantInfo.getFormattedPhoneNumber() != "") {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_DIAL);
-                        intent.setData(Uri.parse(restaurantInfo.getFormattedPhoneNumber()));
+                        Intent intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:" + restaurantInfo.getFormattedPhoneNumber()));
                         try {
                             Log.d(TAG, "initRestaurantDetailUI: callIconClick");
                             startActivity(intent);
@@ -130,13 +131,10 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     private void initUserDataUI() {
         viewModel.getUserData().observe(this, uData -> {
             if (uData != null){
-                if (uData.getPlaceId().equals(PLACE_ID)) {
+                if (uData.getPlaceId().equals(placeId)) {
                     binding.choseRestaurantButton.setImageResource(R.drawable.baseline_check_circle_24);
-                    binding.choseRestaurantButton.setBackgroundColor(Color.GREEN);
-
                 } else {
                     binding.choseRestaurantButton.setImageResource(R.drawable.baseline_check_circle_outline_24);
-                    binding.choseRestaurantButton.setBackgroundColor(Color.LTGRAY);
                 }
             }
         });
@@ -145,14 +143,19 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     private void initFavUI() {
         viewModel.getUserFavList().observe(this, favRestaurants -> {
             if (favRestaurants != null){
+                Log.d(TAG, "initFavUI: favList != null");
                 if (!favRestaurants.isEmpty()) {
+                    Log.d(TAG, "initFavUI: favlist != empty");
                     if (containSamePlaceId(favRestaurants)) {
+                        Log.d(TAG, "initFavUI: baselineStar");
                         binding.favButton.setImageResource(R.drawable.baseline_star_24);
-                        binding.favButton.setBackgroundColor(Color.YELLOW);
                     } else {
+                        Log.d(TAG, "initFavUI: baseline_star_border");
                         binding.favButton.setImageResource(R.drawable.baseline_star_border_24);
-                        binding.favButton.setBackgroundColor(Color.YELLOW);
                     }
+                }else {
+                    Log.d(TAG, "initFavUI: favlist is empty");
+                    binding.favButton.setImageResource(R.drawable.baseline_star_border_24);
                 }
             }
         });
@@ -160,12 +163,14 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     private boolean containSamePlaceId(List<FavRestaurant> favRestaurants) {
         for (FavRestaurant fav : favRestaurants) {
-            if (fav.getPlace_id().equals(PLACE_ID)) {
+            if (fav.getPlace_id().equals(placeId)) {
                 return true;
             }
         }
         return false;
     }
+
+    // TODO: 26/02/2024 créé un workmanager pour les notif on restaurant choice
 
     @Override
     protected void onDestroy() {

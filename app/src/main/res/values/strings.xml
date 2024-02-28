@@ -32,5 +32,8 @@
     <string name="call_button">call</string>
     <string name="place_details_fields">name,formatted_address,photo,type,formatted_phone_number,opening_hours,website,place_id,rating</string>
     <string name="type_gmap_query">restaurant</string>
+    <string name="language">Language:</string>
+    <string name="notification_title_string">Notification:</string>
+    <string name="notification_choice">Manager notifications</string>
 
 </resources>

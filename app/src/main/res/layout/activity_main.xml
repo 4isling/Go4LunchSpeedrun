@@ -20,6 +20,16 @@
             app:titleTextColor="@color/white"
             app:layout_constraintTop_toTopOf="parent">
 
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteTextView"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:text="AutoCompleteTextView"
+                app:layout_constraintEnd_toEndOf="@+id/activity_main_toolbar"
+                app:layout_constraintStart_toStartOf="@id/activity_main_toolbar"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/activity_main_toolbar_search_icon"
                 android:layout_width="wrap_content"
@@ -28,6 +38,7 @@
                 android:layout_gravity="end"
                 android:layout_marginEnd="16dp"
                 />
+
         </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
@@ -54,6 +65,8 @@
             android:outlineSpotShadowColor="@color/dark_gray"
             app:menu="@menu/bottom_nav_menu"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -63,17 +64,12 @@ public class FirebaseHelper {
 
     public MutableLiveData<Workmate> getFirestoreUserDataRT() {
         MutableLiveData<Workmate> realTimeUserData = new MutableLiveData<>();
-        workmateRef.document(userUID).addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) {
-                            Log.w(TAG, "onEvent: listener failed", error);
-                            return;
-                        }
-                        realTimeUserData.postValue(value.toObject(Workmate.class));
-                    }
-                }
-        );
+        workmateRef.document(userUID).addSnapshotListener((value, error) -> {
+            if (error != null){
+                Log.w(TAG, "onEvent: error:", error);
+            }
+            realTimeUserData.postValue(value.toObject(Workmate.class));
+        });
         return realTimeUserData;
     }
 
@@ -104,12 +100,12 @@ public class FirebaseHelper {
     }
 
 
-    public Task<QuerySnapshot> updateUserData(@Nullable String avatarUrl,
-                                              @Nullable String placeId,
-                                              @Nullable String restaurantName,
-                                              @Nullable String restaurantAddress,
-                                              @Nullable String restaurantTypeOfFood) {
-        Workmate uData = getUserDataOAuth();
+    public void updateUserData(@Nullable String avatarUrl,
+                               @Nullable String placeId,
+                               @Nullable String restaurantName,
+                               @Nullable String restaurantAddress,
+                               @Nullable String restaurantTypeOfFood) {
+
         Map<String, Object> updateData = new HashMap<>();
         if (avatarUrl != null) {
             updateData.put("avatarUrl", avatarUrl);
@@ -126,11 +122,10 @@ public class FirebaseHelper {
         if (restaurantTypeOfFood != null) {
             updateData.put("restaurantTypeOfFood", restaurantTypeOfFood);
         }
-        workmateRef.document(uData.getId())
+        workmateRef.document(userUID)
                 .update(updateData)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
-        return null;
     }
 
     /**
@@ -158,21 +153,22 @@ public class FirebaseHelper {
 
     public MutableLiveData<List<Workmate>> getWorkmateByPlaceId(String placeId) {
         MutableLiveData<List<Workmate>> workmatesResult = new MutableLiveData<>(new ArrayList<>());
-        workmateRef.whereEqualTo("placeId", placeId).addSnapshotListener((value, error) -> {
-            if (error != null) {
-                Log.d(TAG, "listen failed", error);
-                return;
+        workmateRef.whereEqualTo("placeId", placeId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException error) {
+                    if (error != null) {
+                        Log.d(TAG, "listen failed: ", error);
+                        return;
+                    }
+                    if (!snapshots.isEmpty()) {
+                        Log.d(TAG, "getWorkmateByPlaceId: not empty");
+                        List<Workmate> workmates = snapshots.toObjects(Workmate.class);
+                        workmatesResult.postValue(workmates);
+                    } else {
+                        Log.d(TAG, "getWorkmateByPlaceId: is empty");
+                        workmatesResult.postValue(new ArrayList<>());
+                    }
             }
-            List<Workmate> workmates = new ArrayList<>();
-            if (!value.isEmpty()) {
-                Log.d(TAG, "getWorkmateByPlaceId: not empty");
-                for (DocumentSnapshot doc : value.getDocuments()) {
-                    workmates.add(doc.toObject(Workmate.class));
-                }
-            } else {
-                Log.d(TAG, "getWorkmateByPlaceId: is empty");
-            }
-            workmatesResult.setValue(workmates);
         });
         return workmatesResult;
     }
@@ -197,7 +193,7 @@ public class FirebaseHelper {
             } else {
                 Log.d(TAG, "getUserFavList: is empty");
             }
-            favRestaurantResult.setValue(favRestaurantsList);
+            favRestaurantResult.postValue(favRestaurantsList);
         }));
         return favRestaurantResult;
     }
@@ -215,7 +211,6 @@ public class FirebaseHelper {
      * @return true if restaurant added in db false if it isn't
      */
     public void updateFavRestaurant(FavRestaurant favRestaurant) {
-        AtomicBoolean restaurantAdded = new AtomicBoolean(false);
         favRestaurantRef.document(userUID + favRestaurant.getPlace_id()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot documentSnapshot = task.getResult();
@@ -224,22 +219,18 @@ public class FirebaseHelper {
                             .set(favRestaurant)
                             .addOnSuccessListener(aVoid -> {
                                 Log.d(TAG, "updateFavRestaurant: restaurantAdded");
-                                restaurantAdded.set(true);
                             })
                             .addOnFailureListener(e -> {
                                 Log.d(TAG, "updateFavRestaurant: add fav Failed");
-                                restaurantAdded.set(false);
                             });
                     Log.d(TAG, "onComplete:DocumentExist: UserData: " + documentSnapshot.getData());
                 } else {
                     favRestaurantRef.document(favRestaurant.getId()).delete()
                             .addOnSuccessListener(aVoid -> {
                                 Log.d(TAG, "updateFavRestaurant: favRestaurant deleted");
-                                restaurantAdded.set(false);
                             })
                             .addOnFailureListener(e -> {
                                 Log.d(TAG, "updateFavRestaurant: failed to delete favRestaurant");
-                                restaurantAdded.set(true);
                             });
                     Log.d(TAG, "onComplete:no such Document");
                 }
