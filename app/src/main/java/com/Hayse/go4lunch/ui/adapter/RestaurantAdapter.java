@@ -118,7 +118,7 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
                 }else {
                     restaurantFoodType.setText("");
                 }
-                    restaurantRating.setRating(restaurant.getRating());
+                    restaurantRating.setRating((float) (restaurant.getRating() * 3) / 5);
             }
        }
     }

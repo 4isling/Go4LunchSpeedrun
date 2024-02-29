@@ -2,6 +2,7 @@ package com.Hayse.go4lunch.ui.activitys;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -21,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.ui.AppBarConfiguration;
 
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.ActivityMainBinding;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView drawerNavView;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
+    private AppBarConfiguration appBarConfig;
 
     boolean mGPSEnable;
     private ViewModelFactory viewModelFactory;
@@ -154,15 +157,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void configureBottomNavView() {
-        Log.d(TAG, "configureBottomNavView: ");
+        Log.d(TAG, "configureBottomNavView: ");/*
+        View navMap = findViewById(R.id.navigation_map);
+        View navList = findViewById(R.id.navigation_restaurant);
+        View navWorkmate = findViewById(R.id.navigation_workmate);
+        appBarConfig = new AppBarConfiguration.Builder(
+                R.id.navigation_map,
+                R.id.navigation_restaurant,
+                R.id.navigation_workmate)
+                .build();*/
         binding.bottomNavView.setOnItemSelectedListener(item -> {
             int pItem = item.getItemId();
             if (pItem == R.id.navigation_map) {
                 Log.d(TAG, "configureBottomNavView: map");
+
                 replaceFragment(mapFragment);
                 return true;
             } else if (pItem == R.id.navigation_restaurant) {
                 Log.d(TAG, "configureBottomNavView: list");
+
                 replaceFragment(listFragment);
                 Toast.makeText(this, "not implemented yet", Toast.LENGTH_SHORT);
                 return true;
