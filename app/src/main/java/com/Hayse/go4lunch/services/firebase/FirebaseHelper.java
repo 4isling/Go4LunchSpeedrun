@@ -53,10 +53,10 @@ public class FirebaseHelper {
      */
     public Workmate getUserDataOAuth() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
         Workmate workmate = new Workmate(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl().toString(),
                 firebaseAuth.getCurrentUser().getDisplayName(),
-                firebaseAuth.getCurrentUser().getUid());
+                firebaseAuth.getCurrentUser().getUid(),
+                firebaseAuth.getCurrentUser().getEmail());
         userUID = workmate.getId();
         Log.d(TAG, "getUserData: userUID" + userUID);
         return workmate;
@@ -64,7 +64,7 @@ public class FirebaseHelper {
 
     public MutableLiveData<Workmate> getFirestoreUserDataRT() {
         MutableLiveData<Workmate> realTimeUserData = new MutableLiveData<>();
-        workmateRef.document(userUID).addSnapshotListener((value, error) -> {
+        workmateRef.document(FirebaseAuth.getInstance().getUid()).addSnapshotListener((value, error) -> {
             if (error != null){
                 Log.w(TAG, "onEvent: error:", error);
             }
@@ -175,6 +175,10 @@ public class FirebaseHelper {
 
     public Task<DocumentSnapshot> getUserDataFireStore() {
         return workmateRef.document(userUID).get();
+    }
+
+    public Task<DocumentSnapshot> getUserDataFireStoreByUID(String userID){
+        return workmateRef.document(userID).get();
     }
 
     public MutableLiveData<List<FavRestaurant>> getUserFavList(String userID) {

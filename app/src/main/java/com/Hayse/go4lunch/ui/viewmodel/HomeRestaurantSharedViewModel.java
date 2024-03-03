@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.Hayse.go4lunch.domain.entites.Workmate;
-import com.Hayse.go4lunch.domain.entites.map_api.autocomplete.AutocompleteResponse;
 import com.Hayse.go4lunch.domain.entites.map_api.autocomplete.Prediction;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.domain.usecases.GetNearBySearchResultUseCase;
@@ -19,10 +18,8 @@ import com.Hayse.go4lunch.services.google_map.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.AutocompleteRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.NearBySearchRepository;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
+import com.google.android.libraries.places.api.model.Place;
 
-import org.checkerframework.checker.units.qual.Luminance;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class HomeRestaurantSharedViewModel extends ViewModel {
@@ -39,6 +36,8 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
 
     ////////////////////////////////////////////////////
     private LiveData<List<Result>> resultLiveData = new MutableLiveData<>(null);
+
+    private MutableLiveData<Place> placeAutocompleteSelected = new MutableLiveData<>(null);
 
     private  LiveData<com.Hayse.go4lunch.domain.entites.map_api.detail.Result> detailResult;
 
@@ -67,6 +66,9 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
         return locationRepository.getLocationLiveData();
     }
 
+    public LiveData<Workmate> getUserData(){
+        return workmateRepository.getRealTimeUserData();
+    }
     public LiveData<List<Result>> getRestaurant(Location location){
         return nearBySearchRepository.getRestaurantLiveData(location);
     }
@@ -75,10 +77,17 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
         return workmateRepository.getAllWorkmate();
     }
 
-    private List<Prediction> getPredictionList(){
-        List<Prediction> predictionsList = new ArrayList<>();
-
+    public LiveData<List<Prediction>> getPredictionList(String text){
+        Location location = locationRepository.getLastUserLocation();
         //@todo prediction list
-        return predictionsList;
+        return autocompleteRepository.getPredictionLiveData(location,text);
+    }
+
+    public void onPredictionClick(Place place) {
+        this.placeAutocompleteSelected.postValue(place);
+    }
+
+    public LiveData<Place> getPrediction(){
+        return placeAutocompleteSelected;
     }
 }

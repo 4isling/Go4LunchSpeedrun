@@ -231,6 +231,15 @@ public class MapRestaurantFragment extends Fragment {
                     homeRestaurantSharedViewModel.getWorkmates().observe(this, this::updateMarkers);
                 }
         );
+        homeRestaurantSharedViewModel.getPrediction().observe(this, place -> {
+            if (place != null){
+                if (place.getLatLng()!=null){
+                    mapsView.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
+                    mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15));
+
+                }
+            }
+        });
     }
 
     private void updateMarkers(List<Workmate> workmates) {
@@ -240,6 +249,7 @@ public class MapRestaurantFragment extends Fragment {
 
     private void unsubscribeToObservables(){
         homeRestaurantSharedViewModel.getLocationMutableLiveData().removeObservers(this);
+        homeRestaurantSharedViewModel.getPrediction().removeObservers(this);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class WorkmateAdapter extends ListAdapter<Workmate, WorkmateAdapter.ViewH
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.workmate_item ,parent,false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_workmate,parent,false));
     }
 
     @Override

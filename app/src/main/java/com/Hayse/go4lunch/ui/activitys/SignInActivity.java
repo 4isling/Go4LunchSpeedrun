@@ -33,6 +33,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
@@ -47,10 +48,13 @@ public class SignInActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 666;
     private static final String TAG = "SignInActivity";
 
-    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();;
+    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    ;
 
     private FirebaseAuth.AuthStateListener listener;
+    private FirebaseHelper firebaseHelper;
     private Intent intent;
+    private String userId;
 
 
     @Override
@@ -60,29 +64,37 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Log.d(TAG, "onCreate: ");
         FirebaseApp.initializeApp(this);
+        firebaseHelper = FirebaseHelper.getInstance();
         boolean isMain = isMainProcess(this);
-        intent = new Intent(this, MainActivity.class);
+        intent = new Intent(this, MainActivity.class).putExtra("USER_ID", userId);
         listener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(isCurrentUserLogged()){
+                if (isCurrentUserLogged()) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(!FirebaseHelper.getInstance().checkIfUserIdExist(user.getUid())){
-                        FirebaseHelper.getInstance().setNewWorkmate();
-                        Toast.makeText(getApplicationContext(),"@string/welcome_new_user", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(getApplicationContext(),"@string/welcome_back", Toast.LENGTH_SHORT).show();
-                    }
+                    userId = user.getUid();
+                    firebaseHelper.getUserDataFireStoreByUID(userId).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+                                    if (documentSnapshot.exists()) {
+                                        Toast.makeText(getApplicationContext(), getString(R.string.string_welcome_back), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        firebaseHelper.setNewWorkmate();
+                                        Toast.makeText(getApplicationContext(), getString(R.string.string_welcome_new_user), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                    );
                     startActivity(intent);
-                }else{
-
+                } else {
+                    initFirebaseAuth();
                 }
             }
         };
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         firebaseAuth.addAuthStateListener(listener);
         initFirebaseAuth();
@@ -90,15 +102,16 @@ public class SignInActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        if(listener != null)firebaseAuth.removeAuthStateListener(listener);
+        if (listener != null) firebaseAuth.removeAuthStateListener(listener);
         super.onStop();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-            this.initFirebaseAuth();
+        this.initFirebaseAuth();
     }
+
     private boolean isMainProcess(Context context) {
         if (null == context) {
             return true;
@@ -119,12 +132,12 @@ public class SignInActivity extends AppCompatActivity {
             this::onSignInResult
     );
 
-    private void initFirebaseAuth(){
+    private void initFirebaseAuth() {
         Log.d(TAG, "initFirebaseAuth: ");
-        if(firebaseAuth.getCurrentUser() != null){
+        if (firebaseAuth.getCurrentUser() != null) {
             startActivity(new Intent(this, MainActivity.class));
             this.finish();
-        }else {
+        } else {
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                     new AuthUI.IdpConfig.TwitterBuilder().build(),
@@ -144,27 +157,27 @@ public class SignInActivity extends AppCompatActivity {
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         Log.d(TAG, "onSignInResult: ");
         IdpResponse response = result.getIdpResponse();
-        if(result.getResultCode() == RESULT_OK){
+        if (result.getResultCode() == RESULT_OK) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             Log.d(TAG, "onSignInResult:" + user.getEmail());
-            if(!FirebaseHelper.getInstance().checkIfUserIdExist(user.getUid())){
-                FirebaseHelper.getInstance().setNewWorkmate();
-                Toast.makeText(this,"@string/welcome_new_user", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(this,"@string/welcome_back", Toast.LENGTH_SHORT).show();
+            if (!firebaseHelper.checkIfUserIdExist(user.getUid())) {
+                firebaseHelper.setNewWorkmate();
+                Toast.makeText(this, "@string/welcome_new_user", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "@string/welcome_back", Toast.LENGTH_SHORT).show();
             }
             startActivity(intent);
-        }else{
-            if(response==null){
+        } else {
+            if (response == null) {
                 Log.d(TAG, "onSignInResult: User cancel sign in request");
-            }else{
+            } else {
                 Log.d(TAG, "onSignInResult:", response.getError());
             }
         }
     }
 
 
-    protected FirebaseUser getCurrentUser(){
+    protected FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -173,27 +186,27 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: ");
-        if(requestCode == RC_SIGN_IN){
-            if(resultCode == RESULT_OK){
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
                 //on User signin = true;
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(TAG, "onActivityResult:" + user.getEmail());
-                if(!FirebaseHelper.getInstance().checkIfUserIdExist(user.getUid())){
-                    FirebaseHelper.getInstance().setNewWorkmate();
-                    Toast.makeText(this,"@string/welcome_new_user", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(this,"@string/welcome_back", Toast.LENGTH_SHORT).show();
+                if (!firebaseHelper.checkIfUserIdExist(user.getUid())) {
+                    firebaseHelper.setNewWorkmate();
+                    Toast.makeText(this, "@string/welcome_new_user", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "@string/welcome_back", Toast.LENGTH_SHORT).show();
                 }
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
-            }else{
+            } else {
                 IdpResponse response = IdpResponse.fromResultIntent(data);
-                if(response==null){
+                if (response == null) {
                     Log.d(TAG, "onActivityResult:User cancel sign in request");
-                }else{
+                } else {
                     Log.d(TAG, "onActivityResult:", response.getError());
                 }
             }

@@ -9,6 +9,7 @@ public class Workmate {
     private String id;
     private String avatarUrl = "";
     private String name;
+    private String email;
     private String placeId = "";
     private String restaurantAddress = "";
     private String restaurantName = "";
@@ -18,10 +19,11 @@ public class Workmate {
         // No-argument constructor
     }
 
-    public Workmate(String avatarUrl, String name, String id) {
+    public Workmate(String avatarUrl, String name, String email,String id) {
         this.id = id;
         this.avatarUrl = avatarUrl;
         this.name = name;
+        this.email = email;
     }
 
     protected Workmate(Parcel parcel){
@@ -29,6 +31,7 @@ public class Workmate {
         name = parcel.readString();
         avatarUrl = parcel.readString();
         placeId = parcel.readString();
+        email = parcel.readString();
         restaurantAddress = parcel.readString();
         restaurantName = parcel.readString();
         restaurantTypeOfFood = parcel.readString();
@@ -75,9 +78,11 @@ public class Workmate {
     public String getRestaurantTypeOfFood(){
         return restaurantTypeOfFood;
     }
+    public String getEmail() {
+        return email;
+    }
+
     //Setter
-
-
     public void setId(String id) {
         this.id = id;
     }
@@ -88,6 +93,9 @@ public class Workmate {
 
     public void setName(String name){
         this.name = name;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPlaceId(String placeId){
@@ -114,7 +122,11 @@ public class Workmate {
         Workmate workmate = (Workmate) o;
         return  Objects.equals(avatarUrl, workmate.avatarUrl) &&
                 Objects.equals(name, workmate.name) &&
-                Objects.equals(id, workmate.id);
+                Objects.equals(id, workmate.id) &&
+                Objects.equals(email, workmate.email) &&
+                Objects.equals(restaurantName, workmate.restaurantName) &&
+                Objects.equals(restaurantAddress, workmate.restaurantAddress)&&
+                Objects.equals(restaurantTypeOfFood, workmate.restaurantTypeOfFood);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.Hayse.go4lunch.ui.activitys;
 
 import android.Manifest;
+import android.app.Application;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -10,8 +10,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -21,21 +24,40 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.ui.AppBarConfiguration;
 
+import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.ActivityMainBinding;
+import com.Hayse.go4lunch.domain.entites.Workmate;
+import com.Hayse.go4lunch.domain.entites.map_api.autocomplete.Prediction;
+import com.Hayse.go4lunch.ui.adapter.AutocompletePredictionsAdapter;
 import com.Hayse.go4lunch.ui.fragments.MapRestaurantFragment;
 import com.Hayse.go4lunch.ui.fragments.RestaurantListFragment;
 import com.Hayse.go4lunch.ui.fragments.WorkmateFragment;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -47,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private AppBarConfiguration appBarConfig;
+
+    private LiveData<Workmate> userData;
 
     boolean mGPSEnable;
     private ViewModelFactory viewModelFactory;
@@ -60,9 +84,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private RestaurantListFragment listFragment;
 
+    private PlacesClient placesClient;
+
+    AutocompleteSupportFragment autocompleteFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String API_KEY = MainApplication.getApplication().getResources().getString(R.string.MAPS_API_KEY);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         this.initViewModel();
@@ -71,20 +100,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureBottomNavView();
         this.configureDrawerLayout();
         this.configureDrawerNavView();
-        if(checkUserLocationPermission()){
+        if (checkUserLocationPermission()) {
             if (isGoogleServiceOK()) {
                 replaceFragment(mapFragment);
+                //init place
+                if (!Places.isInitialized()){
+                    Places.initialize(getApplicationContext(), API_KEY);
+                    placesClient = Places.createClient(this);
+                    this.configureAutocompleteFragment();
+                }
+                this.initUserDataUI();
             }
         }
-
     }
-
 
     private boolean checkUserLocationPermission() {
         Log.d(TAG, "checkUserLocationPermission: ");
         LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGPSEnable = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if(!mGPSEnable){
+        if (!mGPSEnable) {
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
@@ -120,7 +154,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.workmateViewModel = new ViewModelProvider(this, viewModelFactory).get(WorkmateViewModel.class);
     }
 
-
+    private void initUserDataUI() {
+        View header = binding.mainDrawerNavView.getHeaderView(0);
+        ImageView userAvatar = header.findViewById(R.id.avatar_user_header);
+        TextView userName = header.findViewById(R.id.user_name_header);
+        TextView userEmail = header.findViewById(R.id.email_user_header);
+        homeRestaurantSharedViewModel.getUserData().observe(this, userData ->{
+            if (userData != null){
+                if (!Objects.equals(userData.getAvatarUrl(), "")){
+                    Glide.with(this)
+                            .load(userData.getAvatarUrl())
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(userAvatar);
+                }
+                if (userData.getName()!=null){
+                    userName.setText(userData.getName());
+                }
+                if (userData.getEmail()!= null){
+                    userEmail.setText(userData.getEmail());
+                }
+            }
+        });
+    }
 
     private void createFragments() {
         Log.d(TAG, "createFragments: ");
@@ -134,11 +189,54 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.toolbar = binding.activityMainToolbar;
         binding.activityMainToolbar.setNavigationIcon(R.drawable.baseline_list_24);
         binding.activityMainToolbarSearchIcon.setClickable(true);
-        binding.activityMainToolbarSearchIcon.setOnClickListener(v->{
+        binding.activityMainToolbarSearchIcon.setOnClickListener(v -> {
             //@todo autocomplete integration
+            if (autocompleteFragment.isVisible()){
+                autocompleteFragment.setMenuVisibility(false);
+            }else {
+                autocompleteFragment.setMenuVisibility(true);
+            }
         });
         setSupportActionBar(binding.activityMainToolbar);
+    }
 
+    /**
+     * AutocompleteSupportFragment embedding
+     */
+    private void configureAutocompleteFragment(){
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .build(this);
+        autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        //Autocomplete Support fragment
+        autocompleteFragment.setPlaceFields(fields);
+        autocompleteFragment.setTypesFilter(Arrays.asList("restaurant"));
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                // TODO: Get info about the selected place.
+                homeRestaurantSharedViewModel.onPredictionClick(place);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                // TODO: Handle the error.
+                Log.e(TAG, "An error occurred: " + status);
+            }
+        });
+        autocompleteFragment.setMenuVisibility(false);
+    }
+
+    public void onSearchCalled() {
+        // Set the fields to specify which types of place data to return.
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .build(this);
     }
 
     private void configureDrawerLayout() {
@@ -147,17 +245,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav_drawer, R.string.close_nav_drawer);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
     }
 
     private void configureDrawerNavView() {
         Log.d(TAG, "configureDrawerNavView: ");
         this.drawerNavView = binding.mainDrawerNavView;
         drawerNavView.setNavigationItemSelectedListener(this);
+
+
     }
 
     private void configureBottomNavView() {
-        Log.d(TAG, "configureBottomNavView: ");/*
+        Log.d(TAG, "configureBottomNavView: ");
+        /*
         View navMap = findViewById(R.id.navigation_map);
         View navList = findViewById(R.id.navigation_restaurant);
         View navWorkmate = findViewById(R.id.navigation_workmate);
@@ -179,18 +279,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 replaceFragment(listFragment);
                 Toast.makeText(this, "not implemented yet", Toast.LENGTH_SHORT);
                 return true;
-            }
-            else if (pItem == R.id.navigation_workmate) {
+            } else if (pItem == R.id.navigation_workmate) {
                 Log.d(TAG, "configureBottomNavView: workmates");
                 replaceFragment(workmateFragment);
                 return true;
             }
             return false;
         });
-}
+    }
 
     private void replaceFragment(Fragment fragment) {
-        Log.d(TAG, "replaceFragment: "+ fragment);
+        Log.d(TAG, "replaceFragment: " + fragment);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.activity_main_frame_layout, fragment);
@@ -210,16 +309,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.your_lunch ) {
-
+        if (id == R.id.your_lunch) {
+            homeRestaurantSharedViewModel.getUserData().observe(this, userData ->{
+                if (userData.getPlaceId() != null){
+                    this.startActivity(RestaurantDetailActivity.navigate(getApplicationContext(),userData.getPlaceId()));
+                }else{
+                    Toast.makeText(getApplicationContext(), getString(R.string.no_restaurant_your_lunch), Toast.LENGTH_SHORT);
+                }
+            });
             return true;
-        }
-        else if (id== R.id.settings) {
+        } else if (id == R.id.settings) {
             final Intent intentSetting = new Intent(this, SettingActivity.class);
             startActivity(intentSetting);
             return true;
-        }
-        else if (id == R.id.logout ) {
+        } else if (id == R.id.logout) {
             return true;
         }
         this.drawerLayout.closeDrawer(GravityCompat.START);

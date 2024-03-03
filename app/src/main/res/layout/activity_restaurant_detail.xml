@@ -146,7 +146,7 @@
                 android:layout_margin="16dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintTop_toBottomOf="@+id/call_icon"
-                tools:listitem="@layout/workmate_item"/>
+                tools:listitem="@layout/item_workmate"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
