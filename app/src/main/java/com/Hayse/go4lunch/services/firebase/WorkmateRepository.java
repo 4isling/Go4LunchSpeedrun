@@ -66,11 +66,12 @@ public class WorkmateRepository {
         Log.d(TAG, "getAllWorkmate: before return");
         return listOfWorkmate;
     }
+    public LiveData<List<Workmate>> getListOfWorkmate(){
+        return mFirebaseHelper.getRtWorkmates();
+    }
 
     public LiveData<List<Workmate>> getWorkmateByRestaurant(String placeId) {
-        MutableLiveData<List<Workmate>> listDetailWorkmate = new MutableLiveData<>();
-        mFirebaseHelper.getWorkmateByPlaceId(placeId);
-        return listDetailWorkmate;
+        return mFirebaseHelper.getWorkmateByPlaceId(placeId);
     }
 
     public MutableLiveData<Workmate> getUserData(){

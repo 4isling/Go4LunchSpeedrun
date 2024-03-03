@@ -54,7 +54,6 @@ public class RestaurantDetailViewModel extends ViewModel {
 
     public LiveData<List<Workmate>> getListWorkmateLiveData(){
         return workmateRepository.getWorkmateByRestaurant(placeId);
-
     }
 
     public LiveData<Workmate> getUserData() {

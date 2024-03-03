@@ -1,5 +1,6 @@
 package com.Hayse.go4lunch.ui.viewmodel;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -17,5 +18,9 @@ public class WorkmateViewModel extends ViewModel {
 
     public MutableLiveData<List<Workmate>> getAllWorkmates(){
         return repository.getAllWorkmate();
+    }
+
+    public LiveData<List<Workmate>> getWorkmatesRt(){
+        return repository.getListOfWorkmate();
     }
 }

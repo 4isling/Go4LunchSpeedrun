@@ -40,15 +40,26 @@ public class WorkmateFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         adapter = new WorkmateAdapter();
         recyclerView.setAdapter(adapter);
-        workmateViewModel.getAllWorkmates().observe(getViewLifecycleOwner(), workmates -> {
+        workmateViewModel.getWorkmatesRt().observe(getViewLifecycleOwner(), workmates -> {
             adapter.submitList(workmates);
         });
         //@todo item touch open workmate detail
     }
 
+    private void removeObservers(){
+        workmateViewModel.getWorkmatesRt().removeObservers(getViewLifecycleOwner());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        removeObservers();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         binding = null;
     }
 }

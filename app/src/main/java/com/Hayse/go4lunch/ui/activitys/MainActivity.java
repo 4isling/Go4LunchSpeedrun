@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.LocationRestriction;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -213,6 +215,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Autocomplete Support fragment
         autocompleteFragment.setPlaceFields(fields);
         autocompleteFragment.setTypesFilter(Arrays.asList("restaurant"));
+        homeRestaurantSharedViewModel.getLocationMutableLiveData().observe(this, location -> {
+            LocationRestriction restriction = new LocationRestriction() {
+                @Override
+                public int describeContents() {
+                    return 0;
+                }
+
+                @Override
+                public void writeToParcel(@NonNull Parcel dest, int flags) {
+
+                }
+            };
+            autocompleteFragment.setLocationRestriction(restriction);
+        });
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override

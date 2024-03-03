@@ -31,7 +31,6 @@ public class FavRepository {
     public FavRepository(){
         mFirebaseHelper = FirebaseHelper.getInstance();
         userId =  mFirebaseHelper.getUserUID();
-
     }
 
     public LiveData<List<FavRestaurant>> getFavList(){

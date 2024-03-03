@@ -1,5 +1,6 @@
 package com.Hayse.go4lunch.ui.fragments;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,8 @@ public class RestaurantListFragment extends Fragment {
     private RecyclerView recyclerView;
     private FragmentRestaurantBinding binding;
 
+    private Location location;
+
     @NonNull
     private TextView noRestaurant;
 
@@ -63,6 +66,7 @@ public class RestaurantListFragment extends Fragment {
         viewModel.getLocationMutableLiveData().observe(
                 getViewLifecycleOwner(), location -> {
                     if(location!= null){
+                        this.location = location;
                         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
                         viewModel.getRestaurant(location).observe(getViewLifecycleOwner(), this::updateRecyclerView);
                     }
@@ -84,9 +88,17 @@ public class RestaurantListFragment extends Fragment {
             }
     }
 
+    private void removeObserver() {
+        viewModel.getLocationMutableLiveData().removeObservers(getViewLifecycleOwner());
+        viewModel.getRestaurant(location).removeObservers(getViewLifecycleOwner());
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        removeObserver();
         binding = null;
     }
+
+
 }

@@ -74,11 +74,33 @@ public class FirebaseHelper {
     }
 
     public String getUserUID() {
-        return userUID;
+        return FirebaseAuth.getInstance().getUid();
+
     }
 
     public Task<QuerySnapshot> getAllWorkmate() {
         return workmateRef.get();
+    }
+
+    public MutableLiveData<List<Workmate>> getRtWorkmates(){
+        MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
+        workmateRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null){
+                    Log.w(TAG, "GetRtWorkmateListener", error);
+                }
+                if (!value.isEmpty()) {
+                    Log.d(TAG, "getWorkmate: not empty");
+                    List<Workmate> workmatesResult = value.toObjects(Workmate.class);
+                    workmates.postValue(workmatesResult);
+                } else {
+                    Log.d(TAG, "getWorkmate: is empty");
+                    workmates.postValue(new ArrayList<>());
+                }
+            }
+        });
+        return workmates;
     }
 
     public void setNewWorkmate() {
@@ -122,7 +144,7 @@ public class FirebaseHelper {
         if (restaurantTypeOfFood != null) {
             updateData.put("restaurantTypeOfFood", restaurantTypeOfFood);
         }
-        workmateRef.document(userUID)
+        workmateRef.document(FirebaseAuth.getInstance().getUid())
                 .update(updateData)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
@@ -174,7 +196,7 @@ public class FirebaseHelper {
     }
 
     public Task<DocumentSnapshot> getUserDataFireStore() {
-        return workmateRef.document(userUID).get();
+        return workmateRef.document(FirebaseAuth.getInstance().getUid()).get();
     }
 
     public Task<DocumentSnapshot> getUserDataFireStoreByUID(String userID){
@@ -202,12 +224,6 @@ public class FirebaseHelper {
         return favRestaurantResult;
     }
 
-    private LiveData<Boolean> checkIfFavRestaurantExist(String placeId) {
-        MutableLiveData<Boolean> result = new MutableLiveData<>();
-
-        return result;
-    }
-
     /**
      * add favRestaurant to database if it dont exist delete it if it exist
      *
@@ -215,7 +231,7 @@ public class FirebaseHelper {
      * @return true if restaurant added in db false if it isn't
      */
     public void updateFavRestaurant(FavRestaurant favRestaurant) {
-        favRestaurantRef.document(userUID + favRestaurant.getPlace_id()).get().addOnCompleteListener(task -> {
+        favRestaurantRef.document(FirebaseAuth.getInstance().getUid() + favRestaurant.getPlace_id()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (!documentSnapshot.exists()) {
