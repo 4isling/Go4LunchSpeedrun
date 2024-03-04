@@ -23,13 +23,6 @@
                 android:background="@color/red"
                 app:layout_constraintTop_toTopOf="parent"
                 app:titleTextColor="@color/white">
-
-                <fragment
-                    android:id="@+id/autocomplete_fragment"
-                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
                 <ImageView
                     android:id="@+id/activity_main_toolbar_search_icon"
                     android:layout_width="wrap_content"
@@ -37,7 +30,11 @@
                     android:layout_gravity="end"
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/baseline_search_24" />
-
+                <fragment
+                    android:id="@+id/autocomplete_fragment"
+                    android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </androidx.appcompat.widget.Toolbar>
 
             <FrameLayout

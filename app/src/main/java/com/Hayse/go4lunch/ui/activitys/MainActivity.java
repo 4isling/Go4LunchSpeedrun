@@ -5,6 +5,7 @@ import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -47,9 +48,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.LocationBias;
 import com.google.android.libraries.places.api.model.LocationRestriction;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private PlacesClient placesClient;
 
-    AutocompleteSupportFragment autocompleteFragment;
+    AutocompleteSupportFragment autocompleteSupportFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,11 +198,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding.activityMainToolbarSearchIcon.setClickable(true);
         binding.activityMainToolbarSearchIcon.setOnClickListener(v -> {
             //@todo autocomplete integration
-            if (autocompleteFragment.isVisible()){
-                autocompleteFragment.setMenuVisibility(false);
+            if (autocompleteSupportFragment.isVisible()){
+                autocompleteSupportFragment.setActivityMode(AutocompleteActivityMode.OVERLAY);
+                autocompleteSupportFragment.getActivity();
             }else {
-                autocompleteFragment.setMenuVisibility(true);
+                autocompleteSupportFragment.onDestroy();
             }
+
         });
         setSupportActionBar(binding.activityMainToolbar);
     }
@@ -210,30 +217,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Start the autocomplete intent.
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
                 .build(this);
-        autocompleteFragment = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
         //Autocomplete Support fragment
-        autocompleteFragment.setPlaceFields(fields);
-        autocompleteFragment.setTypesFilter(Arrays.asList("restaurant"));
+        autocompleteSupportFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        autocompleteSupportFragment.setPlaceFields(fields);
+        autocompleteSupportFragment.setTypesFilter(Arrays.asList("restaurant"));
         homeRestaurantSharedViewModel.getLocationMutableLiveData().observe(this, location -> {
-            LocationRestriction restriction = new LocationRestriction() {
-                @Override
-                public int describeContents() {
-                    return 0;
-                }
+            if (location != null){
+                //@todo verif si ça marche
+                autocompleteSupportFragment.setLocationRestriction(defineRectangularBounds(location));
 
-                @Override
-                public void writeToParcel(@NonNull Parcel dest, int flags) {
-
-                }
-            };
-            autocompleteFragment.setLocationRestriction(restriction);
+            }
         });
-        // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+        // @todo Set up a PlaceSelectionListener to handle the response.
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
-                // TODO: Get info about the selected place.
                 homeRestaurantSharedViewModel.onPredictionClick(place);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             }
@@ -244,7 +245,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e(TAG, "An error occurred: " + status);
             }
         });
-        autocompleteFragment.setMenuVisibility(false);
+        autocompleteSupportFragment.setMenuVisibility(false);
+    }
+
+    private RectangularBounds defineRectangularBounds(Location location) {
+        /**
+         * TODO si soluce 1 marche pas
+         *
+                    static final double R = 6371e3;
+         *         double lat = 48.8566; // Paris, France
+         *         double lon = 2.3522;
+         *         double brng = FastMath.toRadians(45); // angle in radians
+         *         double d = 5000; // distance in meters
+         *
+         *         double lat1 = lat + d/R * FastMath.sin(brng);
+         *         double lon1 = lon + d/R * FastMath.cos(brng) / FastMath.cos(lat);
+         *
+         *         double lat2 = lat - d/R * FastMath.sin(brng);
+         *         double lon2 = lon - d/R * FastMath.cos(brng) / FastMath.cos(lat);
+         *
+         *         System.out.println("Destination point 5 km to the north-east: " + lat1 + ", " + lon1);
+         *         System.out.println("Destination point 5 km to the south-west: " + lat2 + ", " + lon2);
+         *     }
+         */
+        LatLng northEast = new LatLng(location.getLatitude()+0.005, location.getLongitude()+0.005);
+        LatLng southWest = new LatLng(location.getLatitude()-0.005, location.getLongitude()-0.005);
+
+        return RectangularBounds.newInstance(northEast,southWest);
     }
 
     public void onSearchCalled() {
