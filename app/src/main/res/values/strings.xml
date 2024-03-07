@@ -38,5 +38,10 @@
     <string name="no_restaurant_your_lunch">No restaurant selected</string>
     <string name="string_welcome_back">Welcome_back</string>
     <string name="string_welcome_new_user">Welcome New User</string>
+    <string name="manage_notification">Manage notification</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="notification_title">Notification:</string>
+    <string name="alow_notification_toast">Go4Lunch will send you a daily notification</string>
 
 </resources>

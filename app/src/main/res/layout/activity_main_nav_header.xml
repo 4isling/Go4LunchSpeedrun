@@ -30,8 +30,8 @@
 
     <ImageView
         android:id="@+id/avatar_user_header"
-        android:layout_width="108dp"
-        android:layout_height="108dp"
+        android:layout_width="86dp"
+        android:layout_height="86dp"
         android:layout_gravity="start|bottom"
         android:layout_weight="1"
 

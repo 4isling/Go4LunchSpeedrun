@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.R;
@@ -67,7 +66,7 @@ public class MapRestaurantFragment extends Fragment {
         getMapViewModel();
     }
     private void getMapViewModel() {
-        homeRestaurantSharedViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(HomeRestaurantSharedViewModel.class);
+        homeRestaurantSharedViewModel = new ViewModelProvider(requireActivity(), ViewModelFactory.getInstance()).get(HomeRestaurantSharedViewModel.class);
     }
 
     @Nullable
@@ -220,9 +219,9 @@ public class MapRestaurantFragment extends Fragment {
 
 
     private void subscribeToObservables() {
-        homeRestaurantSharedViewModel.getLocationMutableLiveData().observe(
+        homeRestaurantSharedViewModel.getLocationLiveData().observe(
                 this, location -> {
-                    if(location!= null){
+                    if(location != null){
                         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
                         mapsView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
@@ -231,13 +230,19 @@ public class MapRestaurantFragment extends Fragment {
                     homeRestaurantSharedViewModel.getWorkmates().observe(this, this::updateMarkers);
                 }
         );
+
         homeRestaurantSharedViewModel.getPrediction().observe(this, place -> {
+            Log.d(TAG, "subscribeToObservables: ");
             if (place != null){
+                Log.d(TAG, "subscribeToObservables: "+place);
                 if (place.getLatLng()!=null){
+                    //mapsView.addMarker();
                     mapsView.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
                     mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15));
-
                 }
+            }else {
+                Log.d(TAG, "subscribeToObservables: autocomplete place is null");
+
             }
         });
     }
@@ -248,13 +253,15 @@ public class MapRestaurantFragment extends Fragment {
     }
 
     private void unsubscribeToObservables(){
-        homeRestaurantSharedViewModel.getLocationMutableLiveData().removeObservers(this);
+        homeRestaurantSharedViewModel.getLocationLiveData().removeObservers(this);
         homeRestaurantSharedViewModel.getPrediction().removeObservers(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        subscribeToObservables();
+        binding.getRoot();
     }
 
     @Override
@@ -262,5 +269,11 @@ public class MapRestaurantFragment extends Fragment {
         super.onDestroyView();
         unsubscribeToObservables();
         binding = null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        unsubscribeToObservables();
     }
 }

@@ -3,6 +3,7 @@ package com.Hayse.go4lunch.ui.viewmodel;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -23,7 +24,7 @@ import com.google.android.libraries.places.api.model.Place;
 import java.util.List;
 
 public class HomeRestaurantSharedViewModel extends ViewModel {
-    private final static String TAG = "MapViewModel";
+    private final static String TAG = "HomeSharedViewModel";
     private final Application application;
     private LocationRepository locationRepository;
     private NearBySearchRepository nearBySearchRepository;
@@ -62,7 +63,7 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     }
 
 
-    public LiveData<Location> getLocationMutableLiveData(){
+    public LiveData<Location> getLocationLiveData(){
         return locationRepository.getLocationLiveData();
     }
 
@@ -79,12 +80,12 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
 
     public LiveData<List<Prediction>> getPredictionList(String text){
         Location location = locationRepository.getLastUserLocation();
-        //@todo prediction list
         return autocompleteRepository.getPredictionLiveData(location,text);
     }
 
     public void onPredictionClick(Place place) {
-        this.placeAutocompleteSelected.postValue(place);
+        Log.d(TAG, "onPredictionClick: "+ place.toString());
+        this.placeAutocompleteSelected.setValue(place);
     }
 
     public LiveData<Place> getPrediction(){

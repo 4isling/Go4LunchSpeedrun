@@ -24,7 +24,7 @@ public class WorkmateFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        workmateViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(WorkmateViewModel.class);
+        workmateViewModel = new ViewModelProvider(requireActivity(), ViewModelFactory.getInstance()).get(WorkmateViewModel.class);
         binding = FragmentWorkmateBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         initRecyclerView();

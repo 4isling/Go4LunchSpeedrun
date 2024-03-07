@@ -1,14 +1,12 @@
 package com.Hayse.go4lunch.ui.activitys;
 
 import android.Manifest;
-import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,8 +32,6 @@ import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.ActivityMainBinding;
 import com.Hayse.go4lunch.domain.entites.Workmate;
-import com.Hayse.go4lunch.domain.entites.map_api.autocomplete.Prediction;
-import com.Hayse.go4lunch.ui.adapter.AutocompletePredictionsAdapter;
 import com.Hayse.go4lunch.ui.fragments.MapRestaurantFragment;
 import com.Hayse.go4lunch.ui.fragments.RestaurantListFragment;
 import com.Hayse.go4lunch.ui.fragments.WorkmateFragment;
@@ -50,11 +46,8 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.LocationBias;
-import com.google.android.libraries.places.api.model.LocationRestriction;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -224,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         autocompleteSupportFragment.setPlaceFields(fields);
         autocompleteSupportFragment.setTypesFilter(Arrays.asList("restaurant"));
-        homeRestaurantSharedViewModel.getLocationMutableLiveData().observe(this, location -> {
+        homeRestaurantSharedViewModel.getLocationLiveData().observe(this, location -> {
             if (location != null){
                 //@todo verif si ça marche
                 autocompleteSupportFragment.setLocationRestriction(defineRectangularBounds(location));
@@ -237,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onPlaceSelected(@NonNull Place place) {
                 homeRestaurantSharedViewModel.onPredictionClick(place);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                autocompleteSupportFragment.onDestroy();
             }
 
             @Override
@@ -266,10 +260,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          *
          *         System.out.println("Destination point 5 km to the north-east: " + lat1 + ", " + lon1);
          *         System.out.println("Destination point 5 km to the south-west: " + lat2 + ", " + lon2);
+         *
+         *
+         *
+         *         dd
          *     }
          */
-        LatLng northEast = new LatLng(location.getLatitude()+0.005, location.getLongitude()+0.005);
-        LatLng southWest = new LatLng(location.getLatitude()-0.005, location.getLongitude()-0.005);
+
+        LatLng northEast = new LatLng(location.getLatitude()-0.5, location.getLongitude()-0.5);
+        LatLng southWest = new LatLng(location.getLatitude()+0.5, location.getLongitude()+0.5);
 
         return RectangularBounds.newInstance(northEast,southWest);
     }

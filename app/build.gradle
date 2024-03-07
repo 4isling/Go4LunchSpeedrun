@@ -18,6 +18,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue "string", "MAPS_API_KEY", properties.getProperty("MAPS_API_KEY")
+        resValue "string", "CLOUD_MESSAGE_ID", properties.getProperty("CLOUD_MESSAGE_ID")
     }
 
     buildTypes {
@@ -61,6 +62,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:24.9.0'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    // Firebase Cloud Messaging
+    implementation("com.google.firebase:firebase-messaging")
 
     //Firebase UI Authentication
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
