@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.PointerIcon;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -53,6 +55,7 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Arrays;
@@ -187,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void configureToolbar() {
         Log.d(TAG, "configureToolbar: ");
         this.toolbar = binding.activityMainToolbar;
-        binding.activityMainToolbar.setNavigationIcon(R.drawable.baseline_list_24);
+        binding.activityMainToolbar.setNavigationIcon(R.drawable.baseline_menu_24);
         binding.activityMainToolbarSearchIcon.setClickable(true);
         binding.activityMainToolbarSearchIcon.setOnClickListener(v -> {
             //@todo autocomplete integration
@@ -243,29 +246,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private RectangularBounds defineRectangularBounds(Location location) {
-        /**
-         * TODO si soluce 1 marche pas
-         *
-                    static final double R = 6371e3;
-         *         double lat = 48.8566; // Paris, France
-         *         double lon = 2.3522;
-         *         double brng = FastMath.toRadians(45); // angle in radians
-         *         double d = 5000; // distance in meters
-         *
-         *         double lat1 = lat + d/R * FastMath.sin(brng);
-         *         double lon1 = lon + d/R * FastMath.cos(brng) / FastMath.cos(lat);
-         *
-         *         double lat2 = lat - d/R * FastMath.sin(brng);
-         *         double lon2 = lon - d/R * FastMath.cos(brng) / FastMath.cos(lat);
-         *
-         *         System.out.println("Destination point 5 km to the north-east: " + lat1 + ", " + lon1);
-         *         System.out.println("Destination point 5 km to the south-west: " + lat2 + ", " + lon2);
-         *
-         *
-         *
-         *         dd
-         *     }
-         */
 
         LatLng northEast = new LatLng(location.getLatitude()-0.5, location.getLongitude()-0.5);
         LatLng southWest = new LatLng(location.getLatitude()+0.5, location.getLongitude()+0.5);
@@ -293,8 +273,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d(TAG, "configureDrawerNavView: ");
         this.drawerNavView = binding.mainDrawerNavView;
         drawerNavView.setNavigationItemSelectedListener(this);
-
-
     }
 
     private void configureBottomNavView() {
@@ -308,6 +286,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.id.navigation_restaurant,
                 R.id.navigation_workmate)
                 .build();*/
+        binding.bottomNavView.setItemIconTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.bottom_navigation_item_colors));
+        binding.bottomNavView.setItemTextColor(ContextCompat.getColorStateList(getApplicationContext(),R.color.bottom_navigation_item_colors));
         binding.bottomNavView.setOnItemSelectedListener(item -> {
             int pItem = item.getItemId();
             if (pItem == R.id.navigation_map) {
@@ -322,8 +302,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(this, "not implemented yet", Toast.LENGTH_SHORT);
                 return true;
             } else if (pItem == R.id.navigation_workmate) {
+
                 Log.d(TAG, "configureBottomNavView: workmates");
                 replaceFragment(workmateFragment);
+
                 return true;
             }
             return false;

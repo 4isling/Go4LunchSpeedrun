@@ -3,6 +3,10 @@ package com.Hayse.go4lunch.ui.fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,13 +25,18 @@ import com.Hayse.go4lunch.databinding.FragmentMapBinding;
 import com.Hayse.go4lunch.domain.entites.Workmate;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
+import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
+import com.Hayse.go4lunch.ui.view_state.HomeViewState;
+import com.Hayse.go4lunch.ui.view_state.HomeWrapperViewState;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
+import com.Hayse.go4lunch.util.SvgToBitmap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -65,6 +74,7 @@ public class MapRestaurantFragment extends Fragment {
         Log.d(TAG, "onCreate: ");
         getMapViewModel();
     }
+
     private void getMapViewModel() {
         homeRestaurantSharedViewModel = new ViewModelProvider(requireActivity(), ViewModelFactory.getInstance()).get(HomeRestaurantSharedViewModel.class);
     }
@@ -73,7 +83,6 @@ public class MapRestaurantFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(getLayoutInflater());
-
         return binding.getRoot();
     }
 
@@ -135,10 +144,6 @@ public class MapRestaurantFragment extends Fragment {
             }
         });
     }
-
-
-
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -217,44 +222,123 @@ public class MapRestaurantFragment extends Fragment {
     }
 
 
-
     private void subscribeToObservables() {
-        homeRestaurantSharedViewModel.getLocationLiveData().observe(
+        /*homeRestaurantSharedViewModel.getLocationLiveData().observe(
                 this, location -> {
-                    if(location != null){
-                        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                    if (location != null) {
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                         mapsView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                     }
                     homeRestaurantSharedViewModel.getRestaurant(location).observe(this, this::updateLocationUI);
-                    homeRestaurantSharedViewModel.getWorkmates().observe(this, this::updateMarkers);
+                   // homeRestaurantSharedViewModel.getWorkmates().observe(this, this::updateMarkers);
                 }
-        );
-
-        homeRestaurantSharedViewModel.getPrediction().observe(this, place -> {
+        );*/
+        homeRestaurantSharedViewModel.getHomeViewStateLiveData().observe(getViewLifecycleOwner(), homeWrapperViewState -> {
+            updateUi(homeWrapperViewState.getHomeViewState());
+            updateUserLocation(homeWrapperViewState.getLocation());
+        });
+        homeRestaurantSharedViewModel.getPrediction().observe(getViewLifecycleOwner(), place -> {
             Log.d(TAG, "subscribeToObservables: ");
-            if (place != null){
-                Log.d(TAG, "subscribeToObservables: "+place);
-                if (place.getLatLng()!=null){
+            if (place != null) {
+                Log.d(TAG, "subscribeToObservables: " + place);
+                if (place.getLatLng() != null) {
                     //mapsView.addMarker();
                     mapsView.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                    mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15));
+                    mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 15));
                 }
-            }else {
+            } else {
                 Log.d(TAG, "subscribeToObservables: autocomplete place is null");
-
             }
         });
     }
 
-    private void updateMarkers(List<Workmate> workmates) {
-        //@todo update markers with the right icon
+    private void updateUi(List<HomeViewState> itemList) {
+        if (itemList != null) {
+            if (!itemList.isEmpty()) {
+                for (HomeViewState item : itemList) {
+                    Log.d(TAG, "displayMarker: result : " + item.getRestaurantName());
 
+                    LatLng latLngMarker = new LatLng(
+                            (item.getGeometry()
+                                    .getLocation()
+                                    .getLat()),
+                            (item.getGeometry()
+                                    .getLocation()
+                                    .getLng()));
+                    MarkerOptions markerOpt = new MarkerOptions()
+                            .position(latLngMarker)
+                            .title(item.getRestaurantName())
+                            .snippet(item.getAddress());
+                    //get LatLong to Marker
+                    BitmapDescriptor icon;
+                    if (item.getWorkmateNumber() > 0) {
+                        icon = getBitmapDescriptor(R.drawable.map_marker_icon_green);
+                    } else {
+                        icon = getBitmapDescriptor(R.drawable.map_marker_icon_red);
+                    }
+                    markerOpt.icon(icon);
+                    Marker marker = mapsView.addMarker(markerOpt);
+                    assert marker!=null;
+                            marker.setTag(item.getPlaceId());
+                    mapsView.setOnMarkerClickListener(m -> {
+                        m.showInfoWindow();
+                        return m.isInfoWindowShown();
+                    });
+                }
+            }
+        }
+        mapsView.setOnInfoWindowClickListener(marker -> requireContext().startActivity(RestaurantDetailActivity.navigate(
+                requireContext(),
+                (String) marker.getTag())));
     }
 
-    private void unsubscribeToObservables(){
-        homeRestaurantSharedViewModel.getLocationLiveData().removeObservers(this);
-        homeRestaurantSharedViewModel.getPrediction().removeObservers(this);
+    private void infoWindowClick(Marker marker, HomeViewState item){
+        if (marker.isInfoWindowShown()){
+            if (item!= null){
+                MapRestaurantFragment.this.startActivity(RestaurantDetailActivity.navigate(
+                        MapRestaurantFragment.this.getContext(),
+                        item.getPlaceId()));
+            }
+        }else {
+            Log.d(TAG, "infoWindowClick: infoWindow hiden");
+        }
+    }
+
+    private BitmapDescriptor getBitmapDescriptor(int id) {
+        Drawable vectorDrawable = requireContext().getDrawable(id);
+        int h = 108;
+        int w = 108;
+        vectorDrawable.setBounds(0, 0, w, h);
+        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bm);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bm);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void updateUserLocation(Location location) {
+        if (location != null) {
+            try {
+                if (!permissionDenied) {
+                    mapsView.setMyLocationEnabled(true);
+                    mapsView.getUiSettings().setMyLocationButtonEnabled(true);
+                    return;
+                } else {
+                    Log.d(TAG, "updateLocationUI: permission denied");
+                    lastKnownLocation = null;
+                    getLocationPermission();
+                }
+            } catch (SecurityException e) {
+                Log.e("Exception: %s", e.getMessage());
+            }
+        }
+    }
+
+    private void unsubscribeToObservables() {
+        // homeRestaurantSharedViewModel.getLocationLiveData().removeObservers(this);
+        homeRestaurantSharedViewModel.getHomeViewStateLiveData().removeObservers(getViewLifecycleOwner());
+        homeRestaurantSharedViewModel.getPrediction().removeObservers(getViewLifecycleOwner());
     }
 
     @Override

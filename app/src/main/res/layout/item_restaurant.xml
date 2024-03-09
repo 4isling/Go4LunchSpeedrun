@@ -89,6 +89,15 @@
             app:layout_constraintEnd_toStartOf="@id/restaurant_item_picture"
             app:layout_constraintTop_toTopOf="@+id/restaurant_item_time" />
 
+        <ImageView
+            android:id="@+id/restaurant_item_person_icon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/restaurant_item_number_coworker"
+            app:layout_constraintEnd_toStartOf="@id/restaurant_item_number_coworker"
+            app:layout_constraintStart_toEndOf="@+id/restaurant_item_address"
+            app:layout_constraintTop_toTopOf="@id/restaurant_item_number_coworker" />
+
         <TextView
             android:id="@+id/restaurant_item_number_coworker"
             android:layout_width="wrap_content"
@@ -96,8 +105,6 @@
             app:layout_constraintEnd_toStartOf="@id/restaurant_item_picture"
             app:layout_constraintTop_toTopOf="@id/restaurant_item_address"
             tools:text="@string/coworker_number"/>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

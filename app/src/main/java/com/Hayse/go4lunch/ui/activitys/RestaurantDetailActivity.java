@@ -53,6 +53,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRestaurantDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.activityDetailToolbar.setOnClickListener(v -> onBackPressed());
         initViewModel();
         initRestaurantDetailUI();
         initWorkmatesUI();
@@ -115,9 +116,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     }
 
     private void initWorkmatesUI() {
-        recyclerView = binding.detailRecyclerView;
+        recyclerView = binding.detailWorkmateList;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
         adapter = new WorkmateAdapter();
         recyclerView.setAdapter(adapter);
         viewModel.getListWorkmateLiveData().observe(this, workmates -> {

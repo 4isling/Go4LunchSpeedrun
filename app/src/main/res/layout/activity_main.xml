@@ -25,6 +25,7 @@
                 app:titleTextColor="@color/white">
                 <ImageView
                     android:id="@+id/activity_main_toolbar_search_icon"
+                    android:contentDescription="@string/toolbar_search_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -61,8 +62,6 @@
                 app:itemTextColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:menu="@menu/bottom_nav_menu" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.navigation.NavigationView
@@ -77,13 +76,12 @@
             app:itemIconTint="@color/white"
             app:itemTextColor="@color/white"
             app:menu="@menu/drawer_menu_activity_main">
-
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="148dp"
+                android:layout_height="148dp"
                 android:layout_gravity="bottom|center"
+                android:contentDescription="@string/icon_go4lunch_navigation_view"
                 android:src="@drawable/ic_go4lunch_logo" />
         </com.google.android.material.navigation.NavigationView>
-
     </androidx.drawerlayout.widget.DrawerLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

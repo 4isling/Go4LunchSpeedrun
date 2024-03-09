@@ -1,7 +1,7 @@
 package com.Hayse.go4lunch.ui.adapter;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,48 +17,49 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
+import com.Hayse.go4lunch.ui.view_state.HomeViewState;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.ViewHolder> {
-    private List<Result> restaurantList;
+public class RestaurantItemByViewStateAdapter extends ListAdapter<HomeViewState, RestaurantItemByViewStateAdapter.ViewHolder> {
+
+    private List<HomeViewState> restaurantList;
     private OnRestaurantItemClickListener onRestaurantItemClickListener;
-    public RestaurantAdapter(){
+
+    public RestaurantItemByViewStateAdapter(){
         super(new ListRestaurantItemCallback());
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_restaurant,parent,false));
+    public RestaurantItemByViewStateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new RestaurantItemByViewStateAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_restaurant,parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RestaurantItemByViewStateAdapter.ViewHolder holder, int position) {
         holder.bind(getItem(position));
         holder.itemView.setOnClickListener(v -> onRestaurantItemClickListener.onRestaurantItemClick(getItem(position)));
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setList(List<Result> restaurantList){
+    public void setList(List<HomeViewState> restaurantList){
         this.restaurantList = restaurantList;
         notifyDataSetChanged();
     }
 
-    private static class ListRestaurantItemCallback extends DiffUtil.ItemCallback<Result>{
-
+    private static class ListRestaurantItemCallback extends DiffUtil.ItemCallback<HomeViewState>{
         @Override
-        public boolean areItemsTheSame(@NonNull Result oldItem, @NonNull Result newItem) {
+        public boolean areItemsTheSame(@NonNull HomeViewState oldItem, @NonNull HomeViewState newItem) {
             return oldItem.getPlaceId().equals(newItem.getPlaceId());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Result oldItem, @NonNull Result newItem) {
+        public boolean areContentsTheSame(@NonNull HomeViewState oldItem, @NonNull HomeViewState newItem) {
             return oldItem.equals(newItem);
         }
     }
-    public void setOnItemClickListener(OnRestaurantItemClickListener onRestaurantItemClickListener) {
+    public void setOnItemClickListener(RestaurantItemByViewStateAdapter.OnRestaurantItemClickListener onRestaurantItemClickListener) {
         this.onRestaurantItemClickListener = onRestaurantItemClickListener;
     }
 
@@ -69,8 +70,9 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
         private final TextView restaurantOpenHour;
         private final TextView restaurantFoodType;
         private final RatingBar restaurantRating;
-
+        private final ImageView personIcon;
         private final TextView workmateNumber;
+        private final TextView distance;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,30 +82,30 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
             restaurantOpenHour = itemView.findViewById(R.id.restaurant_item_time);
             restaurantFoodType = itemView.findViewById(R.id.restaurant_item_food);
             restaurantRating = itemView.findViewById(R.id.restaurant_item_rating);
+            distance = itemView.findViewById(R.id.restaurant_item_distance);
+            personIcon = itemView.findViewById(R.id.restaurant_item_person_icon);
             workmateNumber = itemView.findViewById(R.id.restaurant_item_number_coworker);
         }
 
-        public void bind(Result restaurant) {
+        public void bind(HomeViewState restaurant) {
             if(restaurant != null){
-                if(restaurant.getPhotos().get(0).getPhotoReference()!= null){
-                    String photoRef = restaurant.getPhotos().get(0).getPhotoReference();
-                    String html_attributions = restaurant.getPhotos().get(0).getHtmlAttributions().get(0);
-
+                if(restaurant.getImageUri()!= null){
+                    String photoRef = restaurant.getImageUri();
                     Glide.with(restaurantImage.getContext())
                             .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+photoRef+"&key="+ MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY))
                             .into(restaurantImage);
                 }
-                if(restaurant.getName()!= null){
-                    restaurantName.setText(restaurant.getName());
+                if(restaurant.getRestaurantName()!= null){
+                    restaurantName.setText(restaurant.getRestaurantName());
                 }else{
                     restaurantName.setText("");
                 }
-                if (restaurant.getVicinity()!=null){
-                    restaurantAddress.setText(restaurant.getVicinity());
+                if (restaurant.getAddress()!=null){
+                    restaurantAddress.setText(restaurant.getAddress());
                 }else{
                     restaurantAddress.setText("");
                 }
-                if (restaurant.getOpeningHours() !=null){
+                if (restaurant.getOpeningHours() != null){
                     if(restaurant.getOpeningHours().isOpenNow()){
                         restaurantOpenHour.setText(R.string.is_open);
                         restaurantOpenHour.setTextColor(Color.GREEN);
@@ -114,18 +116,22 @@ public class RestaurantAdapter extends ListAdapter<Result, RestaurantAdapter.Vie
                 }else {
                     restaurantOpenHour.setText("");
                 }
-
-                if (restaurant.getTypes() != null){
-                    restaurantFoodType.setText(restaurant.getTypes().get(1));
-                }else {
-                    restaurantFoodType.setText("");
+                if (restaurant.getWorkmateNumber() > 0){
+                    personIcon.setImageResource(R.drawable.baseline_person_24);
+                    personIcon.setVisibility(View.VISIBLE);
+                    workmateNumber.setText("("+restaurant.getWorkmateNumber()+")  ");
+                }else{
+                    personIcon.setVisibility(View.GONE);
+                    workmateNumber.setText("");
                 }
-                    restaurantRating.setRating((float) (restaurant.getRating() * 3) / 5);
+                distance.setText(restaurant.getDistance()+"m");
+                restaurantFoodType.setText("");
+                restaurantRating.setRating((float) (restaurant.getRating() * 3) / 5);
             }
-       }
+        }
     }
 
     public interface OnRestaurantItemClickListener{
-        void onRestaurantItemClick(Result result);
+        void onRestaurantItemClick(HomeViewState result);
     }
 }

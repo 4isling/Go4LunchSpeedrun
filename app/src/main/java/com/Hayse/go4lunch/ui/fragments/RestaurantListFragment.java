@@ -18,19 +18,23 @@ import com.Hayse.go4lunch.databinding.FragmentRestaurantBinding;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
 import com.Hayse.go4lunch.ui.adapter.RestaurantAdapter;
+import com.Hayse.go4lunch.ui.adapter.RestaurantItemByViewStateAdapter;
+import com.Hayse.go4lunch.ui.view_state.HomeViewState;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RestaurantListFragment extends Fragment {
     private String TAG = "com.Hayse.go4lunch.ui.fragments.RestaurantListFragment";
     private HomeRestaurantSharedViewModel viewModel;
-    private RestaurantAdapter adapter;
+    private RestaurantItemByViewStateAdapter adapter;
     private RecyclerView recyclerView;
     private FragmentRestaurantBinding binding;
 
+    private final AtomicBoolean isViewStateSet = new AtomicBoolean(false);
     private Location location;
 
     @NonNull
@@ -50,7 +54,7 @@ public class RestaurantListFragment extends Fragment {
         recyclerView = binding.restaurantList;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
-        adapter = new RestaurantAdapter();
+        adapter = new RestaurantItemByViewStateAdapter();
         recyclerView.setAdapter(adapter);
         subscribeToObservables();
         adapter.setOnItemClickListener(restaurant -> RestaurantListFragment.this.startActivity(RestaurantDetailActivity.navigate(
@@ -61,15 +65,21 @@ public class RestaurantListFragment extends Fragment {
 
     private void subscribeToObservables() {
         Log.d(TAG, "subscribeToObservables: ");
-        viewModel.getLocationLiveData().observe(
+       /* viewModel.getLocationLiveData().observe(
                 getViewLifecycleOwner(), location -> {
                     if (location != null) {
                         this.location = location;
                         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        viewModel.getRestaurant(location).observe(getViewLifecycleOwner(), this::updateRecyclerView);
+                        //viewModel.getRestaurant(location).observe(getViewLifecycleOwner(), this::updateRecyclerView);
                     }
                 }
-        );
+        );*/
+        //HomeViewState
+        viewModel.getHomeViewStateLiveData().observe(getViewLifecycleOwner(), viewState ->{
+            setUserLocation(viewState.getLocation());
+            updateRecyclerViewByViewState(viewState.getHomeViewState());
+            Log.d(TAG, "subscribeToObservables: viewState "+viewState.toString());
+        });
 
         viewModel.getPrediction().observe(getViewLifecycleOwner(), place -> {
             if (place != null) {
@@ -81,9 +91,25 @@ public class RestaurantListFragment extends Fragment {
                 Log.d(TAG, "subscribeToObservables: place autocomplete is null");
             }
         });
-
     }
 
+    private void updateRecyclerViewByViewState(List<HomeViewState> restaurants){
+        if (restaurants == null) {
+            noRestaurant.setVisibility(View.VISIBLE);
+            binding.restaurantList.setVisibility(View.GONE);
+            Log.d(TAG, "updateRecyclerView: restaurantsList == null");
+        } else {
+            Log.d(TAG, "updateRecyclerView: restaurantList != null");
+            noRestaurant.setVisibility(View.GONE);
+            binding.restaurantList.setVisibility(View.VISIBLE);
+            adapter.submitList(restaurants);
+            adapter.submitList(restaurants);
+        }
+    }
+
+    private void setUserLocation(Location location){
+
+    }
     private void updateRecyclerView(List<Result> resultList) {
         if (resultList == null) {
             noRestaurant.setVisibility(View.VISIBLE);
@@ -93,7 +119,7 @@ public class RestaurantListFragment extends Fragment {
             Log.d(TAG, "updateRecyclerView: restaurantList != null");
             noRestaurant.setVisibility(View.GONE);
             binding.restaurantList.setVisibility(View.VISIBLE);
-            adapter.submitList(resultList);
+     //       adapter.submitList(resultList);
         }
     }
 
@@ -105,9 +131,14 @@ public class RestaurantListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //removeObserver();
+        removeObserver();
         binding = null;
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        subscribeToObservables();
+        binding.getRoot();
+    }
 }

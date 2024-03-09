@@ -90,7 +90,7 @@ public class LocationRepository {
     }
 
     @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
-    public MutableLiveData<Location> getLastLocation() {
+    public LiveData<Location> getLastLocation() {
         fusedLocationProviderClient.getLastLocation()
                 .addOnCompleteListener(new OnCompleteListener<Location>() {
                     @SuppressLint("MissingPermission")

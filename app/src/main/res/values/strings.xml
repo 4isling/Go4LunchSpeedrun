@@ -43,5 +43,8 @@
     <string name="off">Off</string>
     <string name="notification_title">Notification:</string>
     <string name="alow_notification_toast">Go4Lunch will send you a daily notification</string>
-
+    <string name="workmateNumberClose">)</string>
+    <string name="workmateNumberOpen">(</string>
+    <string name="toolbar_search_icon">toolbar search Icon</string>
+    <string name="icon_go4lunch_navigation_view">Icon Go4Lunch</string>
 </resources>
