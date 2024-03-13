@@ -3,6 +3,7 @@ package com.Hayse.go4lunch.services.firebase;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.work.WorkManager;
@@ -39,6 +40,10 @@ public class WorkmateRepository {
         mFirebaseHelper = FirebaseHelper.getInstance();
         // Uncomment this method to populate your firebase database, it will upload some data
         // Comment it again after the first launch
+    }
+
+    public LiveData<List<Workmate>> getAllWorkmateRt(){
+        return mFirebaseHelper.getRtWorkmates();
     }
 
     public MutableLiveData<List<Workmate>> getAllWorkmate(){
@@ -83,23 +88,38 @@ public class WorkmateRepository {
         return userData;
     }
 
+
     public LiveData<Workmate> getRealTimeUserData(){
         return mFirebaseHelper.getFirestoreUserDataRT();
     }
 
-    public void updateRestaurantChoice(String placeId, String name, String address) {
+    public void updateRestaurantChoice(String placeId, String restaurantName, String address) {
         mFirebaseHelper.getUserDataFireStore().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
                 Workmate user = task.getResult().toObject(Workmate.class);
                 if (!Objects.equals(user.getPlaceId(), placeId) || user.getPlaceId().equals("")){
                     Log.d(TAG, "updateRestaurantChoice: addRestaurantChoice");
-                    mFirebaseHelper.updateUserData(null, placeId, name,address,null);
+                    mFirebaseHelper.updateUserData(null, null,null, placeId, restaurantName,address,null);
                 }else{
                     Log.d(TAG, "updateRestaurantChoice: suppressRestaurantChoice");
-                    mFirebaseHelper.updateUserData(null,"","","",null);
+                    mFirebaseHelper.updateUserData(null,null,null,"","","",null);
                 }
             }
         });
 
+    }
+
+    public void deleteUser() {
+        mFirebaseHelper.deleteUser();
+    }
+
+    public void updateWorkmate(@Nullable String avatarUrl,
+                               @Nullable String name,
+                               @Nullable String email,
+                               @Nullable String placeId,
+                               @Nullable String restaurantName,
+                               @Nullable String restaurantAddress,
+                               @Nullable String restaurantTypeOfFood) {
+        mFirebaseHelper.updateUserData(avatarUrl,name,email,placeId, restaurantName, null, null);
     }
 }

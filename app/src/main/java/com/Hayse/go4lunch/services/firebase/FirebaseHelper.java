@@ -3,21 +3,18 @@ package com.Hayse.go4lunch.services.firebase;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.Hayse.go4lunch.domain.entites.FavRestaurant;
 import com.Hayse.go4lunch.domain.entites.Workmate;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -25,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FirebaseHelper {
     private static FirebaseHelper sFirebaseHelper;
@@ -46,6 +41,7 @@ public class FirebaseHelper {
         return sFirebaseHelper;
     }
 
+
     /**
      * Get Data From user OAuth account to make a Workmate object
      *
@@ -53,10 +49,13 @@ public class FirebaseHelper {
      */
     public Workmate getUserDataOAuth() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        Workmate workmate = new Workmate(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl().toString(),
-                firebaseAuth.getCurrentUser().getDisplayName(),
-                firebaseAuth.getCurrentUser().getUid(),
-                firebaseAuth.getCurrentUser().getEmail());
+        Workmate workmate = new Workmate();
+        if (firebaseAuth.getCurrentUser().getPhotoUrl() != null) {
+            workmate.setAvatarUrl(firebaseAuth.getCurrentUser().getPhotoUrl().toString());
+        }
+        workmate.setName(firebaseAuth.getCurrentUser().getDisplayName());
+        workmate.setEmail(firebaseAuth.getCurrentUser().getEmail());
+        workmate.setId(firebaseAuth.getCurrentUser().getUid());
         userUID = workmate.getId();
         Log.d(TAG, "getUserData: userUID" + userUID);
         return workmate;
@@ -65,7 +64,7 @@ public class FirebaseHelper {
     public MutableLiveData<Workmate> getFirestoreUserDataRT() {
         MutableLiveData<Workmate> realTimeUserData = new MutableLiveData<>();
         workmateRef.document(FirebaseAuth.getInstance().getUid()).addSnapshotListener((value, error) -> {
-            if (error != null){
+            if (error != null) {
                 Log.w(TAG, "onEvent: error:", error);
             }
             realTimeUserData.postValue(value.toObject(Workmate.class));
@@ -75,19 +74,18 @@ public class FirebaseHelper {
 
     public String getUserUID() {
         return FirebaseAuth.getInstance().getUid();
-
     }
 
     public Task<QuerySnapshot> getAllWorkmate() {
         return workmateRef.get();
     }
 
-    public MutableLiveData<List<Workmate>> getRtWorkmates(){
+    public MutableLiveData<List<Workmate>> getRtWorkmates() {
         MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
         workmateRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null){
+                if (error != null) {
                     Log.w(TAG, "GetRtWorkmateListener", error);
                 }
                 if (!value.isEmpty()) {
@@ -111,6 +109,7 @@ public class FirebaseHelper {
         workmate.put("id", uData.getId());
         workmate.put("avatarUrl", uData.getAvatarUrl());
         workmate.put("name", uData.getName());
+        workmate.put("email", uData.getEmail());
         workmate.put("placeId", "");
         workmate.put("restaurantAddress", "");
         workmate.put("restaurantName", "");
@@ -123,6 +122,8 @@ public class FirebaseHelper {
 
 
     public void updateUserData(@Nullable String avatarUrl,
+                               @Nullable String name,
+                               @Nullable String email,
                                @Nullable String placeId,
                                @Nullable String restaurantName,
                                @Nullable String restaurantAddress,
@@ -143,6 +144,12 @@ public class FirebaseHelper {
         }
         if (restaurantTypeOfFood != null) {
             updateData.put("restaurantTypeOfFood", restaurantTypeOfFood);
+        }
+        if (name != null){
+            updateData.put("name", name);
+        }
+        if (email!= null){
+            updateData.put("email", email);
         }
         workmateRef.document(FirebaseAuth.getInstance().getUid())
                 .update(updateData)
@@ -178,28 +185,32 @@ public class FirebaseHelper {
         workmateRef.whereEqualTo("placeId", placeId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException error) {
-                    if (error != null) {
-                        Log.d(TAG, "listen failed: ", error);
-                        return;
-                    }
-                    if (!snapshots.isEmpty()) {
-                        Log.d(TAG, "getWorkmateByPlaceId: not empty");
-                        List<Workmate> workmates = snapshots.toObjects(Workmate.class);
-                        workmatesResult.postValue(workmates);
-                    } else {
-                        Log.d(TAG, "getWorkmateByPlaceId: is empty");
-                        workmatesResult.postValue(new ArrayList<>());
-                    }
+                if (error != null) {
+                    Log.d(TAG, "listen failed: ", error);
+                    return;
+                }
+                if (!snapshots.isEmpty()) {
+                    Log.d(TAG, "getWorkmateByPlaceId: not empty");
+                    List<Workmate> workmates = snapshots.toObjects(Workmate.class);
+                    workmatesResult.postValue(workmates);
+                } else {
+                    Log.d(TAG, "getWorkmateByPlaceId: is empty");
+                    workmatesResult.postValue(new ArrayList<>());
+                }
             }
         });
         return workmatesResult;
+    }
+
+    public Task<QuerySnapshot> getWorkmateForNotification(String placeId) {
+        return workmateRef.whereEqualTo("placeId", placeId).get();
     }
 
     public Task<DocumentSnapshot> getUserDataFireStore() {
         return workmateRef.document(FirebaseAuth.getInstance().getUid()).get();
     }
 
-    public Task<DocumentSnapshot> getUserDataFireStoreByUID(String userID){
+    public Task<DocumentSnapshot> getUserDataFireStoreByUID(String userID) {
         return workmateRef.document(userID).get();
     }
 
@@ -256,6 +267,61 @@ public class FirebaseHelper {
                 }
             } else {
                 Log.d(TAG, "onComplete: Failed with", task.getException());
+            }
+        });
+    }
+
+    public void deleteUser() {
+        workmateRef.whereEqualTo("uid", getUserUID()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    document.getReference().delete();
+                }
+            } else {
+                Log.e(TAG, "Failed to delete user's workmates.", task.getException());
+            }
+        });
+        favRestaurantRef.whereEqualTo("user_id", getUserUID()).addSnapshotListener(((value, error) -> {
+                    if (error != null) {
+                        Log.e(TAG, "getUserFavList: ", error);
+                        return;
+                    }
+                    if (!value.isEmpty()) {
+                        Log.d(TAG, "getUserFavList: not empty");
+                        for (DocumentSnapshot doc : value.getDocuments()) {
+                            doc.getReference().delete();
+                        }
+                    } else {
+                        Log.d(TAG, "getUserFavList: is empty");
+                    }
+                })
+        );
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            user.delete()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted successfully.");
+                            // You can sign out the user or perform other actions here
+                            FirebaseAuth.getInstance().signOut();
+                            // Finish the current activity or navigate to the appropriate screen
+                        } else {
+                            Log.e(TAG, "Failed to delete user account.", task.getException());
+                        }
+                    });
+        } else {
+            Log.e(TAG, "No user is currently signed in.");
+        }
+    }
+
+    public void deleteFavRestaurant(FavRestaurant favRestaurant) {
+        favRestaurantRef.whereEqualTo("id", favRestaurant.getId()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    document.getReference().delete();
+                }
+            } else {
+                Log.e(TAG, "Failed to delete fav restaurant.", task.getException());
             }
         });
     }

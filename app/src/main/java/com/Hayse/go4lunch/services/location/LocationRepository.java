@@ -1,4 +1,4 @@
-package com.Hayse.go4lunch.services.google_map;
+package com.Hayse.go4lunch.services.location;
 
 import static android.content.ContentValues.TAG;
 
@@ -87,40 +87,5 @@ public class LocationRepository {
         if (callback != null) {
             fusedLocationProviderClient.removeLocationUpdates(callback);
         }
-    }
-
-    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
-    public LiveData<Location> getLastLocation() {
-        fusedLocationProviderClient.getLastLocation()
-                .addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @SuppressLint("MissingPermission")
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        Location location = task.getResult();
-                        if (location == null) {
-                            startLocationRequest();
-                        } else {
-                            locationMutableLiveData.setValue(location);
-                        }
-                    }
-                });
-        return locationMutableLiveData;
-    }
-
-    @SuppressLint("MissingPermission")
-    private void requestNewLocationData() {
-
-        // Initializing LocationRequest
-        // object with appropriate methods
-        LocationRequest locationRequest = new
-                LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000)
-                .setWaitForAccurateLocation(false)
-                .setMinUpdateIntervalMillis(10_000)
-                .setMinUpdateDistanceMeters(500)
-                .build();
-
-        // setting LocationRequest
-        // on FusedLocationClient
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, callback, Looper.myLooper());
     }
 }

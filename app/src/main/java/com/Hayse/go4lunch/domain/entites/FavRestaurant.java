@@ -145,11 +145,15 @@ public class FavRestaurant {
                 restaurant_website);
     }
 
-    public String getRestaurant_pic() {
-        return restaurant_pic;
-    }
-
     public void setRestaurant_pic(String restaurant_pic) {
         this.restaurant_pic = restaurant_pic;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FavRestaurant that = (FavRestaurant) o;
+        return Float.compare(that.restaurant_rating, restaurant_rating) == 0 && Objects.equals(id, that.id) && Objects.equals(user_id, that.user_id) && Objects.equals(place_id, that.place_id) && Objects.equals(restaurant_name, that.restaurant_name) && Objects.equals(restaurant_pic, that.restaurant_pic) && Objects.equals(restaurant_address, that.restaurant_address) && Objects.equals(restaurant_phone, that.restaurant_phone) && Objects.equals(restaurant_website, that.restaurant_website);
     }
 }

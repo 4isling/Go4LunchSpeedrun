@@ -15,29 +15,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.Hayse.go4lunch.databinding.FragmentRestaurantBinding;
-import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
-import com.Hayse.go4lunch.ui.adapter.RestaurantAdapter;
 import com.Hayse.go4lunch.ui.adapter.RestaurantItemByViewStateAdapter;
 import com.Hayse.go4lunch.ui.view_state.HomeViewState;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RestaurantListFragment extends Fragment {
-    private String TAG = "com.Hayse.go4lunch.ui.fragments.RestaurantListFragment";
+    private final String TAG = "RestaurantListFragment";
     private HomeRestaurantSharedViewModel viewModel;
     private RestaurantItemByViewStateAdapter adapter;
-    private RecyclerView recyclerView;
     private FragmentRestaurantBinding binding;
 
     private final AtomicBoolean isViewStateSet = new AtomicBoolean(false);
     private Location location;
 
-    @NonNull
     private TextView noRestaurant;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,7 +46,7 @@ public class RestaurantListFragment extends Fragment {
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: ");
-        recyclerView = binding.restaurantList;
+        RecyclerView recyclerView = binding.restaurantList;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
         adapter = new RestaurantItemByViewStateAdapter();
@@ -65,15 +60,6 @@ public class RestaurantListFragment extends Fragment {
 
     private void subscribeToObservables() {
         Log.d(TAG, "subscribeToObservables: ");
-       /* viewModel.getLocationLiveData().observe(
-                getViewLifecycleOwner(), location -> {
-                    if (location != null) {
-                        this.location = location;
-                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        //viewModel.getRestaurant(location).observe(getViewLifecycleOwner(), this::updateRecyclerView);
-                    }
-                }
-        );*/
         //HomeViewState
         viewModel.getHomeViewStateLiveData().observe(getViewLifecycleOwner(), viewState ->{
             setUserLocation(viewState.getLocation());
@@ -108,20 +94,11 @@ public class RestaurantListFragment extends Fragment {
     }
 
     private void setUserLocation(Location location){
+        this.location = location;
+        Log.d(TAG, "setUserLocation: yserLocation");
 
     }
-    private void updateRecyclerView(List<Result> resultList) {
-        if (resultList == null) {
-            noRestaurant.setVisibility(View.VISIBLE);
-            binding.restaurantList.setVisibility(View.GONE);
-            Log.d(TAG, "updateRecyclerView: restaurantsList == null");
-        } else {
-            Log.d(TAG, "updateRecyclerView: restaurantList != null");
-            noRestaurant.setVisibility(View.GONE);
-            binding.restaurantList.setVisibility(View.VISIBLE);
-     //       adapter.submitList(resultList);
-        }
-    }
+
 
     private void removeObserver() {
         viewModel.getLocationLiveData().removeObservers(getViewLifecycleOwner());

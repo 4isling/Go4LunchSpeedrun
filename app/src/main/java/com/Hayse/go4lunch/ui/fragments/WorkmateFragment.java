@@ -19,7 +19,6 @@ import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
 public class WorkmateFragment extends Fragment {
     private WorkmateViewModel workmateViewModel;
     private WorkmateAdapter adapter;
-    private RecyclerView recyclerView;
     private FragmentWorkmateBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -35,7 +34,7 @@ public class WorkmateFragment extends Fragment {
      * initialise the recyclerView with binding a
      */
     private void initRecyclerView(){
-        recyclerView = binding.workmateList;
+        RecyclerView recyclerView = binding.workmateList;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
         adapter = new WorkmateAdapter();

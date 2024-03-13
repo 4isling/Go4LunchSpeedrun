@@ -1,7 +1,7 @@
 package com.Hayse.go4lunch.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.graphics.drawable.Icon;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
-import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.ui.view_state.HomeViewState;
 import com.bumptech.glide.Glide;
 
-import java.util.List;
-
 public class RestaurantItemByViewStateAdapter extends ListAdapter<HomeViewState, RestaurantItemByViewStateAdapter.ViewHolder> {
 
-    private List<HomeViewState> restaurantList;
     private OnRestaurantItemClickListener onRestaurantItemClickListener;
 
     public RestaurantItemByViewStateAdapter(){
@@ -41,11 +37,6 @@ public class RestaurantItemByViewStateAdapter extends ListAdapter<HomeViewState,
     public void onBindViewHolder(@NonNull RestaurantItemByViewStateAdapter.ViewHolder holder, int position) {
         holder.bind(getItem(position));
         holder.itemView.setOnClickListener(v -> onRestaurantItemClickListener.onRestaurantItemClick(getItem(position)));
-    }
-
-    public void setList(List<HomeViewState> restaurantList){
-        this.restaurantList = restaurantList;
-        notifyDataSetChanged();
     }
 
     private static class ListRestaurantItemCallback extends DiffUtil.ItemCallback<HomeViewState>{
@@ -87,6 +78,7 @@ public class RestaurantItemByViewStateAdapter extends ListAdapter<HomeViewState,
             workmateNumber = itemView.findViewById(R.id.restaurant_item_number_coworker);
         }
 
+        @SuppressLint("SetTextI18n")
         public void bind(HomeViewState restaurant) {
             if(restaurant != null){
                 if(restaurant.getImageUri()!= null){

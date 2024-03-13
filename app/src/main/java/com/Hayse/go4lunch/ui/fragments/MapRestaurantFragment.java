@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -13,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,15 +22,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentMapBinding;
-import com.Hayse.go4lunch.domain.entites.Workmate;
-import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
 import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
 import com.Hayse.go4lunch.ui.view_state.HomeViewState;
-import com.Hayse.go4lunch.ui.view_state.HomeWrapperViewState;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
-import com.Hayse.go4lunch.util.SvgToBitmap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -43,6 +39,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 
@@ -54,12 +51,8 @@ public class MapRestaurantFragment extends Fragment {
     private static final String TAG = MapRestaurantFragment.class.getSimpleName();
     private GoogleMap mapsView;
 
-    private GoogleMapOptions mapOptions;
-
     SupportMapFragment supportMapFragment;
 
-
-    private final boolean permissionDenied = false;
     int REQ_PERMISSION = 100;
 
     private final Disposable disposable = null;
@@ -95,58 +88,49 @@ public class MapRestaurantFragment extends Fragment {
      * if user already authorised location permission
      *
      * @return true
-     * else ask user permission and
-     * @return true
      * if it as bin given
      * else
      * @return false
      */
-    private boolean getLocationPermission() {
+    private void getLocationPermission() {
         //request location permission
-        if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_PERMISSION);
-            if (ActivityCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this.requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_PERMISSION);
+            if (ActivityCompat.checkSelfPermission(this.requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "getLocationPermission: return true2");
-                return true;
             } else {
                 Log.d(TAG, "getLocationPermission: return false");
-                return false;
             }
         } else {
             Log.d(TAG, "getLocationPermission: return true1");
-            return true;
         }
     }
 
     private void initMap() {
         Log.d(TAG, "initMap: ");
-        this.mapOptions = new GoogleMapOptions();
-        this.mapOptions.mapType(GoogleMap.MAP_TYPE_NORMAL)
+        GoogleMapOptions mapOptions = new GoogleMapOptions();
+        mapOptions.mapType(GoogleMap.MAP_TYPE_NORMAL)
                 .compassEnabled(true)
                 .rotateGesturesEnabled(true)
                 .tiltGesturesEnabled(true);
         this.supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_view);
         //requireActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_view, supportMapFragment).commit();
 
-        this.supportMapFragment.getMapAsync(new OnMapReadyCallback() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onMapReady(@NonNull GoogleMap googleMap) {
-                Log.d(TAG, "onMapReady: ");
-                mapsView = googleMap;
-                PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
-                if (permissionChecker.hasLocationPermission()) {
-                    Log.d(TAG, "onMapReady: location permission guaranteed");
-                    subscribeToObservables();
-                }
+        this.supportMapFragment.getMapAsync(googleMap -> {
+            Log.d(TAG, "onMapReady: ");
+            mapsView = googleMap;
+            PermissionChecker permissionChecker = new PermissionChecker(getActivity().getApplication());
+            if (permissionChecker.hasLocationPermission()) {
+                Log.d(TAG, "onMapReady: location permission guaranteed");
+                subscribeToObservables();
             }
         });
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         if (mapsView != null) {
             outState.putParcelable(KEY_CAMERA_POSITION, mapsView.getCameraPosition());
             outState.putParcelable(KEY_LOCATION, lastKnownLocation);
@@ -155,88 +139,11 @@ public class MapRestaurantFragment extends Fragment {
     }
 
 
-    /**
-     * Updates the map's UI settings based on whether the user has granted location permission.
-     */
-    // [START maps_current_place_update_location_ui]
-    @SuppressLint("MissingPermission")
-    private void updateLocationUI(List<Result> resultList) {
-        if (mapsView == null) {
-            Log.d(TAG, "updateLocationUI: mapsView == null");
-            return;
-        }
-        try {
-            if (!permissionDenied) {
-                Log.d(TAG, "updateLocationUI: permission guaranteed");
-                mapsView.setMyLocationEnabled(true);
-                mapsView.getUiSettings().setMyLocationButtonEnabled(true);
-                if (resultList != null) {
-                    displayMarker(resultList);
-                }
-
-            } else {
-                Log.d(TAG, "updateLocationUI: permission denied");
-                lastKnownLocation = null;
-                getLocationPermission();
-            }
-        } catch (SecurityException e) {
-            Log.e("Exception: %s", e.getMessage());
-        }
-    }
-
-    private void displayMarker(@NonNull List<Result> results) {
-        Log.d(TAG, "displayMarker: ");
-        for (Result result : results) {
-            Log.d(TAG, "displayMarker: result : " + result.getName());
-            LatLng latLngMarker = new LatLng(
-                    (result.getGeometry()
-                            .getLocation()
-                            .getLat()),
-                    (result.getGeometry()
-                            .getLocation()
-                            .getLng()));
-            //get LatLong to Marker
-            Marker restaurant = mapsView.addMarker(new MarkerOptions()
-                    .position(latLngMarker)
-                    .icon(BitmapDescriptorFactory.defaultMarker())
-                    .title(result.getName()));
-            restaurant.showInfoWindow();
-            //show marker
-            LatLng latLngResult = new LatLng(
-                    (result.getGeometry()
-                            .getLocation()
-                            .getLat()),
-                    (result.getGeometry()
-                            .getLocation()
-                            .getLng()));
-            mapsView.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(@NonNull Marker marker) {
-                    return false;
-                }
-            });
-            //set position marker
-            mapsView.getUiSettings().setAllGesturesEnabled(true);
-            mapsView.getUiSettings().setZoomGesturesEnabled(true);
-        }
-    }
-
-
     private void subscribeToObservables() {
-        /*homeRestaurantSharedViewModel.getLocationLiveData().observe(
-                this, location -> {
-                    if (location != null) {
-                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        mapsView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                    }
-                    homeRestaurantSharedViewModel.getRestaurant(location).observe(this, this::updateLocationUI);
-                   // homeRestaurantSharedViewModel.getWorkmates().observe(this, this::updateMarkers);
-                }
-        );*/
+
         homeRestaurantSharedViewModel.getHomeViewStateLiveData().observe(getViewLifecycleOwner(), homeWrapperViewState -> {
-            updateUi(homeWrapperViewState.getHomeViewState());
             updateUserLocation(homeWrapperViewState.getLocation());
+            updateUi(homeWrapperViewState.getHomeViewState());
         });
         homeRestaurantSharedViewModel.getPrediction().observe(getViewLifecycleOwner(), place -> {
             Log.d(TAG, "subscribeToObservables: ");
@@ -246,6 +153,20 @@ public class MapRestaurantFragment extends Fragment {
                     //mapsView.addMarker();
                     mapsView.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
                     mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 15));
+                    MarkerOptions markerOpt = new MarkerOptions()
+                            .position(place.getLatLng())
+                            .title(place.getName())
+                            .snippet(place.getAddress());
+                    Marker marker = mapsView.addMarker(markerOpt);
+                    if (marker != null) {
+                        marker.showInfoWindow();
+                    }
+                    if (marker != null) {
+                        marker.setTag(place.getId());
+                    }
+                    mapsView.setOnInfoWindowClickListener(info -> requireContext().startActivity(RestaurantDetailActivity.navigate(
+                            requireContext(),
+                            (String) info.getTag())));
                 }
             } else {
                 Log.d(TAG, "subscribeToObservables: autocomplete place is null");
@@ -306,7 +227,7 @@ public class MapRestaurantFragment extends Fragment {
     }
 
     private BitmapDescriptor getBitmapDescriptor(int id) {
-        Drawable vectorDrawable = requireContext().getDrawable(id);
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable vectorDrawable = requireContext().getDrawable(id);
         int h = 108;
         int w = 108;
         vectorDrawable.setBounds(0, 0, w, h);
@@ -320,9 +241,12 @@ public class MapRestaurantFragment extends Fragment {
     private void updateUserLocation(Location location) {
         if (location != null) {
             try {
+                boolean permissionDenied = false;
                 if (!permissionDenied) {
                     mapsView.setMyLocationEnabled(true);
                     mapsView.getUiSettings().setMyLocationButtonEnabled(true);
+                    mapsView.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
+                    mapsView.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()), 15));
                     return;
                 } else {
                     Log.d(TAG, "updateLocationUI: permission denied");
@@ -332,6 +256,8 @@ public class MapRestaurantFragment extends Fragment {
             } catch (SecurityException e) {
                 Log.e("Exception: %s", e.getMessage());
             }
+        }else {
+            Toast.makeText(getContext(), getString(R.string.enable_location_in_settings),Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -339,13 +265,6 @@ public class MapRestaurantFragment extends Fragment {
         // homeRestaurantSharedViewModel.getLocationLiveData().removeObservers(this);
         homeRestaurantSharedViewModel.getHomeViewStateLiveData().removeObservers(getViewLifecycleOwner());
         homeRestaurantSharedViewModel.getPrediction().removeObservers(getViewLifecycleOwner());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        subscribeToObservables();
-        binding.getRoot();
     }
 
     @Override

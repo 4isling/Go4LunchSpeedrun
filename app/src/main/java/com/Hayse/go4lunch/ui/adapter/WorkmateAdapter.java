@@ -55,10 +55,10 @@ public class WorkmateAdapter extends ListAdapter<Workmate, WorkmateAdapter.ViewH
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView avatarImageView;
-        private TextView nameTextView;
-        private TextView typeOfFoodTextView;
-        private TextView restaurantNameTextView;
+        private final ImageView avatarImageView;
+        private final TextView nameTextView;
+        private final TextView typeOfFoodTextView;
+        private final TextView restaurantNameTextView;
 
         public ViewHolder(@NonNull View itemView){
             super(itemView);

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.RestaurantResult;
-import com.Hayse.go4lunch.services.google_map.LocationRepository;
+import com.Hayse.go4lunch.services.location.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.NearBySearchRepository;
 
 public class GetNearBySearchResultUseCase {

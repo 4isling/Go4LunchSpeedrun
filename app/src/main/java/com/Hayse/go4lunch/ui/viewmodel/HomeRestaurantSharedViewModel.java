@@ -1,7 +1,6 @@
 package com.Hayse.go4lunch.ui.viewmodel;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.location.Location;
 import android.os.Build;
 import android.util.Log;
@@ -15,16 +14,12 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.Hayse.go4lunch.domain.entites.Workmate;
-import com.Hayse.go4lunch.domain.entites.map_api.autocomplete.Prediction;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Geometry;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.OpeningHours;
 import com.Hayse.go4lunch.domain.entites.map_api.nerbysearch.Result;
-import com.Hayse.go4lunch.domain.usecases.GetNearBySearchResultUseCase;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
-import com.Hayse.go4lunch.services.google_map.LocationRepository;
-import com.Hayse.go4lunch.services.google_map.google_api.AutocompleteRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.NearBySearchRepository;
-import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
+import com.Hayse.go4lunch.services.location.LocationRepository;
 import com.Hayse.go4lunch.ui.view_state.HomeViewState;
 import com.Hayse.go4lunch.ui.view_state.HomeWrapperViewState;
 import com.google.android.libraries.places.api.model.Place;
@@ -36,53 +31,44 @@ import java.util.List;
 
 public class HomeRestaurantSharedViewModel extends ViewModel {
     private final static String TAG = "HomeSharedViewModel";
-    private final Application application;
-    private LocationRepository locationRepository;
-    private NearBySearchRepository nearBySearchRepository;
-    private WorkmateRepository workmateRepository;
+    private final LocationRepository locationRepository;
+    private final NearBySearchRepository nearBySearchRepository;
+    private final WorkmateRepository workmateRepository;
     private int count = 0;
-    private AutocompleteRepository autocompleteRepository;
-    private PermissionChecker permissionChecker;
-    private GetNearBySearchResultUseCase getNearBySearchResultUseCase;
-    private final Location defaultLocation = new Location("48.888053, 2.343312");
-    private final MutableLiveData<Boolean> hasGpsPermissionLiveData = new MutableLiveData<>();
-    private List<HomeViewState> homeViewStateList = new ArrayList<>();
     private final MediatorLiveData<HomeWrapperViewState> homeWrapperViewStateMediatorLiveData = new MediatorLiveData<>();
 
     ////////////////////////////////////////////////////
-    private MutableLiveData<Place> placeAutocompleteSelected = new MutableLiveData<>(null);
+    private final MutableLiveData<Place> placeAutocompleteSelected = new MutableLiveData<>(null);
 
     @SuppressLint("MissingPermission")
     public HomeRestaurantSharedViewModel(
-            @NonNull Application application,
-            @NonNull PermissionChecker permissionChecker,
             @NonNull LocationRepository locationRepository,
             @NonNull NearBySearchRepository nearBySearchRepository,
-            @NonNull WorkmateRepository workmateRepository,
-            @NonNull AutocompleteRepository autocompleteRepository
+            @NonNull WorkmateRepository workmateRepository
     ) {
-        this.application = application;
         this.locationRepository = locationRepository;
         this.nearBySearchRepository = nearBySearchRepository;
         this.workmateRepository = workmateRepository;
-        this.autocompleteRepository = autocompleteRepository;
         locationRepository.startLocationRequest();
         setViewState();
+    }
+
+    @SuppressLint("MissingPermission")
+    public void startLocationRequest(){
+        locationRepository.startLocationRequest();
     }
 
     public void setViewState() {
         LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getAllWorkmate();
         LiveData<Location> userLocationLiveData = locationRepository.getLocationLiveData();
-        LiveData<List<Result>> nearbySearchListLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), userLocation -> {
-            return nearBySearchRepository.getRestaurantLiveData(userLocation);
-        });
+        LiveData<List<Result>> nearbySearchListLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), nearBySearchRepository::getRestaurantLiveData);
 
         homeWrapperViewStateMediatorLiveData.addSource(nearbySearchListLiveData, resultList -> combine(
                 resultList,
                 userLocationLiveData.getValue(),
                 workmatesLiveData.getValue()));
 
-        homeWrapperViewStateMediatorLiveData.addSource(workmateRepository.getAllWorkmate(), workmates -> combine(
+        homeWrapperViewStateMediatorLiveData.addSource(workmateRepository.getAllWorkmateRt(), workmates -> combine(
                 nearbySearchListLiveData.getValue(),
                 userLocationLiveData.getValue(),
                 workmates));
@@ -105,17 +91,8 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
         return nearBySearchRepository.getRestaurantLiveData(location);
     }
 
-    public LiveData<List<Workmate>> getWorkmates() {
-        return workmateRepository.getAllWorkmate();
-    }
-
-    public LiveData<List<Prediction>> getPredictionList(String text) {
-        Location location = locationRepository.getLastUserLocation();
-        return autocompleteRepository.getPredictionLiveData(location, text);
-    }
-
-    public void onPredictionClick(Place place) {
-        Log.d(TAG, "onPredictionClick: " + place.toString());
+    public void onPredictionClick(@Nullable Place place) {
+        Log.d(TAG, "onPredictionClick: " + place);
         this.placeAutocompleteSelected.setValue(place);
     }
 
@@ -136,29 +113,6 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
                         location));
             }
         }
-/*if (restaurants != null) {
-            for (int i = 0; i< restaurants.size(); i++){
-                for (Result restaurant:
-                        restaurants) {
-                    String placeId = restaurant.getPlaceId();
-                    if (workmates!=null){
-                        for (Workmate workmate:
-                                workmates) {
-                            if (workmate.getPlaceId()!= null){
-                                if (placeId.equals(workmate.getPlaceId())){
-                                    count++;
-                                }
-                            }
-                        }
-                    }
-                    homeViewStateList.add(mapHomeViewState(restaurant, count));
-                    count = 0;
-                }
-            }
-        }
-        Collections.sort(homeViewStateList, Comparator.comparingInt(HomeViewState::getDistance));
-        homeWrapperViewStateMediatorLiveData.setValue(new HomeWrapperViewState(homeViewStateList));
-        homeViewStateList.clear();*/
     }
 
     private HomeWrapperViewState map(
@@ -199,11 +153,10 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
         Geometry geometry = restaurant.getGeometry();
         OpeningHours openingHours = restaurant.getOpeningHours();
         float rating = restaurant.getRating();
-        int workmateNumber = numberWorkmate;
         int distance = distance(locationRepository.getLastUserLocation(),
                 restaurant.getGeometry().getLocation().getLat(),
                 restaurant.getGeometry().getLocation().getLng());
-        return new HomeViewState(placeId, imageUri, restaurantName, address, geometry, openingHours, rating, workmateNumber, distance);
+        return new HomeViewState(placeId, imageUri, restaurantName, address, geometry, openingHours, rating, numberWorkmate, distance);
     }
 
     private int distance(Location userLocation, double lat, double lng) {

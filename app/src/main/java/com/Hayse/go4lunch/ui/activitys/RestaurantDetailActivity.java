@@ -3,11 +3,9 @@ package com.Hayse.go4lunch.ui.activitys;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,26 +17,19 @@ import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.ActivityRestaurantDetailBinding;
 import com.Hayse.go4lunch.domain.entites.FavRestaurant;
 import com.Hayse.go4lunch.ui.adapter.WorkmateAdapter;
-import com.Hayse.go4lunch.ui.view_state.DetailViewState;
 import com.Hayse.go4lunch.ui.viewmodel.RestaurantDetailViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Objects;
 
 public class RestaurantDetailActivity extends AppCompatActivity {
     private final String TAG = "ResDetailActivity: ";
     private ActivityRestaurantDetailBinding binding;
-    private ViewModelFactory viewModelFactory;
-
     private String placeId;
-
     private RestaurantDetailViewModel viewModel;
-    private RecyclerView recyclerView;
     private WorkmateAdapter adapter;
-
-    private DetailViewState viewState;
-
 
     public static final String PLACE_ID = "PLACE_ID";
 
@@ -64,7 +55,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
 
     private void initViewModel() {
-        this.viewModelFactory = ViewModelFactory.getInstance();
+        ViewModelFactory viewModelFactory = ViewModelFactory.getInstance();
         this.viewModel = new ViewModelProvider(this, viewModelFactory).get(RestaurantDetailViewModel.class);
         this.viewModel.init(getIntent().getStringExtra(PLACE_ID));
     }
@@ -87,7 +78,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 }
                 binding.restaurantDetailsRating.setRating((float) (restaurantInfo.getRating() * 3) / 5);
                 binding.callIcon.setOnClickListener(v -> {
-                    if (restaurantInfo.getFormattedPhoneNumber() != null || restaurantInfo.getFormattedPhoneNumber() != "") {
+                    if (restaurantInfo.getFormattedPhoneNumber() != null || !Objects.equals(restaurantInfo.getFormattedPhoneNumber(), "")) {
                         Intent intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:" + restaurantInfo.getFormattedPhoneNumber()));
                         try {
                             Log.d(TAG, "initRestaurantDetailUI: callIconClick");
@@ -100,9 +91,10 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                 });
             }
             binding.webIcon.setOnClickListener(v -> {
-                if (restaurantInfo.getWebsite() != null || !restaurantInfo.getWebsite().equals("")) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantInfo.getWebsite()));
-
+                assert restaurantInfo != null;
+                String website = restaurantInfo.getWebsite();
+                if (website != null && !website.isEmpty()) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(website));
                     try {
                         Log.d(TAG, "initRestaurantDetailUI: webIconClick");
                         startActivity(intent);
@@ -116,7 +108,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     }
 
     private void initWorkmatesUI() {
-        recyclerView = binding.detailWorkmateList;
+        RecyclerView recyclerView = binding.detailWorkmateList;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new WorkmateAdapter();
         recyclerView.setAdapter(adapter);
@@ -169,8 +161,6 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    // TODO: 26/02/2024 créé un workmanager pour les notif on restaurant choice
 
     @Override
     protected void onDestroy() {

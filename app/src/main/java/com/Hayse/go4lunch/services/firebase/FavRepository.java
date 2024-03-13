@@ -42,4 +42,8 @@ public class FavRepository {
         favRestaurant.setId();
         mFirebaseHelper.updateFavRestaurant(favRestaurant);
     }
+
+    public void deleteFavRestaurant(FavRestaurant favRestaurant) {
+        mFirebaseHelper.deleteFavRestaurant(favRestaurant);
+    }
 }

@@ -8,22 +8,35 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+
 import androidx.core.app.NotificationCompat;
+
 import android.util.Log;
 
 import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
+import com.Hayse.go4lunch.domain.entites.Workmate;
+import com.Hayse.go4lunch.services.firebase.FirebaseHelper;
 import com.Hayse.go4lunch.ui.activitys.MainActivity;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class FirebaseMessagingHelper extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
-  //  private static final String CHANEL_ID = MainApplication.getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
+    private static final String CHANEL_ID = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
+
+
+    public FirebaseMessagingHelper() {
+    }
 
     /**
      * Called when message is received.
@@ -34,39 +47,8 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        // [START_EXCLUDE]
-        // There are two types of messages data messages and notification messages. Data messages
-        // are handled
-        // here in onMessageReceived whether the app is in the foreground or background. Data
-        // messages are the type
-        // traditionally used with GCM. Notification messages are only received here in
-        // onMessageReceived when the app
-        // is in the foreground. When the app is in the background an automatically generated
-        // notification is displayed.
-        // When the user taps on the notification they are returned to the app. Messages
-        // containing both notification
-        // and data payloads are treated as notification messages. The Firebase console always
-        // sends notification
-        // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
-        // [END_EXCLUDE]
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
-        // Check if message contains a data payload.
-    /*    if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            //Check if data needs to be processed by long running job
-            if (true) {
-                // For long-running tasks (10 seconds or more) use WorkManager.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow();
-            }
-
-        }*/
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
@@ -84,15 +66,6 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
 
 
     // [START on_new_token]
-    /**
-     * There are two scenarios when onNewToken is called:
-     * 1) When a new token is generated on initial app startup
-     * 2) Whenever an existing token is changed
-     * Under #2, there are three scenarios when the existing token is changed:
-     * A) App is restored to a new device
-     * B) User uninstalls/reinstalls the app
-     * C) User clears app data
-     */
     @Override
     public void onNewToken(String token) {
         Log.d(TAG, "Refreshed token: " + token);
@@ -100,7 +73,7 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // FCM registration token to your app server.
-        sendRegistrationToServer(token);
+        //sendRegistrationToServer(token);
     }
     // [END on_new_token]
 
@@ -109,11 +82,12 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
      */
     private void scheduleJob() {
         // [START dispatch_job]
-        /*OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(MyWorker.class)
+        OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(NotificationWorker.class)
                 .build();
         WorkManager.getInstance(this).beginWith(work).enqueue();
-        // [END dispatch_job]*/
+        // [END dispatch_job]
     }
+
     /**
      * Handle time allotted to BroadcastReceivers.
      */
@@ -121,17 +95,6 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
         Log.d(TAG, "Short lived task is done.");
     }
 
-    /**
-     * Persist token to third-party servers.
-     *
-     * Modify this method to associate the user's FCM registration token with any
-     * server-side account maintained by your application.
-     *
-     * @param token The new token.
-     */
-    private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
-    }
 
     /**
      * Create and show a simple notification containing the received FCM message.
@@ -139,18 +102,52 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody) {
+        FirebaseHelper firebaseHelper = FirebaseHelper.getInstance();
+        firebaseHelper.getUserDataFireStore().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Workmate user = task.getResult().toObject(Workmate.class);
+                if (user != null && user.getPlaceId() != null) {
+                    firebaseHelper.getWorkmateForNotification(user.getPlaceId()).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            List<String> coworkers = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task1.getResult()) {
+                                coworkers.add(document.toObject(Workmate.class).getName());
+                            }
+                            String notificationContent = buildNotificationContent(user, coworkers);
+                            showNotification(notificationContent);
+                        } else {
+                            Log.w(TAG, "sendNotification: ", task.getException());
+                        }
+                    });
+                }
+            } else {
+                Log.w(TAG, "sendNotification:onComplete:", task.getException());
+            }
+        });
+    }
+
+    private String buildNotificationContent(Workmate user, List<String> coworkers) {
+        String notificationContent = "Hey " + user.getName() + " remember to come at: " + user.getRestaurantName();
+        if (coworkers.size() < 1) {
+            notificationContent += " no other coworker signal";
+        } else {
+            notificationContent += " with: " + String.join(", ", coworkers);
+        }
+        return notificationContent;
+    }
+
+    private void showNotification(String notificationContent) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_IMMUTABLE);
-
-        String channelId = "195634402934078343";
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
+                new NotificationCompat.Builder(this, CHANEL_ID)
                         .setSmallIcon(R.drawable.ic_go4lunch_logo)
                         .setContentTitle(getString(R.string.app_name))
-                        .setContentText(messageBody)
+                        .setContentText(notificationContent)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
@@ -158,14 +155,17 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Since android Oreo notification channel is needed.
+        createNotificationChannelIfNeeded(notificationManager);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void createNotificationChannelIfNeeded(NotificationManager notificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
+            NotificationChannel channel = new NotificationChannel(CHANEL_ID,
                     "Channel human readable title",
                     NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 }

@@ -1,18 +1,12 @@
 package com.Hayse.go4lunch.ui.activitys;
 
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.Hayse.go4lunch.R;
@@ -22,40 +16,23 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.signin.internal.SignInClientImpl;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class SignInActivity extends AppCompatActivity {
-    protected GoogleSignInOptions gso;
-    protected GoogleSignInClient gsc;
-
     private static final int RC_SIGN_IN = 666;
     private static final String TAG = "SignInActivity";
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    ;
-
     private FirebaseAuth.AuthStateListener listener;
     private FirebaseHelper firebaseHelper;
-    private Intent intent;
     private String userId;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,40 +41,37 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Log.d(TAG, "onCreate: ");
         FirebaseApp.initializeApp(this);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+                });
         firebaseHelper = FirebaseHelper.getInstance();
-        boolean isMain = isMainProcess(this);
-        intent = new Intent(this, MainActivity.class).putExtra("USER_ID", userId);
-        listener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (isCurrentUserLogged()) {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    userId = user.getUid();
-                    firebaseHelper.getUserDataFireStoreByUID(userId).addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot documentSnapshot = task.getResult();
-                                    if (documentSnapshot.exists()) {
-                                        Toast.makeText(getApplicationContext(), getString(R.string.string_welcome_back), Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        firebaseHelper.setNewWorkmate();
-                                        Toast.makeText(getApplicationContext(), getString(R.string.string_welcome_new_user), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                    );
-                    startActivity(intent);
-                } else {
-                    initFirebaseAuth();
-                }
+
+        listener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Log.d(TAG, "listener: user Logged");
+                userId = user.getUid();
+                checkUserDataAndStartMainActivity();
+            } else {
+                Log.d(TAG, "onCreate: listener user Not Logged");
             }
         };
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        firebaseAuth.addAuthStateListener(listener);
-        initFirebaseAuth();
+        if (firebaseAuth.getCurrentUser() != null) {
+            userId = firebaseAuth.getCurrentUser().getUid();
+            Log.d(TAG, "onCreate: userUid = " + userId);
+            checkUserDataAndStartMainActivity();
+        } else {
+            Log.d(TAG, "onCreate: initFirebaseAuth call");
+            initFirebaseAuth();
+        }
     }
 
     @Override
@@ -106,25 +80,29 @@ public class SignInActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        this.initFirebaseAuth();
+    private void checkUserDataAndStartMainActivity() {
+        firebaseHelper.getUserDataFireStoreByUID(userId).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot.exists()) {
+                    Log.d(TAG, "listener userFirestore exist");
+                    Toast.makeText(getApplicationContext(), getString(R.string.string_welcome_back), Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d(TAG, "listener userFirestore do not exist");
+                    firebaseHelper.setNewWorkmate();
+                    Toast.makeText(getApplicationContext(), getString(R.string.string_welcome_new_user), Toast.LENGTH_SHORT).show();
+                }
+                startMainActivity();
+            } else {
+                Log.d(TAG, "listener error");
+                Toast.makeText(getApplicationContext(), "an error occurred", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private boolean isMainProcess(Context context) {
-        if (null == context) {
-            return true;
-        }
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-
-        int pid = android.os.Process.myPid();
-        for (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) {
-            if ("APPLICATION_ID".equals(processInfo.processName) && pid == processInfo.pid) {
-                return true;
-            }
-        }
-        return false;
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
@@ -134,81 +112,35 @@ public class SignInActivity extends AppCompatActivity {
 
     private void initFirebaseAuth() {
         Log.d(TAG, "initFirebaseAuth: ");
-        if (firebaseAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, MainActivity.class));
-            this.finish();
-        } else {
-            List<AuthUI.IdpConfig> providers = Arrays.asList(
-                    new AuthUI.IdpConfig.GoogleBuilder().build(),
-                    new AuthUI.IdpConfig.TwitterBuilder().build(),
-                    new AuthUI.IdpConfig.EmailBuilder().build()
-            );
 
-            //remplace signInFirebase
-            Intent signInIntent = AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .setIsSmartLockEnabled(false, true)
-                    .build();
-            signInLauncher.launch(signInIntent);
-        }
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.GoogleBuilder().build(),
+                new AuthUI.IdpConfig.TwitterBuilder().build(),
+                new AuthUI.IdpConfig.EmailBuilder().setRequireName(true).build()
+        );
+
+        Intent signInIntent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .setIsSmartLockEnabled(false, true)
+                .build();
+        signInLauncher.launch(signInIntent);
     }
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         Log.d(TAG, "onSignInResult: ");
         IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            Log.d(TAG, "onSignInResult:" + user.getEmail());
-            if (!firebaseHelper.checkIfUserIdExist(user.getUid())) {
+            if (response != null && response.isNewUser()) {
+                response.getEmail();
                 firebaseHelper.setNewWorkmate();
-                Toast.makeText(this, "@string/welcome_new_user", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "@string/welcome_back", Toast.LENGTH_SHORT).show();
             }
-            startActivity(intent);
+            checkUserDataAndStartMainActivity();
         } else {
             if (response == null) {
                 Log.d(TAG, "onSignInResult: User cancel sign in request");
             } else {
                 Log.d(TAG, "onSignInResult:", response.getError());
-            }
-        }
-    }
-
-
-    protected FirebaseUser getCurrentUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    protected boolean isCurrentUserLogged() {
-        return (this.getCurrentUser() != null);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: ");
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                //on User signin = true;
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d(TAG, "onActivityResult:" + user.getEmail());
-                if (!firebaseHelper.checkIfUserIdExist(user.getUid())) {
-                    firebaseHelper.setNewWorkmate();
-                    Toast.makeText(this, "@string/welcome_new_user", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "@string/welcome_back", Toast.LENGTH_SHORT).show();
-                }
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-            } else {
-                IdpResponse response = IdpResponse.fromResultIntent(data);
-                if (response == null) {
-                    Log.d(TAG, "onActivityResult:User cancel sign in request");
-                } else {
-                    Log.d(TAG, "onActivityResult:", response.getError());
-                }
             }
         }
     }

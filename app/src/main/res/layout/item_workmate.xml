@@ -11,7 +11,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="@dimen/fui_body_padding_bottom">
+
 
         <ImageView
             android:id="@+id/workmate_item_avatar"

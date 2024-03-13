@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.services.firebase.FavRepository;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
-import com.Hayse.go4lunch.services.google_map.LocationRepository;
+import com.Hayse.go4lunch.services.location.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.RetrofitService;
 import com.Hayse.go4lunch.services.google_map.google_api.AutocompleteRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.DetailRepository;
@@ -100,12 +100,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         }
         if (modelClass.isAssignableFrom(HomeRestaurantSharedViewModel.class)) {
             return (T) new HomeRestaurantSharedViewModel(
-                    application,
-                    permissionChecker,
                     locationRepository,
                     nearBySearchRepository,
-                    workmateRepository,
-                    autocompleteRepository
+                    workmateRepository
                     );
         }
         if (modelClass.isAssignableFrom(RestaurantDetailViewModel.class)){
@@ -116,7 +113,13 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             );
         }
         if (modelClass.isAssignableFrom(SettingViewModel.class)){
-            return (T) new SettingViewModel();
+            return (T) new SettingViewModel(
+                    workmateRepository);
+        }
+        if (modelClass.isAssignableFrom(ProfileViewModel.class)){
+            return (T) new ProfileViewModel(
+                    workmateRepository,
+                    favRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass);
     }

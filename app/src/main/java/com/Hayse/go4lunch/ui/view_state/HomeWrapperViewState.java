@@ -2,6 +2,8 @@ package com.Hayse.go4lunch.ui.view_state;
 
 import android.location.Location;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Objects;
 public class HomeWrapperViewState {
@@ -9,6 +11,7 @@ public class HomeWrapperViewState {
 
     private final Location location;
 
+    @NonNull
     @Override
     public String toString() {
         return "HomeWrapperViewState{" +
