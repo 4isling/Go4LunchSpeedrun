@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentRestaurantBinding;
 import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
 import com.Hayse.go4lunch.ui.adapter.RestaurantItemByViewStateAdapter;
@@ -41,7 +43,30 @@ public class RestaurantListFragment extends Fragment {
         View root = binding.getRoot();
         noRestaurant = binding.listNoRestaurants;
         initRecyclerView();
+        setFloationActionButton();
         return root;
+    }
+
+    private void setFloationActionButton() {
+        binding.floatingActionButton.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(requireContext(), v);
+            popupMenu.inflate(R.menu.sort_menu);
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.sort_by_proximity) {
+                    viewModel.sortByProximity();
+                    return true;
+                } else if (item.getItemId() == R.id.sort_by_workmate_number) {
+                    viewModel.sortByWorkmateNumber();
+                    return true;
+                }else if (item.getItemId() == R.id.sort_by_rate) {
+                    viewModel.sortByRestaurantRating();
+                    return true;
+                }else {
+                    return true;
+                }
+            });
+            popupMenu.show();
+        });
     }
 
     private void initRecyclerView() {

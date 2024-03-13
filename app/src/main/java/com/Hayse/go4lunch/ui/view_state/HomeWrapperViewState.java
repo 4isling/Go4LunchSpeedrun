@@ -45,5 +45,4 @@ public class HomeWrapperViewState {
     public Location getLocation() {
         return location;
     }
-
 }

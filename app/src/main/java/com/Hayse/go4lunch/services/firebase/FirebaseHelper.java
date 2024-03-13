@@ -211,7 +211,7 @@ public class FirebaseHelper {
     }
 
     public Task<DocumentSnapshot> getUserDataFireStoreByUID(String userID) {
-        return workmateRef.document(userID).get();
+        return workmateRef.document(FirebaseAuth.getInstance().getUid()).get();
     }
 
     public MutableLiveData<List<FavRestaurant>> getUserFavList(String userID) {

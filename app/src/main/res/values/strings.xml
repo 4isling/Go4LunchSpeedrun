@@ -77,4 +77,7 @@
     <string name="favorite_restaurant">Favorite Restaurant:</string>
     <string name="savebutton">SaveButton</string>
     <string name="go_to_app_settings">Go to app settings</string>
+    <string name="sort_by_distance">Sort by distance</string>
+    <string name="sort_by_number_of_workers">Sort by number of workers</string>
+    <string name="sort_by_rating">Sort by rating</string>
 </resources>

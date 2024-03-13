@@ -173,4 +173,40 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     public LiveData<HomeWrapperViewState> getHomeViewStateLiveData() {
         return homeWrapperViewStateMediatorLiveData;
     }
+
+    public void sortByProximity() {
+        HomeWrapperViewState homeWrapperViewState = homeWrapperViewStateMediatorLiveData.getValue();
+        if (homeWrapperViewState != null) {
+            List<HomeViewState> sortedList = new ArrayList<>(homeWrapperViewState.getHomeViewState());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Collections.sort(sortedList, Comparator.comparingInt(HomeViewState::getDistance));
+            }
+            HomeWrapperViewState updatedHomeWrapperViewState = new HomeWrapperViewState(sortedList, homeWrapperViewState.getLocation());
+            homeWrapperViewStateMediatorLiveData.setValue(updatedHomeWrapperViewState);
+        }
+    }
+
+    public void sortByWorkmateNumber() {
+        HomeWrapperViewState homeWrapperViewState = homeWrapperViewStateMediatorLiveData.getValue();
+        if (homeWrapperViewState != null) {
+            List<HomeViewState> sortedList = new ArrayList<>(homeWrapperViewState.getHomeViewState());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Collections.sort(sortedList, Comparator.comparingInt(HomeViewState::getWorkmateNumber).reversed());
+            }
+            HomeWrapperViewState updatedHomeWrapperViewState = new HomeWrapperViewState(sortedList, homeWrapperViewState.getLocation());
+            homeWrapperViewStateMediatorLiveData.setValue(updatedHomeWrapperViewState);
+        }
+    }
+
+    public void sortByRestaurantRating() {
+        HomeWrapperViewState homeWrapperViewState = homeWrapperViewStateMediatorLiveData.getValue();
+        if (homeWrapperViewState != null) {
+            List<HomeViewState> sortedList = new ArrayList<>(homeWrapperViewState.getHomeViewState());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Collections.sort(sortedList, Comparator.comparingDouble(HomeViewState::getRating).reversed());
+            }
+            HomeWrapperViewState updatedHomeWrapperViewState = new HomeWrapperViewState(sortedList, homeWrapperViewState.getLocation());
+            homeWrapperViewStateMediatorLiveData.setValue(updatedHomeWrapperViewState);
+        }
+    }
 }
