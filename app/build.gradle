@@ -63,8 +63,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:3.11.2'
 
     // Firebase Emulators
-    testImplementation 'com.google.firebase:firebase-firestore-testing:23.0.3'
-    testImplementation 'com.google.firebase:firebase-auth-testing:20.0.3'
 
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:32.3.1')
