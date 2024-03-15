@@ -277,6 +277,5 @@ public class MapRestaurantFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        unsubscribeToObservables();
     }
 }

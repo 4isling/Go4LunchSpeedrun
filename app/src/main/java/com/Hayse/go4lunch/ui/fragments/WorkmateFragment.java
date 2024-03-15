@@ -52,13 +52,12 @@ public class WorkmateFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        removeObservers();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
+        removeObservers();
         binding = null;
     }
 }

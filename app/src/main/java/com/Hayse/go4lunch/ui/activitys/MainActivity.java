@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +66,11 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MainActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
+
+    private static final String CURRENT_FRAGMENT_INDEX = "current_fragment_index";
+
+    private int currentFragmentIndex;
+
     private ActivityMainBinding binding;
     private Toolbar toolbar;
     private HomeRestaurantSharedViewModel homeRestaurantSharedViewModel;
@@ -108,10 +114,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureBottomNavView();
         this.configureDrawerLayout();
         this.configureDrawerNavView();
+
+        // Restore the current fragment if there's a savedInstanceState
+        boolean isRestoringFromSavedInstanceState = false;
+        if (savedInstanceState != null) {
+            currentFragmentIndex = savedInstanceState.getInt(CURRENT_FRAGMENT_INDEX);
+            // Restore the fragment based on the currentFragmentIndex
+            switch (currentFragmentIndex) {
+                case 0:
+                    replaceFragment(mapFragment);
+                    break;
+                case 1:
+                    replaceFragment(listFragment);
+                    break;
+                case 2:
+                    replaceFragment(workmateFragment);
+                    break;
+                default:
+                    replaceFragment(mapFragment); // Default to mapFragment if the index is invalid
+            }
+            isRestoringFromSavedInstanceState = true;
+        }
+
         if (ContextCompat.checkSelfPermission(MainApplication.getApplication(), ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
             Log.d(TAG, "onCreate: location permission granted");
             if (isGoogleServiceOK()) {
-                replaceFragment(mapFragment);
+                if (!isRestoringFromSavedInstanceState) {
+                    replaceFragment(mapFragment);
+                }
                 if (!Places.isInitialized()) {
                     Places.initialize(getApplicationContext(), API_KEY);
                 }
@@ -254,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (pItem == R.id.navigation_map) {
                 Log.d(TAG, "configureBottomNavView: map");
                 replaceFragment(mapFragment);
+
                 return true;
             } else if (pItem == R.id.navigation_restaurant) {
                 Log.d(TAG, "configureBottomNavView: list");
@@ -286,6 +317,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.replace(R.id.activity_main_frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+
+        if (fragment instanceof MapRestaurantFragment) {
+            currentFragmentIndex = 0;
+        } else if (fragment instanceof RestaurantListFragment) {
+            currentFragmentIndex = 1;
+        } else if (fragment instanceof WorkmateFragment) {
+            currentFragmentIndex = 2;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(CURRENT_FRAGMENT_INDEX, currentFragmentIndex);
     }
 
     @Override
