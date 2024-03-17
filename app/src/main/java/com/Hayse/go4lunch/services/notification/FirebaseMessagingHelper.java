@@ -58,12 +58,7 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
                 sendNotification(notificationBody);
             }
         }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
-    // [END receive_message]
-
 
     // [START on_new_token]
     @Override
@@ -127,13 +122,20 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
     }
 
     private String buildNotificationContent(Workmate user, List<String> coworkers) {
-        String notificationContent = "Hey " + user.getName() + " remember to come at: " + user.getRestaurantName();
-        if (coworkers.size() < 1) {
-            notificationContent += " no other coworker signal";
+        StringBuilder notificationContent = new StringBuilder("Hey ");
+        notificationContent.append(user.getName());
+        notificationContent.append(getString(R.string.remember_to_come_at));
+        notificationContent.append(user.getRestaurantName());
+
+        if (coworkers.isEmpty()) {
+            notificationContent.append(getString(R.string.no_other_coworker_signal));
         } else {
-            notificationContent += " with: " + String.join(", ", coworkers);
+            String coworkersList = String.join(", ", coworkers);
+            notificationContent.append(" with: ");
+            notificationContent.append(coworkersList);
         }
-        return notificationContent;
+
+        return notificationContent.toString();
     }
 
     private void showNotification(String notificationContent) {
@@ -163,7 +165,7 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
     private void createNotificationChannelIfNeeded(NotificationManager notificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANEL_ID,
-                    "Channel human readable title",
+                    "Daily notification",
                     NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }

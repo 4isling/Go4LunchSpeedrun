@@ -142,11 +142,12 @@ public class MapRestaurantFragment extends Fragment {
     private void subscribeToObservables() {
 
         homeRestaurantSharedViewModel.getHomeViewStateLiveData().observe(getViewLifecycleOwner(), homeWrapperViewState -> {
+            Log.d(TAG, "subscribeToObservables: homeWrapperViewState trigger ");
             updateUserLocation(homeWrapperViewState.getLocation());
             updateUi(homeWrapperViewState.getHomeViewState());
         });
         homeRestaurantSharedViewModel.getPrediction().observe(getViewLifecycleOwner(), place -> {
-            Log.d(TAG, "subscribeToObservables: ");
+            Log.d(TAG, "subscribeToObservables: place trigger ");
             if (place != null) {
                 Log.d(TAG, "subscribeToObservables: " + place);
                 if (place.getLatLng() != null) {
@@ -262,7 +263,7 @@ public class MapRestaurantFragment extends Fragment {
     }
 
     private void unsubscribeToObservables() {
-        // homeRestaurantSharedViewModel.getLocationLiveData().removeObservers(this);
+        Log.d(TAG, "unsubscribeToObservables:");
         homeRestaurantSharedViewModel.getHomeViewStateLiveData().removeObservers(getViewLifecycleOwner());
         homeRestaurantSharedViewModel.getPrediction().removeObservers(getViewLifecycleOwner());
     }

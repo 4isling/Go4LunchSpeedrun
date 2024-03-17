@@ -67,13 +67,27 @@ public class RestaurantDetailViewModel extends ViewModel {
         }
     }
 
-    //todo update db.workmate. with restaurantData
     public void onClickRestaurantChoice() {
         if (restaurantLiveData.getValue() != null) {
-            workmateRepository.updateRestaurantChoice(restaurantLiveData.getValue().getPlaceId(),
-                    restaurantLiveData.getValue().getName(),
-                    restaurantLiveData.getValue().getFormattedAddress()
-            );
+            if (getUserData() != null){
+                if (getUserData().getValue() != null){
+                    if (!getUserData().getValue().getPlaceId().equals(restaurantLiveData.getValue().getPlaceId())){
+                        workmateRepository.updateWorkmate(null,null,null, restaurantLiveData.getValue().getPlaceId(),
+                                restaurantLiveData.getValue().getName(),
+                                restaurantLiveData.getValue().getFormattedAddress(),
+                                null
+                        );
+                    }else {
+                        workmateRepository.updateWorkmate(null,
+                                null,
+                                null,
+                                "",
+                                "",
+                                "",
+                                null);
+                    }
+                }
+            }
         }
     }
 }

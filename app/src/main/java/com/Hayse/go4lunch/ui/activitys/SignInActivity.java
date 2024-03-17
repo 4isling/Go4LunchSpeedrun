@@ -130,18 +130,21 @@ public class SignInActivity extends AppCompatActivity {
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         Log.d(TAG, "onSignInResult: ");
         IdpResponse response = result.getIdpResponse();
-        if (result.getResultCode() == RESULT_OK) {
-            if (response != null && response.isNewUser()) {
-                response.getEmail();
-                firebaseHelper.setNewWorkmate();
+        if (response != null) {
+            if (result.getResultCode() == RESULT_OK) {
+                if (response != null && response.isNewUser()) {
+                    response.getEmail();
+                    firebaseHelper.setNewWorkmate();
+                }
+                checkUserDataAndStartMainActivity();
+            } else if (result.getResultCode() == RESULT_CANCELED) {
+                Toast.makeText(this, "Sign-in was cancelled", Toast.LENGTH_SHORT).show();
             }
-            checkUserDataAndStartMainActivity();
+
         } else {
-            if (response == null) {
-                Log.d(TAG, "onSignInResult: User cancel sign in request");
-            } else {
-                Log.d(TAG, "onSignInResult:", response.getError());
-            }
+            Toast.makeText(this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "onSignInResult: signIn failed", result.getIdpResponse().getError());
+
         }
     }
 }

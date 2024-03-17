@@ -16,11 +16,7 @@ public class WorkmateViewModel extends ViewModel {
         repository = WorkmateRepository.getInstance();
     }
 
-    public MutableLiveData<List<Workmate>> getAllWorkmates(){
-        return repository.getAllWorkmate();
-    }
-
     public LiveData<List<Workmate>> getWorkmatesRt(){
-        return repository.getListOfWorkmate();
+        return repository.getAllWorkmateRt();
     }
 }

@@ -12,7 +12,7 @@
                 app:showAsAction="never|withText" />
             <item
                 android:id="@+id/sort_by_workmate_number"
-                android:icon="@drawable/baseline_person_24"
+                android:icon="@drawable/workmate_place_holder"
                 android:title="@string/sort_by_number_of_workers"
                 app:showAsAction="never|withText" />
             <item

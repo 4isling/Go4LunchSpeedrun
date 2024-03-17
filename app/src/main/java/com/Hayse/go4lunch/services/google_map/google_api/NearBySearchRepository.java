@@ -67,32 +67,4 @@ public class NearBySearchRepository {
         }
         return restaurantMutableLiveData;
     }
-
-
-
-    public LiveData<RestaurantResult> getRestaurantListLiveData(String type, String location, String radius) {
-        MutableLiveData<RestaurantResult> RestaurantResultMutableLiveData = new MutableLiveData<>();
-
-        RestaurantResult nearbySearchResults = cache.get(location);
-        if (nearbySearchResults != null) {
-            RestaurantResultMutableLiveData.setValue(nearbySearchResults);
-        } else {
-            gMapsApi.getNearBySearchResult(API_KEY, type, location, radius).enqueue(
-                    new Callback<RestaurantResult>() {
-                        @Override
-                        public void onResponse(@NonNull Call<RestaurantResult> call, @NonNull Response<RestaurantResult> response) {
-                            if (response.body() != null) {
-                                cache.put(location, response.body());
-                                RestaurantResultMutableLiveData.setValue(response.body());
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Call<RestaurantResult> call, @NonNull Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
-        }
-        return RestaurantResultMutableLiveData;
-    }
 }

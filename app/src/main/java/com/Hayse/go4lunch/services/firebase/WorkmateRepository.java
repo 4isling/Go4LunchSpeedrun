@@ -21,12 +21,11 @@ import java.util.Objects;
 
 public class WorkmateRepository {
     private static final String TAG = "WorkmateRepository";
-    private final MutableLiveData<List<Workmate>> listOfWorkmate = new MutableLiveData<>();
-
+    private final LiveData<List<Workmate>> listOfWorkmates;
     private static WorkmateRepository sWorkmateRepository;
-
-    private MutableLiveData<Workmate> userData = new MutableLiveData<>();
     private static FirebaseHelper mFirebaseHelper;
+
+    private final LiveData<Workmate>  userData;
 
 
     public static WorkmateRepository getInstance(){
@@ -34,79 +33,25 @@ public class WorkmateRepository {
             sWorkmateRepository = new WorkmateRepository();
         }
         return sWorkmateRepository;
+
     }
 
     public WorkmateRepository(){
         mFirebaseHelper = FirebaseHelper.getInstance();
-        // Uncomment this method to populate your firebase database, it will upload some data
-        // Comment it again after the first launch
+        userData = mFirebaseHelper.getFirestoreUserDataRT();
+        listOfWorkmates = mFirebaseHelper.getRtWorkmates();
     }
 
     public LiveData<List<Workmate>> getAllWorkmateRt(){
-        return mFirebaseHelper.getRtWorkmates();
-    }
-
-    public MutableLiveData<List<Workmate>> getAllWorkmate(){
-        Log.d(TAG, "getAllWorkmate: ");
-        mFirebaseHelper.getAllWorkmate().addOnCompleteListener(task->{
-            if(task.isSuccessful()){
-                Log.d(TAG, "getAllWorkmate: task.isSuccessful");
-                ArrayList<Workmate> workmate = new ArrayList<>();
-                for(QueryDocumentSnapshot document : task.getResult()){
-                    Log.d(TAG, "getAllWorkmate: "+task.getResult().getDocuments());
-                    workmate.add(document.toObject(Workmate.class));
-                }
-                listOfWorkmate.postValue(workmate);
-            } else {
-                Log.e("WorkmateRepError", "Error getting documents", task.getException());
-            }
-        }).addOnFailureListener(new OnFailureListener(){
-            @Override
-            public void onFailure(@NonNull Exception e){
-                //handle error
-                Log.d("WorkmateRepError", "Error getting documents", e);
-                listOfWorkmate.postValue(new ArrayList<>());
-            }
-        });
-        Log.d(TAG, "getAllWorkmate: before return");
-        return listOfWorkmate;
-    }
-    public LiveData<List<Workmate>> getListOfWorkmate(){
-        return mFirebaseHelper.getRtWorkmates();
+        return listOfWorkmates;
     }
 
     public LiveData<List<Workmate>> getWorkmateByRestaurant(String placeId) {
         return mFirebaseHelper.getWorkmateByPlaceId(placeId);
     }
 
-    public MutableLiveData<Workmate> getUserData(){
-        mFirebaseHelper.getUserDataFireStore().addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                    userData.postValue(task.getResult().toObject(Workmate.class));
-            }
-        });
-        return userData;
-    }
-
-
     public LiveData<Workmate> getRealTimeUserData(){
-        return mFirebaseHelper.getFirestoreUserDataRT();
-    }
-
-    public void updateRestaurantChoice(String placeId, String restaurantName, String address) {
-        mFirebaseHelper.getUserDataFireStore().addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                Workmate user = task.getResult().toObject(Workmate.class);
-                if (!Objects.equals(user.getPlaceId(), placeId) || user.getPlaceId().equals("")){
-                    Log.d(TAG, "updateRestaurantChoice: addRestaurantChoice");
-                    mFirebaseHelper.updateUserData(null, null,null, placeId, restaurantName,address,null);
-                }else{
-                    Log.d(TAG, "updateRestaurantChoice: suppressRestaurantChoice");
-                    mFirebaseHelper.updateUserData(null,null,null,"","","",null);
-                }
-            }
-        });
-
+        return userData;
     }
 
     public void deleteUser() {
@@ -120,6 +65,6 @@ public class WorkmateRepository {
                                @Nullable String restaurantName,
                                @Nullable String restaurantAddress,
                                @Nullable String restaurantTypeOfFood) {
-        mFirebaseHelper.updateUserData(avatarUrl,name,email,placeId, restaurantName, null, null);
+        mFirebaseHelper.updateUserData(avatarUrl,name,email,placeId, restaurantName, restaurantAddress, restaurantTypeOfFood);
     }
 }

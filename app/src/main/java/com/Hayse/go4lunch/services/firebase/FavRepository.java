@@ -13,10 +13,9 @@ import java.util.List;
 
 public class FavRepository {
     private static final String TAG = "FavRepository";
-    private final MutableLiveData<List<FavRestaurant>> favList = new MutableLiveData<>();
+    private final LiveData<List<FavRestaurant>> favList;
     private static FavRepository sFavRepository;
     private static FirebaseHelper mFirebaseHelper;
-
     private final String userId;
 
     private final MutableLiveData<Workmate> user = new MutableLiveData<>();
@@ -24,17 +23,20 @@ public class FavRepository {
     public static FavRepository getInstance(){
         if(sFavRepository == null){
             sFavRepository = new FavRepository();
+
         }
+
         return sFavRepository;
     }
 
     public FavRepository(){
         mFirebaseHelper = FirebaseHelper.getInstance();
         userId =  mFirebaseHelper.getUserUID();
+        favList = mFirebaseHelper.getUserFavList(userId);
     }
 
     public LiveData<List<FavRestaurant>> getFavList(){
-        return mFirebaseHelper.getUserFavList(userId);
+        return favList;
     }
 
     public void updateFavRestaurant(FavRestaurant favRestaurant) {

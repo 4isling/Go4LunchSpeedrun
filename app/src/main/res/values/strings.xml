@@ -80,4 +80,7 @@
     <string name="sort_by_distance">Sort by distance</string>
     <string name="sort_by_number_of_workers">Sort by number of workers</string>
     <string name="sort_by_rating">Sort by rating</string>
+    <string name="remember_to_come_at">" remember to come at: "</string>
+    <string name="no_other_coworker_signal">" no other coworker signal"</string>
+    <string name="workmate_picture_place_holder">workmate picture place holder</string>
 </resources>

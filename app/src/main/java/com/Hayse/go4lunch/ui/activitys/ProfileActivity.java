@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,6 +25,8 @@ import com.Hayse.go4lunch.ui.viewmodel.ProfileViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 
 public class ProfileActivity extends AppCompatActivity {
+
+    private final String TAG = "ProfileActivity";
     private Toolbar toolbar;
     private EditText nameField;
     private EditText emailField;
@@ -65,6 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
         FavRestaurantAdapter adapter = new FavRestaurantAdapter();
         recyclerView.setAdapter(adapter);
         viewModel.getFavList().observe(this, favRestaurants -> {
+            Log.d(TAG, "setupRecyclerView: favRestaurantsObserverTrigger");
             if (favRestaurants != null){
                 if (favRestaurants.isEmpty()){
                     recyclerView.setVisibility(View.GONE);
@@ -83,6 +87,7 @@ public class ProfileActivity extends AppCompatActivity {
         nameField.setSingleLine();
         emailField.setSingleLine();
         viewModel.getUser().observe(this, user ->{
+            Log.d(TAG, "setupTextFields: user observerTrigger");
             if (user!= null){
                 nameField.setText(user.getName());
                 emailField.setText(user.getEmail());
@@ -133,6 +138,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void removeListener(){
+        Log.d(TAG, "removeListener: remove observer");
         viewModel.getFavList().removeObservers(this);
         viewModel.getUser().removeObservers(this);
     }

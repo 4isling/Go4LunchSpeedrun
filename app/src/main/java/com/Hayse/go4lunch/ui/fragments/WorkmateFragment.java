@@ -1,6 +1,7 @@
 package com.Hayse.go4lunch.ui.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.Hayse.go4lunch.ui.viewmodel.WorkmateViewModel;
 
 public class WorkmateFragment extends Fragment {
+    private final String TAG = "WorkmateFragment:";
     private WorkmateViewModel workmateViewModel;
     private WorkmateAdapter adapter;
     private FragmentWorkmateBinding binding;
@@ -40,9 +42,9 @@ public class WorkmateFragment extends Fragment {
         adapter = new WorkmateAdapter();
         recyclerView.setAdapter(adapter);
         workmateViewModel.getWorkmatesRt().observe(getViewLifecycleOwner(), workmates -> {
+            Log.d(TAG, "initRecyclerView: workmates observer Trigger");
             adapter.submitList(workmates);
         });
-        //@todo item touch open workmate detail
     }
 
     private void removeObservers(){
@@ -56,8 +58,8 @@ public class WorkmateFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         removeObservers();
         binding = null;
+        super.onDestroyView();
     }
 }

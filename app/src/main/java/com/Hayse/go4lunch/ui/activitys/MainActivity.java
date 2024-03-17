@@ -204,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView userName = header.findViewById(R.id.user_name_header);
         TextView userEmail = header.findViewById(R.id.email_user_header);
         homeRestaurantSharedViewModel.getUserData().observe(this, userData -> {
+            Log.d(TAG, "initUserDataUI: observer trigger");
             if (userData != null) {
                 if (!Objects.equals(userData.getAvatarUrl(), "")) {
                     Glide.with(this)
@@ -232,13 +233,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d(TAG, "configureToolbar: ");
         this.toolbar = binding.activityMainToolbar;
         binding.activityMainToolbar.setNavigationIcon(R.drawable.baseline_menu_24);
+        this.autocompleteSupportFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        this.autocompleteSupportFragment.setMenuVisibility(false);
         binding.activityMainToolbarSearchIcon.setClickable(true);
         binding.activityMainToolbarSearchIcon.setOnClickListener(v -> {
             homeRestaurantSharedViewModel.getLocationLiveData().observe(this, location -> {
+                Log.d(TAG, "configureToolbar: location observer trigger");
                 if (location != null) {
-
-                    this.autocompleteSupportFragment = (AutocompleteSupportFragment)
-                            getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
                     List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
                     // Start the autocomplete intent.
                     Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
@@ -349,7 +351,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setMessage(getString(R.string.sure_logout))
                 .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
                     FirebaseAuth.getInstance().signOut();
-                    finishAffinity(); // closes the entire application
+                    Intent intent = new Intent(this, SignInActivity.class);
+                    startActivity(intent); // go to signIn
                 })
                 .setNegativeButton(getString(R.string.no), (dialog, which) -> dialog.dismiss())
                 .show();
@@ -379,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if (id == R.id.your_lunch) {
             homeRestaurantSharedViewModel.getUserData().observe(this, userData -> {
+                Log.d(TAG, "onNavigationItemSelected: observer trigger");
                 if (userData.getPlaceId() != null && !userData.getPlaceId().equals("")) {
                     this.startActivity(RestaurantDetailActivity.navigate(getApplicationContext(), userData.getPlaceId()));
                 } else {

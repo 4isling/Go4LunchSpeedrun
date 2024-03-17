@@ -11,6 +11,8 @@ import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.domain.entites.map_api.detail.DetailResponse;
 import com.Hayse.go4lunch.domain.entites.map_api.detail.Result;
 
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,13 +23,23 @@ public class DetailRepository {
     private final GMapsApi gMapsApi;
     private final String API_KEY = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
     private final String FIELDS = MainApplication.getApplication().getString(R.string.place_details_fields);
-    private MutableLiveData<Result> detailResult = new MutableLiveData<>();
+    private final MutableLiveData<Result> detailResult = new MutableLiveData<>();
     public DetailRepository(GMapsApi gMapsApi) {
         this.gMapsApi = gMapsApi;
     }
 
+
     public LiveData<Result> getDetail(String place_id){
         Log.d(TAG, "getDetail: "+place_id);
+        if (detailResult.getValue() == null){
+            setDetailResult(place_id);
+        }else if (!Objects.equals(detailResult.getValue().getPlaceId(), place_id)){
+            setDetailResult(place_id);
+        }
+        return detailResult;
+    }
+
+    private void setDetailResult(String place_id){
         gMapsApi.getPlaceDetails(place_id,FIELDS,API_KEY).enqueue(new Callback<DetailResponse>() {
             @Override
             public void onResponse(Call<DetailResponse> call, Response<DetailResponse> response) {
@@ -47,6 +59,6 @@ public class DetailRepository {
                 Log.e(TAG, "onFailure: error detail call ", t);
             }
         });
-        return detailResult;
     }
+
 }

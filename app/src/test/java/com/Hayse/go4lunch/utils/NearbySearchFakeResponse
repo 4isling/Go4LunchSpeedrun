@@ -1,0 +1,1174 @@
+{
+   "html_attributions" : [],
+   "next_page_token" : "ATplDJbGRgNRyu3jEZ3WNFtalPV6ywKoFv_MPhv4O9Ua8tABAayPXDwIdd3DllVnxctzTt5xDJ3doiRSYqBIKO5sBtqrR8L5PFg1uyW9x5-2hWArnTRDynXsBhTU5VZ3wiot6OOthJ7mtjRQCQ1QDSeUJjVbx9xVlbHTV5guFvwX9uc5auG4gIokT-iwOWS_1qQYiL6_B2VzTWcxwmegNpr0HVZmOfxpTwvxZKlCmVKmogilLy00NqGvpN3c4cBrgYMGiKksh5i7p36LrJPHN8YA8bYrEPV4BEcwDnsTvwKNthCkHNoydQJal4N7DumIncSMX2SfAW-HIHXy1H1Sc9I4POaAU2lJ3dqkQb1ZbT7qiM2qIsO_t9RhlT85b53kvgYLpIr6j_unBY9taYdMhA6JDi_85IxaWdi9eTaOikuOdfqUT5oEEkXilr0ub9a2RA",
+   "results" :
+   [
+      {
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.33874,
+               "lng" : -121.8852525
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.46921102532504,
+                  "lng" : -121.5861371630509
+               },
+               "southwest" :
+               {
+                  "lat" : 37.12271341474762,
+                  "lng" : -122.0460552255236
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "San José",
+         "photos" :
+         [
+            {
+               "height" : 1065,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/103829844627175481707\"\u003eSaeed Ullah\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJaL2vFFSAN1NAkxOGz2MhvoUASxLhkPdhaoQ_u8lTx2O3AnJe7KadI1Rn-av8fBcaGsU2JncpWw6CS2K2PQGptrd4uYUNpicJ9ptTnOlQN3KDI1P-by4opbdbL8s7g9bT1JPn8t_jnDdV3uBbyshbSezHf5QcOPYkp0noPBDLqDwCHp",
+               "width" : 1438
+            }
+         ],
+         "place_id" : "ChIJ9T_5iuTKj4ARe3GfygqMnbk",
+         "reference" : "ChIJ9T_5iuTKj4ARe3GfygqMnbk",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "locality",
+            "political"
+         ],
+         "vicinity" : "San José"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.4063521,
+               "lng" : -122.0637462
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.4077321802915,
+                  "lng" : -122.0624824197085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.4050342197085,
+                  "lng" : -122.0651803802915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Ramada by Wyndham Mountain View",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 400,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/112737787428299503329\"\u003eRamada by Wyndham Mountain View\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJZa-lJpdn5OTCINCl2CIJec8xovltGrgQwJhR_RCeNe35JDNdB1_ExCeQLx1oncqar_VISlHXzmfcCp4xyS4M9rn7Nbwd3_WoHLz2Wd6adptufLV9pKVw-cdHgnqjAEjhp9F10PAwRNYcnIn4K9apax7vYZrRbmS3ceJN3aSuc-khs-",
+               "width" : 711
+            }
+         ],
+         "place_id" : "ChIJH_lIeUG3j4ARtyJvysb96Vg",
+         "plus_code" :
+         {
+            "compound_code" : "CW4P+GG Mountain View, Californie, États-Unis",
+            "global_code" : "849VCW4P+GG"
+         },
+         "rating" : 3.5,
+         "reference" : "ChIJH_lIeUG3j4ARtyJvysb96Vg",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 432,
+         "vicinity" : "55 Fairchild Drive, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.3988429,
+               "lng" : -122.0757809
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.4002476302915,
+                  "lng" : -122.0742568697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.3975496697085,
+                  "lng" : -122.0769548302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Hampton Inn & Suites Mountain View",
+         "photos" :
+         [
+            {
+               "height" : 1638,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/105762394471212357473\"\u003eHampton Inn &amp; Suites Mountain View\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJZdadGyAQKY1Dz3ttz2eoirdDZSqzRvnGWw-YZf_ZCnwEEfPYZuhFsowFbLyMxT9mZd3b3Lm8NrYmxVbi-2rgDCVigun9uLkspFcAqVIR6IrbV9v2Imu7fhCf1RXtcjvkuPoy0gqd1syO_vh72W70w66tZGR5t-fcIJnzvLIJvj_3Q",
+               "width" : 2048
+            }
+         ],
+         "place_id" : "ChIJc7lNKki3j4ARyqLFNOl42cc",
+         "plus_code" :
+         {
+            "compound_code" : "9WXF+GM Mountain View, Californie, États-Unis",
+            "global_code" : "849V9WXF+GM"
+         },
+         "rating" : 4.2,
+         "reference" : "ChIJc7lNKki3j4ARyqLFNOl42cc",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 980,
+         "vicinity" : "390 Moffett Boulevard, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.3926659,
+               "lng" : -122.0951402
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.39394968029151,
+                  "lng" : -122.0940951697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.39125171970851,
+                  "lng" : -122.0967931302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Residence Inn by Marriott Palo Alto Mountain View",
+         "photos" :
+         [
+            {
+               "height" : 320,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/109759708877535078334\"\u003eResidence Inn by Marriott Palo Alto Mountain View\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJYgmI4JhGjYNDSqpuMLO4A9MaLXsuz7pvSekdjwAoiekd0DaXETrIm150dSNcnqP3lgc_Q1HI-7CWuIeUnSgtH1d7sDtFwSqEMLbZdhglBxSMSKJrasrppwUuLXQjqWVvUYypqoTAI_M39HNBMrmf-e9F3v8ZpIqwmbmFiRAdJD10hZ",
+               "width" : 480
+            }
+         ],
+         "place_id" : "ChIJd7BpB8iwj4AReNh8DhGJBy4",
+         "plus_code" :
+         {
+            "compound_code" : "9WV3+3W Mountain View, Californie, États-Unis",
+            "global_code" : "849V9WV3+3W"
+         },
+         "rating" : 4.1,
+         "reference" : "ChIJd7BpB8iwj4AReNh8DhGJBy4",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 813,
+         "vicinity" : "1854 El Camino Real, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.407464,
+               "lng" : -122.1203004
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.4086840302915,
+                  "lng" : -122.1190276697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.4059860697085,
+                  "lng" : -122.1217256302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Dinah's Garden Hotel",
+         "photos" :
+         [
+            {
+               "height" : 1195,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/115212688446356792868\"\u003eDinah&#39;s Garden Hotel\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJYLKUu2u8JjdyfPZtFIkgc-Nm-YK0T-BgVLKa0VHTF4UkZfalrgMr8A8pamcpiyCEJzDsZhHmJZZVY6G41AoR9zR3DApR4qW9zCpVaNWwDZ8mfmVtS_owRRoWf3TAav6G6PMetA4xRrN87xwWLxYkoWRq_G3a575X-tt50Mh7_i-hcZ",
+               "width" : 1800
+            }
+         ],
+         "place_id" : "ChIJxUf2lnm6j4ARf-dI1c4L9sA",
+         "plus_code" :
+         {
+            "compound_code" : "CV4H+XV Palo Alto, Californie, États-Unis",
+            "global_code" : "849VCV4H+XV"
+         },
+         "rating" : 4.5,
+         "reference" : "ChIJxUf2lnm6j4ARf-dI1c4L9sA",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 1030,
+         "vicinity" : "4261 El Camino Real, Palo Alto"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.405935,
+               "lng" : -122.1215384
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.4073787802915,
+                  "lng" : -122.1198816197085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.4046808197085,
+                  "lng" : -122.1225795802915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Crowne Plaza Palo Alto, an IHG Hotel",
+         "photos" :
+         [
+            {
+               "height" : 3666,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/101702457097946958430\"\u003eCrowne Plaza Palo Alto, an IHG Hotel\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJbdjTToPCFueWd29s-B0mXwz2Q60OBobquUl_hjC_LhRnehjMh6IaoptI5ad4J6Nau1ErpWk7R4Tt2NHozxK1-VvTuUADRtt1atZAX_bX5X7EapKqOXxXDy1cwB3bmoSRLEUfjAffC6dinaVGMqM2M2d2Wb-sj1KNNCjwOpz5bKesFM",
+               "width" : 5500
+            }
+         ],
+         "place_id" : "ChIJG-5a-ni6j4ARkWA-ydv9vME",
+         "plus_code" :
+         {
+            "compound_code" : "CV4H+99 Palo Alto, Californie, États-Unis",
+            "global_code" : "849VCV4H+99"
+         },
+         "rating" : 4.1,
+         "reference" : "ChIJG-5a-ni6j4ARkWA-ydv9vME",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 1580,
+         "vicinity" : "4290 El Camino Real, Palo Alto"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.4189701,
+               "lng" : -122.1356393
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.4202984302915,
+                  "lng" : -122.1342326197085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.4176004697085,
+                  "lng" : -122.1369305802915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Creekside Inn",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 702,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/116597843885770181027\"\u003eCreekside Inn\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJbDLkPmClNgsnHLh4TMwWdUefFspMqYmU2oOJWt3fzpjxYcgsCs_YmYurOH1rv-4JbjrHd-l3Ep3TZkd7PNVTunBzth0cRcC71lBqOa5RqET_EnPrtks4eu34g-n6h6bgjswJ4fFYVDkiTdDJTlWIjrHkk6CnIisck_7A1kuc7m0psl",
+               "width" : 1248
+            }
+         ],
+         "place_id" : "ChIJk-81NEQzjoARbseaaQj2g_E",
+         "plus_code" :
+         {
+            "compound_code" : "CV97+HP Palo Alto, Californie, États-Unis",
+            "global_code" : "849VCV97+HP"
+         },
+         "rating" : 4.3,
+         "reference" : "ChIJk-81NEQzjoARbseaaQj2g_E",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 806,
+         "vicinity" : "3400 El Camino Real, Palo Alto"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.3975517,
+               "lng" : -122.0866167
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.39870883029149,
+                  "lng" : -122.08543385
+               },
+               "southwest" :
+               {
+                  "lat" : 37.39601086970849,
+                  "lng" : -122.09016525
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Avalon Mountain View",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 1120,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/103031326133812648501\"\u003eAvalon Mountain View\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJZRlcKKnA545duhFaP5tsLlqASYR8BwpNajHl9KAGDgyq0MTeGIxe7TFapRJofZvqAv_rQy-QE7B14HmTB7--Vx6SSX5PgfkjJFnI-VRMikQNLXVmHQPIsl-sykjp7AJEeoUbeA1djcSzHpL8ORxz5J3yCm6JusW_CRwCollwlgn2Ml",
+               "width" : 1800
+            }
+         ],
+         "place_id" : "ChIJfYitT7Swj4ARqlGv4vl-YYc",
+         "plus_code" :
+         {
+            "compound_code" : "9WX7+29 Mountain View, Californie, États-Unis",
+            "global_code" : "849V9WX7+29"
+         },
+         "rating" : 4.7,
+         "reference" : "ChIJfYitT7Swj4ARqlGv4vl-YYc",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "real_estate_agency",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 184,
+         "vicinity" : "1600 Villa Street, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.3870861,
+               "lng" : -122.0859968
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.3883344302915,
+                  "lng" : -122.0846571197085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.38563646970851,
+                  "lng" : -122.0873550802915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Hotel Aria Mountain View",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 4032,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/114539333830534988153\"\u003eHotel Aria Mountain View\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJY2ivZ21MupuHUfn1En--P52rxFJMiQSn4sJ5AhRobfdwhf4mg9UumTiOovixC2KDTig1mU-ZRMRM5fS8JqH2ZAvqjV_WLHOsHkMwuo_KupZWcDjUiPdBItq4QdTn3HXmWqfUM62DpLVT1gwnx9j9UDeFVrg4wqiiuQKkBQaLqqlkIv",
+               "width" : 3024
+            }
+         ],
+         "place_id" : "ChIJE_kJDc2wj4ARi4uFhMs6E3g",
+         "plus_code" :
+         {
+            "compound_code" : "9WP7+RJ Mountain View, Californie, États-Unis",
+            "global_code" : "849V9WP7+RJ"
+         },
+         "rating" : 3.8,
+         "reference" : "ChIJE_kJDc2wj4ARi4uFhMs6E3g",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 386,
+         "vicinity" : "1012 West El Camino Real, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.4077448,
+               "lng" : -122.1214735
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.40917093029149,
+                  "lng" : -122.1200838697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.4064729697085,
+                  "lng" : -122.1227818302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "The Palo Alto Inn",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 824,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/118373272918474299431\"\u003eThe Palo Alto Inn\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJbrA7kO8463vDqpNw-uVlMKKKVyKygkPWgwabFbSGJKr6wDGjNcjYbgp8EjdIsWVI0xzL3b_N9SvhRXCiW3oNmLKUQeaKPP6yIedGoZxdlcg0ub_d2sCO0tX_nnn9aQ29XqqHsTNKryXXUWh4GZgARHnRj-Y1oV63tdJC3-X94dBVO0",
+               "width" : 1500
+            }
+         ],
+         "place_id" : "ChIJ8f-cbXm6j4ARAaN2FcMlALk",
+         "plus_code" :
+         {
+            "compound_code" : "CV5H+3C Palo Alto, Californie, États-Unis",
+            "global_code" : "849VCV5H+3C"
+         },
+         "rating" : 4.1,
+         "reference" : "ChIJ8f-cbXm6j4ARAaN2FcMlALk",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 353,
+         "vicinity" : "4238 El Camino Real, Palo Alto"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.389652,
+               "lng" : -122.0933179
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.3913037302915,
+                  "lng" : -122.0918956197085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.38860576970851,
+                  "lng" : -122.0945935802915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Super 8 by Wyndham Mountain View",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 484,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/111345943902551751900\"\u003eSuper 8 by Wyndham Mountain View\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJap2oda4WMbnPBeUiSdTrrAtAFh9zTNAg68DKr2ngywj_aYeXvaI8EvE6Nemg-j84fqOGNbYdzKP03UGmPRYosUUyEB9S7eIHbds1SM2c19JQSJIXeNzk2yYiJOsCvFNU7PLSmeOpKej-qkTbrtbXctCsD27SMtsyFYZjzvXVa4T2Ho",
+               "width" : 796
+            }
+         ],
+         "place_id" : "ChIJWX5_6ciwj4ARNsmUKzB2OMA",
+         "plus_code" :
+         {
+            "compound_code" : "9WQ4+VM Mountain View, Californie, États-Unis",
+            "global_code" : "849V9WQ4+VM"
+         },
+         "rating" : 3.7,
+         "reference" : "ChIJWX5_6ciwj4ARNsmUKzB2OMA",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 242,
+         "vicinity" : "El Camino/El Monte, 1665 West El Camino Real, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.4206388,
+               "lng" : -122.138789
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.42211848029149,
+                  "lng" : -122.1372804697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.4194205197085,
+                  "lng" : -122.1399784302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Hotel Parmani",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 484,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/113490491514168116548\"\u003eHotel Parmani\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJbjj0I85wnfEw_OY4aXWISexKwi5t5jnAmwMJSE8dRZVPSe6cPxfPtOAKSMpS74RhktaaDtuNFKZFqy_boOmYacgoT_soNV8de94dHyzX3iQQM9Q8COMlKQUz9LRz8c8_8H4YZtSoheEiR2u73CmDb3qBhWDKC_UocZhK3nFCiBLitb",
+               "width" : 796
+            }
+         ],
+         "place_id" : "ChIJrc71UPK6j4ARsjRjGIAmhWA",
+         "plus_code" :
+         {
+            "compound_code" : "CVC6+7F Palo Alto, Californie, États-Unis",
+            "global_code" : "849VCVC6+7F"
+         },
+         "rating" : 3.7,
+         "reference" : "ChIJrc71UPK6j4ARsjRjGIAmhWA",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 197,
+         "vicinity" : "3200 El Camino Real, Palo Alto"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.4220604,
+               "lng" : -122.0852343
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.42468864999999,
+                  "lng" : -122.08013875
+               },
+               "southwest" :
+               {
+                  "lat" : 37.41990725,
+                  "lng" : -122.09124615
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Googleplex",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 3024,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/117851692593417823996\"\u003eSimone\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJbYjsFdBWmYGL1z0jo1Mc-zvqGAZ3LKbWoXNcfbiPvj1-q8AvSDwUwz3sWtw38hFyri63YEXcKNYdFQ8HZA9S8PtUanZyIyP7gHNji9I0T55NdoNsUePBS9nbbKBMbx6rP-vYqKZdSgxA0uJSIJyAyF2XiYajH5_LScQWuahklb1bYz",
+               "width" : 4032
+            }
+         ],
+         "place_id" : "ChIJj61dQgK6j4AR4GeTYWZsKWw",
+         "plus_code" :
+         {
+            "compound_code" : "CWC7+RW Mountain View, Californie, États-Unis",
+            "global_code" : "849VCWC7+RW"
+         },
+         "rating" : 4.1,
+         "reference" : "ChIJj61dQgK6j4AR4GeTYWZsKWw",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 10201,
+         "vicinity" : "1600 Amphitheatre Parkway, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.39784970000001,
+               "lng" : -122.1053284
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.3989555802915,
+                  "lng" : -122.1041658697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.3962576197085,
+                  "lng" : -122.1068638302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "SureStay Plus By Best Western Mountain View",
+         "photos" :
+         [
+            {
+               "height" : 682,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/109036923734581694419\"\u003eSureStay Plus By Best Western Mountain View\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJYeHuwgQLe_TIvBAWkSuawFR2qUWHPuLkCtovRAyAYLdubqCJFdVb8QEbNsxsV2YqM_6o1RkD33HdX5wdVBx04cHBgrLYatDlzHeKHUHnPja3_tW8-U1p7Sjy_42BZMbjyst1WIzXfYzGqrF2M--ov3OXQmOJx-P0JDYeTw4_DemoSU",
+               "width" : 1023
+            }
+         ],
+         "place_id" : "ChIJp35wbL2wj4ARz3qwZpD1XsQ",
+         "plus_code" :
+         {
+            "compound_code" : "9VXV+4V Mountain View, Californie, États-Unis",
+            "global_code" : "849V9VXV+4V"
+         },
+         "rating" : 3.4,
+         "reference" : "ChIJp35wbL2wj4ARz3qwZpD1XsQ",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 552,
+         "vicinity" : "2300 West El Camino Real, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.4079719,
+               "lng" : -122.1217813
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.40942433029149,
+                  "lng" : -122.1203469697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.40672636970849,
+                  "lng" : -122.1230449302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Americas Best Value Inn Sky Ranch Palo Alto",
+         "photos" :
+         [
+            {
+               "height" : 2456,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/116254689249014909429\"\u003eAmericas Best Value Inn Sky Ranch Palo Alto\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJYl5t9U_3YssACvuBLj8HbkQ0kMe8bwb3vz4CF-NDIwcS3khGU-0jrS5VVgkufT1vN6sQpp3oTDIMR_GmasrOI_T29jKukLKLv43rqN_u5ahAQ8kHIcIkWf4KYl-7lOgUDv9TgG092PD-XtI55ev2zJMAbXHDYvHLRtA5WUjv4881Vo",
+               "width" : 3680
+            }
+         ],
+         "place_id" : "ChIJB2bVZ3m6j4ARHYx4y8hiOfk",
+         "plus_code" :
+         {
+            "compound_code" : "CV5H+57 Palo Alto, Californie, États-Unis",
+            "global_code" : "849VCV5H+57"
+         },
+         "rating" : 3.5,
+         "reference" : "ChIJB2bVZ3m6j4ARHYx4y8hiOfk",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 170,
+         "vicinity" : "4234 El Camino Real, Palo Alto"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.3811477,
+               "lng" : -122.0759028
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.3826584302915,
+                  "lng" : -122.0745352697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.3799604697085,
+                  "lng" : -122.0772332302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Hotel Strata",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 6656,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/105454054259360107249\"\u003eHotel Strata\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJbrSVqcJcRE4-MHRoZW1VLSkSRqV779vXRB5OZjNqhmyBEte_iwYDkiXOuGL-8jGSFklpoEewXcEG5_2e-FBk3pNBLXiHBCKQonQ4BDqQkR8WmK859yceVoeackBOnLroO1AAbEaJuwrvftS0M432w2e1ZZbA9KCIkpTAxPxuabZVEu",
+               "width" : 13312
+            }
+         ],
+         "place_id" : "ChIJPZijrym3j4ARuNJ-3cD5R54",
+         "plus_code" :
+         {
+            "compound_code" : "9WJF+FJ Mountain View, Californie, États-Unis",
+            "global_code" : "849V9WJF+FJ"
+         },
+         "rating" : 4.7,
+         "reference" : "ChIJPZijrym3j4ARuNJ-3cD5R54",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 897,
+         "vicinity" : "93 West El Camino Real, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.42683419999999,
+               "lng" : -122.0807023
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.43055770000001,
+                  "lng" : -122.0770219
+               },
+               "southwest" :
+               {
+                  "lat" : 37.42080929999999,
+                  "lng" : -122.0819291
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#13B5C7",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Shoreline Amphitheatre",
+         "opening_hours" :
+         {
+            "open_now" : false
+         },
+         "photos" :
+         [
+            {
+               "height" : 3024,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/110712896522991860375\"\u003eJanelle Hopkins\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJa4UlPPvhOxHtsWR24rpitNkF7JpLG0xNkpGEzAydi8TDyN3by6TJt1LMV0OybplVpVzXwe-9JRnIhuCCnLfhogj-uTp4zVdh-zW--iioafEU5V0i0hVSw3LS-Uk7oO7nl1gzou2SKPgmFWirVHd3NI-_jQ2K1yohOvi5E0WQTqTXsf",
+               "width" : 4032
+            }
+         ],
+         "place_id" : "ChIJZeH1dve5j4ARPT9VG0oB3x0",
+         "plus_code" :
+         {
+            "compound_code" : "CWG9+PP Mountain View, Californie, États-Unis",
+            "global_code" : "849VCWG9+PP"
+         },
+         "rating" : 4.4,
+         "reference" : "ChIJZeH1dve5j4ARPT9VG0oB3x0",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 9393,
+         "vicinity" : "One Amphitheatre Parkway, Mountain View"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.41674700000001,
+               "lng" : -122.128363
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.41779043029151,
+                  "lng" : -122.1271371197085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.41509246970851,
+                  "lng" : -122.1298350802915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "Comfort Inn Palo Alto",
+         "opening_hours" :
+         {
+            "open_now" : true
+         },
+         "photos" :
+         [
+            {
+               "height" : 400,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/118003442407184470875\"\u003eComfort Inn Palo Alto\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJYRpJ-fkKbS9rxIZtiIXjM1Tqrp3E2xB586PR58JOXHkoHRLWjSoCPcPSAaCacZa4WlFc9ANiz-6ELBlDXNAFhErPg9mEulySJ7kLKwAXj_JXx-u4B7EvO_pO0NonRS5VJ7VoJWbBaikxNimTlz_w4xfonwFwuLZ1QMw91ZRACUeOtd",
+               "width" : 711
+            }
+         ],
+         "place_id" : "ChIJjRGNAmK6j4ARJf9u5lvBMW8",
+         "plus_code" :
+         {
+            "compound_code" : "CV8C+MM Palo Alto, Californie, États-Unis",
+            "global_code" : "849VCV8C+MM"
+         },
+         "rating" : 3.5,
+         "reference" : "ChIJjRGNAmK6j4ARJf9u5lvBMW8",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 538,
+         "vicinity" : "3945 El Camino Real, Palo Alto"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.4055912,
+               "lng" : -122.0665871
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.4068237802915,
+                  "lng" : -122.0652205697085
+               },
+               "southwest" :
+               {
+                  "lat" : 37.4041258197085,
+                  "lng" : -122.0679185302915
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+         "icon_background_color" : "#909CE1",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/hotel_pinlet",
+         "name" : "County Inn",
+         "photos" :
+         [
+            {
+               "height" : 4160,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/101099133527019952358\"\u003evalerie rose poetry\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJZDU-IFKbTivOBxYR46Yu5HDUpG51zGwqpxg7EEAISmKwVHVNLTGXFcmuwLJQXwpcZ9_RqYoNo_HJgeS89eKSCx-u6rtHkZ0cBTm_U-rvNuF6S63h0TmmAs6LQbA24YUzuIJU9XdWHkKGvtZOsyXaXzNy4WH2RxXzoK7Ud0Y7qLwrmV",
+               "width" : 3120
+            }
+         ],
+         "place_id" : "ChIJQZg0T0G3j4ARYYPD-HqzSjk",
+         "plus_code" :
+         {
+            "compound_code" : "CW4M+69 Mountain View, Californie, États-Unis",
+            "global_code" : "849VCW4M+69"
+         },
+         "rating" : 3.1,
+         "reference" : "ChIJQZg0T0G3j4ARYYPD-HqzSjk",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "lodging",
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 627,
+         "vicinity" : "850 Leong Drive, Mountain View"
+      },
+      {
+         "geometry" :
+         {
+            "location" :
+            {
+               "lat" : 37.36883,
+               "lng" : -122.0363496
+            },
+            "viewport" :
+            {
+               "northeast" :
+               {
+                  "lat" : 37.46123239169791,
+                  "lng" : -121.98267000873
+               },
+               "southwest" :
+               {
+                  "lat" : 37.33023601087744,
+                  "lng" : -122.0650661004533
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Sunnyvale",
+         "photos" :
+         [
+            {
+               "height" : 4032,
+               "html_attributions" :
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/108164309592199976827\"\u003eDIVINE SPARK\u003c/a\u003e"
+               ],
+               "photo_reference" : "ATplDJYDrqm9gt2_d-kQI7vkdyrvFQ6RsMANqCgPN_8S7liP3aRMLlBeK8-Qn4pR9ceZjm9DSqLYvOmcIVLYE498lBptlpeDKFwEiDAB6tkY2DqZrt5_Dbo16WAn9HYxRtBS5iaSzyloZOL5tEQ_bdc3Rv2U7EwrqhfwM-Ib1KN3vEo2HEUG",
+               "width" : 3024
+            }
+         ],
+         "place_id" : "ChIJO13QqUW2j4ARosN83Sb7jXY",
+         "reference" : "ChIJO13QqUW2j4ARosN83Sb7jXY",
+         "scope" : "GOOGLE",
+         "types" :
+         [
+            "locality",
+            "political"
+         ],
+         "vicinity" : "Sunnyvale"
+      }
+   ],
+   "status" : "OK"
+}

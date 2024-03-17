@@ -62,6 +62,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     private void initRestaurantDetailUI() {
         viewModel.getRestaurantDetail().observe(this, restaurantInfo -> {
+            Log.d(TAG, "initRestaurantDetailUI: restaurantInfo trigger");
             if (restaurantInfo != null) {
                 if (restaurantInfo.getPhotos().get(0) != null) {
                     String photoRef = restaurantInfo.getPhotos().get(0).getPhotoReference();
@@ -113,6 +114,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         adapter = new WorkmateAdapter();
         recyclerView.setAdapter(adapter);
         viewModel.getListWorkmateLiveData().observe(this, workmates -> {
+            Log.d(TAG, "initWorkmatesUI: workmates observer trigger");
             adapter.submitList(workmates);
         });
         binding.choseRestaurantButton.setOnClickListener(v -> {
@@ -122,6 +124,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     private void initUserDataUI() {
         viewModel.getUserData().observe(this, uData -> {
+            Log.d(TAG, "initUserDataUI: uData observer trigger");
             if (uData != null){
                 if (uData.getPlaceId().equals(placeId)) {
                     binding.choseRestaurantButton.setImageResource(R.drawable.baseline_check_circle_24);
@@ -134,6 +137,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     private void initFavUI() {
         viewModel.getUserFavList().observe(this, favRestaurants -> {
+            Log.d(TAG, "initFavUI: favRestaurant observer trigger");
             if (favRestaurants != null){
                 Log.d(TAG, "initFavUI: favList != null");
                 if (!favRestaurants.isEmpty()) {
@@ -164,9 +168,10 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        Log.d(TAG, "onDestroy: remove observer");
         viewModel.getListWorkmateLiveData().removeObservers(this);
         viewModel.getRestaurantDetail().removeObservers(this);
         viewModel.getUserData().removeObservers(this);
+        super.onDestroy();
     }
 }

@@ -87,9 +87,9 @@ public class RestaurantListFragment extends Fragment {
         Log.d(TAG, "subscribeToObservables: ");
         //HomeViewState
         viewModel.getHomeViewStateLiveData().observe(getViewLifecycleOwner(), viewState ->{
+            Log.d(TAG, "subscribeToObservables: viewState "+viewState.toString());
             setUserLocation(viewState.getLocation());
             updateRecyclerViewByViewState(viewState.getHomeViewState());
-            Log.d(TAG, "subscribeToObservables: viewState "+viewState.toString());
         });
 
         viewModel.getPrediction().observe(getViewLifecycleOwner(), place -> {
@@ -114,7 +114,6 @@ public class RestaurantListFragment extends Fragment {
             noRestaurant.setVisibility(View.GONE);
             binding.restaurantList.setVisibility(View.VISIBLE);
             adapter.submitList(restaurants);
-            adapter.submitList(restaurants);
         }
     }
 
@@ -132,9 +131,9 @@ public class RestaurantListFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         removeObserver();
         binding = null;
+        super.onDestroyView();
     }
 
     @Override

@@ -59,7 +59,7 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     }
 
     public void setViewState() {
-        LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getAllWorkmate();
+        LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getAllWorkmateRt();
         LiveData<Location> userLocationLiveData = locationRepository.getLocationLiveData();
         LiveData<List<Result>> nearbySearchListLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), nearBySearchRepository::getRestaurantLiveData);
 

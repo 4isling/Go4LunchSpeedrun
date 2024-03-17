@@ -40,6 +40,7 @@ public class WorkmateAdapter extends ListAdapter<Workmate, WorkmateAdapter.ViewH
     @SuppressLint("NotifyDataSetChanged")
     public void setList(List<Workmate> workmatesList){
         this.workmatesList = workmatesList;
+        notifyDataSetChanged();
     }
 
     private static class ListWorkmateItemCallback extends DiffUtil.ItemCallback<Workmate> {
@@ -78,10 +79,14 @@ public class WorkmateAdapter extends ListAdapter<Workmate, WorkmateAdapter.ViewH
                 restaurantNameTextView.setText(item.getRestaurantName());
             }
             if (item.getAvatarUrl() != null){
-                Glide.with(avatarImageView)
-                        .load(item.getAvatarUrl())
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(avatarImageView);
+                if (!item.getAvatarUrl().isEmpty()){
+                    Glide.with(avatarImageView)
+                            .load(item.getAvatarUrl())
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(avatarImageView);
+                }else {
+                    avatarImageView.setImageResource(R.drawable.workmate_place_holder);
+                }
             }
         }
     }

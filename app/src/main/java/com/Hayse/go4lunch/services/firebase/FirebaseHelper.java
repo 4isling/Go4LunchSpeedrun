@@ -29,6 +29,10 @@ public class FirebaseHelper {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String userUID;
 
+    private final MutableLiveData<Workmate> userInfo = new MutableLiveData<>();
+
+    private boolean firestoreDataAlreadyFetched = false;
+
     public final CollectionReference workmateRef = db.collection("workmates");
 
     public final CollectionReference favRestaurantRef = db.collection("favorite_restaurant");
@@ -47,7 +51,7 @@ public class FirebaseHelper {
      *
      * @return
      */
-    public Workmate getUserDataOAuth() {
+    private void getUserDataOAuth() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         Workmate workmate = new Workmate();
         if (firebaseAuth.getCurrentUser().getPhotoUrl() != null) {
@@ -58,52 +62,50 @@ public class FirebaseHelper {
         workmate.setId(firebaseAuth.getCurrentUser().getUid());
         userUID = workmate.getId();
         Log.d(TAG, "getUserData: userUID" + userUID);
-        return workmate;
+        userInfo.postValue(workmate);
     }
 
     public MutableLiveData<Workmate> getFirestoreUserDataRT() {
         MutableLiveData<Workmate> realTimeUserData = new MutableLiveData<>();
-        workmateRef.document(FirebaseAuth.getInstance().getUid()).addSnapshotListener((value, error) -> {
-            if (error != null) {
-                Log.w(TAG, "onEvent: error:", error);
-            }
-            realTimeUserData.postValue(value.toObject(Workmate.class));
-        });
-        return realTimeUserData;
+        if (!firestoreDataAlreadyFetched) {
+            workmateRef.document(FirebaseAuth.getInstance().getUid()).addSnapshotListener((value, error) -> {
+                if (error != null) {
+                    Log.w(TAG, "onEvent: error:", error);
+                }
+                userInfo.postValue(value.toObject(Workmate.class));
+            });
+            firestoreDataAlreadyFetched = true;
+        }
+        return userInfo;
     }
 
     public String getUserUID() {
         return FirebaseAuth.getInstance().getUid();
     }
 
-    public Task<QuerySnapshot> getAllWorkmate() {
-        return workmateRef.get();
-    }
-
     public MutableLiveData<List<Workmate>> getRtWorkmates() {
-        MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>();
-        workmateRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.w(TAG, "GetRtWorkmateListener", error);
-                }
-                if (!value.isEmpty()) {
-                    Log.d(TAG, "getWorkmate: not empty");
-                    List<Workmate> workmatesResult = value.toObjects(Workmate.class);
-                    workmates.postValue(workmatesResult);
-                } else {
-                    Log.d(TAG, "getWorkmate: is empty");
-                    workmates.postValue(new ArrayList<>());
-                }
+        MutableLiveData<List<Workmate>> workmates = new MutableLiveData<>(new ArrayList<>());
+        if (workmates.getValue() != null) {
+            if (workmates.getValue().isEmpty()) {
+                workmateRef.addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.w(TAG, "GetRtWorkmateListener", error);
+                    }
+                    if (value != null && !value.isEmpty()) {
+                        Log.d(TAG, "getWorkmate: not empty");
+                        List<Workmate> workmatesResult = value.toObjects(Workmate.class);
+                        workmates.postValue(workmatesResult);
+                    }
+                });
             }
-        });
+        }
         return workmates;
     }
 
     public void setNewWorkmate() {
         Log.d(TAG, "setNewWorkmate: ");
-        Workmate uData = getUserDataOAuth();
+        getUserDataOAuth();
+        Workmate uData = userInfo.getValue();
         Log.d(TAG, "setNewWorkmate: uData" + uData);
         Map<String, Object> workmate = new HashMap<>();
         workmate.put("id", uData.getId());
@@ -145,10 +147,10 @@ public class FirebaseHelper {
         if (restaurantTypeOfFood != null) {
             updateData.put("restaurantTypeOfFood", restaurantTypeOfFood);
         }
-        if (name != null){
+        if (name != null) {
             updateData.put("name", name);
         }
-        if (email!= null){
+        if (email != null) {
             updateData.put("email", email);
         }
         workmateRef.document(FirebaseAuth.getInstance().getUid())
@@ -182,21 +184,18 @@ public class FirebaseHelper {
 
     public MutableLiveData<List<Workmate>> getWorkmateByPlaceId(String placeId) {
         MutableLiveData<List<Workmate>> workmatesResult = new MutableLiveData<>(new ArrayList<>());
-        workmateRef.whereEqualTo("placeId", placeId).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.d(TAG, "listen failed: ", error);
-                    return;
-                }
-                if (!snapshots.isEmpty()) {
-                    Log.d(TAG, "getWorkmateByPlaceId: not empty");
-                    List<Workmate> workmates = snapshots.toObjects(Workmate.class);
-                    workmatesResult.postValue(workmates);
-                } else {
-                    Log.d(TAG, "getWorkmateByPlaceId: is empty");
-                    workmatesResult.postValue(new ArrayList<>());
-                }
+        workmateRef.whereEqualTo("placeId", placeId).addSnapshotListener((snapshots, error) -> {
+            if (error != null) {
+                Log.d(TAG, "listen failed: ", error);
+                return;
+            }
+            if (!snapshots.isEmpty()) {
+                Log.d(TAG, "getWorkmateByPlaceId: not empty");
+                List<Workmate> workmates = snapshots.toObjects(Workmate.class);
+                workmatesResult.postValue(workmates);
+            } else {
+                Log.d(TAG, "getWorkmateByPlaceId: is empty");
+                workmatesResult.postValue(new ArrayList<>());
             }
         });
         return workmatesResult;
@@ -216,22 +215,22 @@ public class FirebaseHelper {
 
     public MutableLiveData<List<FavRestaurant>> getUserFavList(String userID) {
         MutableLiveData<List<FavRestaurant>> favRestaurantResult = new MutableLiveData<>();
-        favRestaurantRef.whereEqualTo("user_id", userID).addSnapshotListener(((value, error) -> {
-            if (error != null) {
-                Log.e(TAG, "getUserFavList: ", error);
-                return;
-            }
-            List<FavRestaurant> favRestaurantsList = new ArrayList<>();
-            if (!value.isEmpty()) {
-                Log.d(TAG, "getUserFavList: not empty");
-                for (DocumentSnapshot doc : value.getDocuments()) {
-                    favRestaurantsList.add(doc.toObject(FavRestaurant.class));
+        if (favRestaurantResult.getValue()== null){
+            favRestaurantRef.whereEqualTo("user_id", userID).addSnapshotListener(((value, error) -> {
+                if (error != null) {
+                    Log.e(TAG, "getUserFavList: ", error);
+                    return;
                 }
-            } else {
-                Log.d(TAG, "getUserFavList: is empty");
-            }
-            favRestaurantResult.postValue(favRestaurantsList);
-        }));
+                List<FavRestaurant> favRestaurantsList = new ArrayList<>();
+                if (value != null && !value.isEmpty()) {
+                    Log.d(TAG, "getUserFavList: not empty");
+                    for (DocumentSnapshot doc : value.getDocuments()) {
+                        favRestaurantsList.add(doc.toObject(FavRestaurant.class));
+                    }
+                }
+                favRestaurantResult.postValue(favRestaurantsList);
+            }));
+        }
         return favRestaurantResult;
     }
 

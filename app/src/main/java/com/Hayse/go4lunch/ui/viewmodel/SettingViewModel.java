@@ -13,14 +13,11 @@ import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
 import java.util.List;
 
 public class SettingViewModel extends ViewModel {
-    LiveData<List<Workmate>> workmates;
-    private final MutableLiveData<Boolean> notificationEnabled = new MutableLiveData<>(true);
     private final WorkmateRepository workmateRepository;
     public SettingViewModel(
             @NonNull WorkmateRepository workmateRepository
     ){
         this.workmateRepository = workmateRepository;
-        workmates = workmateRepository.getAllWorkmate();
     }
 
     public void deleteUserAccount() {
