@@ -159,31 +159,9 @@ public class FirebaseHelper {
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
-    /**
-     * @param userUID
-     * @return true if user with this Id exist
-     */
-    public Boolean checkIfUserIdExist(String userUID) {
-        final boolean[] result = new boolean[1];
-        workmateRef.document("userUID").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-                    result[0] = true;
-                    Log.d(TAG, "onComplete:DocumentExist: UserData: " + document.getData());
-                } else {
-                    result[0] = false;
-                    Log.d(TAG, "onComplete:no such Document");
-                }
-            } else {
-                Log.d(TAG, "onComplete: Failed with", task.getException());
-            }
-        });
-        return result[0];
-    }
-
     public MutableLiveData<List<Workmate>> getWorkmateByPlaceId(String placeId) {
         MutableLiveData<List<Workmate>> workmatesResult = new MutableLiveData<>(new ArrayList<>());
+
         workmateRef.whereEqualTo("placeId", placeId).addSnapshotListener((snapshots, error) -> {
             if (error != null) {
                 Log.d(TAG, "listen failed: ", error);
@@ -323,5 +301,13 @@ public class FirebaseHelper {
                 Log.e(TAG, "Failed to delete fav restaurant.", task.getException());
             }
         });
+    }
+
+    public boolean isUserLogged() {
+        if (FirebaseAuth.getInstance().getUid()!= null){
+            return true;
+        }else {
+            return false;
+        }
     }
 }

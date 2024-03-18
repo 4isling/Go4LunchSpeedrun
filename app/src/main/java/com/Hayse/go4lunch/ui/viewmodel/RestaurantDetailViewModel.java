@@ -37,8 +37,12 @@ public class RestaurantDetailViewModel extends ViewModel {
     }
 
 
-    public LiveData<Result> getRestaurantDetail() {
+    private LiveData<Result> getRestaurantDetail() {
         return detailRepository.getDetail(placeId);
+    }
+
+    public LiveData<Result> getRestaurantLiveData(){
+        return restaurantLiveData;
     }
 
     public LiveData<List<Workmate>> getListWorkmateLiveData() {

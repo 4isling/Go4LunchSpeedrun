@@ -94,6 +94,7 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     public void onPredictionClick(@Nullable Place place) {
         Log.d(TAG, "onPredictionClick: " + place);
         this.placeAutocompleteSelected.setValue(place);
+        this.placeAutocompleteSelected.postValue(null);
     }
 
     public LiveData<Place> getPrediction() {
@@ -196,6 +197,10 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
             HomeWrapperViewState updatedHomeWrapperViewState = new HomeWrapperViewState(sortedList, homeWrapperViewState.getLocation());
             homeWrapperViewStateMediatorLiveData.setValue(updatedHomeWrapperViewState);
         }
+    }
+
+    public boolean isUserLogged(){
+        return workmateRepository.isUserLogged();
     }
 
     public void sortByRestaurantRating() {

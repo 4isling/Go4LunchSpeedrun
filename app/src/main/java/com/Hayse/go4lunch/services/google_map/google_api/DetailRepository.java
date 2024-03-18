@@ -31,9 +31,7 @@ public class DetailRepository {
 
     public LiveData<Result> getDetail(String place_id){
         Log.d(TAG, "getDetail: "+place_id);
-        if (detailResult.getValue() == null){
-            setDetailResult(place_id);
-        }else if (!Objects.equals(detailResult.getValue().getPlaceId(), place_id)){
+        if (detailResult.getValue() == null || !detailResult.getValue().getPlaceId().equals(place_id)){
             setDetailResult(place_id);
         }
         return detailResult;

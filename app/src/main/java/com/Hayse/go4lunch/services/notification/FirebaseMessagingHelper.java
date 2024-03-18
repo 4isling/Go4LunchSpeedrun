@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FirebaseMessagingHelper extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
-    private static final String CHANEL_ID = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
+    private static final String CHANEL_ID = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.CLOUD_MESSAGE_ID);
 
 
     public FirebaseMessagingHelper() {

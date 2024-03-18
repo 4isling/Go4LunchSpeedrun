@@ -105,52 +105,57 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String API_KEY = MainApplication.getApplication().getResources().getString(R.string.MAPS_API_KEY);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        this.initViewModel();
-        this.createFragments();
-        this.configureToolbar();
-        this.configureBottomNavView();
-        this.configureDrawerLayout();
-        this.configureDrawerNavView();
+        if (homeRestaurantSharedViewModel.isUserLogged()){
+            String API_KEY = MainApplication.getApplication().getResources().getString(R.string.MAPS_API_KEY);
+            binding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+            this.initViewModel();
+            this.createFragments();
+            this.configureToolbar();
+            this.configureBottomNavView();
+            this.configureDrawerLayout();
+            this.configureDrawerNavView();
 
-        // Restore the current fragment if there's a savedInstanceState
-        boolean isRestoringFromSavedInstanceState = false;
-        if (savedInstanceState != null) {
-            currentFragmentIndex = savedInstanceState.getInt(CURRENT_FRAGMENT_INDEX);
-            // Restore the fragment based on the currentFragmentIndex
-            switch (currentFragmentIndex) {
-                case 0:
-                    replaceFragment(mapFragment);
-                    break;
-                case 1:
-                    replaceFragment(listFragment);
-                    break;
-                case 2:
-                    replaceFragment(workmateFragment);
-                    break;
-                default:
-                    replaceFragment(mapFragment); // Default to mapFragment if the index is invalid
+            // Restore the current fragment if there's a savedInstanceState
+            boolean isRestoringFromSavedInstanceState = false;
+            if (savedInstanceState != null) {
+                currentFragmentIndex = savedInstanceState.getInt(CURRENT_FRAGMENT_INDEX);
+                // Restore the fragment based on the currentFragmentIndex
+                switch (currentFragmentIndex) {
+                    case 0:
+                        replaceFragment(mapFragment);
+                        break;
+                    case 1:
+                        replaceFragment(listFragment);
+                        break;
+                    case 2:
+                        replaceFragment(workmateFragment);
+                        break;
+                    default:
+                        replaceFragment(mapFragment); // Default to mapFragment if the index is invalid
+                }
+                isRestoringFromSavedInstanceState = true;
             }
-            isRestoringFromSavedInstanceState = true;
-        }
 
-        if (ContextCompat.checkSelfPermission(MainApplication.getApplication(), ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
-            Log.d(TAG, "onCreate: location permission granted");
-            if (isGoogleServiceOK()) {
-                if (!isRestoringFromSavedInstanceState) {
-                    replaceFragment(mapFragment);
+            if (ContextCompat.checkSelfPermission(MainApplication.getApplication(), ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
+                Log.d(TAG, "onCreate: location permission granted");
+                if (isGoogleServiceOK()) {
+                    if (!isRestoringFromSavedInstanceState) {
+                        replaceFragment(mapFragment);
+                    }
+                    if (!Places.isInitialized()) {
+                        Places.initialize(getApplicationContext(), API_KEY);
+                    }
+                    this.initUserDataUI();
                 }
-                if (!Places.isInitialized()) {
-                    Places.initialize(getApplicationContext(), API_KEY);
-                }
-                this.initUserDataUI();
+            } else {
+                Log.d(TAG, "onCreate: location permission disable");
+                PermissionUtils.requestPermission(this, 1,
+                        Manifest.permission.ACCESS_FINE_LOCATION, false);
             }
-        } else {
-            Log.d(TAG, "onCreate: location permission disable");
-            PermissionUtils.requestPermission(this, 1,
-                    Manifest.permission.ACCESS_FINE_LOCATION, false);
+        }else {
+            Intent intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
         }
     }
 

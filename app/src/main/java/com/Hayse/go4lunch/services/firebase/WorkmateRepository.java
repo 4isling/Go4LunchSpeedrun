@@ -22,22 +22,12 @@ import java.util.Objects;
 public class WorkmateRepository {
     private static final String TAG = "WorkmateRepository";
     private final LiveData<List<Workmate>> listOfWorkmates;
-    private static WorkmateRepository sWorkmateRepository;
     private static FirebaseHelper mFirebaseHelper;
 
     private final LiveData<Workmate>  userData;
 
-
-    public static WorkmateRepository getInstance(){
-        if(sWorkmateRepository == null){
-            sWorkmateRepository = new WorkmateRepository();
-        }
-        return sWorkmateRepository;
-
-    }
-
-    public WorkmateRepository(){
-        mFirebaseHelper = FirebaseHelper.getInstance();
+    public WorkmateRepository(FirebaseHelper firebaseHelper){
+        mFirebaseHelper = firebaseHelper;
         userData = mFirebaseHelper.getFirestoreUserDataRT();
         listOfWorkmates = mFirebaseHelper.getRtWorkmates();
     }
@@ -66,5 +56,9 @@ public class WorkmateRepository {
                                @Nullable String restaurantAddress,
                                @Nullable String restaurantTypeOfFood) {
         mFirebaseHelper.updateUserData(avatarUrl,name,email,placeId, restaurantName, restaurantAddress, restaurantTypeOfFood);
+    }
+
+    public boolean isUserLogged() {
+        return mFirebaseHelper.isUserLogged();
     }
 }

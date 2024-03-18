@@ -77,10 +77,15 @@ public class RestaurantListFragment extends Fragment {
         adapter = new RestaurantItemByViewStateAdapter();
         recyclerView.setAdapter(adapter);
         subscribeToObservables();
-        adapter.setOnItemClickListener(restaurant -> RestaurantListFragment.this.startActivity(RestaurantDetailActivity.navigate(
-                RestaurantListFragment.this.getContext(),
-                restaurant.getPlaceId()
-        )));
+        adapter.setOnItemClickListener(restaurant -> {
+            Log.d(TAG, "initRecyclerView: click restaurantItem");
+                    RestaurantListFragment.this.startActivity(RestaurantDetailActivity.navigate(
+                            RestaurantListFragment.this.getContext(),
+                            restaurant.getPlaceId()));
+                }
+                
+            
+        );
     }
 
     private void subscribeToObservables() {
@@ -139,7 +144,6 @@ public class RestaurantListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        subscribeToObservables();
         binding.getRoot();
     }
 }

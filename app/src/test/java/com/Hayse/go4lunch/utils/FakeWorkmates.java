@@ -1,5 +1,8 @@
 package com.Hayse.go4lunch.utils;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.Hayse.go4lunch.domain.entites.Workmate;
 
 import java.util.ArrayList;
@@ -15,7 +18,7 @@ public class FakeWorkmates {
         workmate1.setAvatarUrl("https://example.com/avatar1");
         workmate1.setName("John Doe");
         workmate1.setEmail("john.doe@example.com");
-        workmate1.setPlaceId("place1");
+        workmate1.setPlaceId("fakePlaceID");
         workmate1.setRestaurantName("Restaurant 1");
         workmate1.setRestaurantAddress("123 Main St");
         workmate1.setRestaurantTypeOfFood("Italian");
@@ -26,9 +29,9 @@ public class FakeWorkmates {
         workmate2.setAvatarUrl("https://example.com/avatar2");
         workmate2.setName("Jane Doe");
         workmate2.setEmail("jane.doe@example.com");
-        workmate2.setPlaceId("place2");
-        workmate2.setRestaurantName("Restaurant 2");
-        workmate2.setRestaurantAddress("456 Elm St");
+        workmate2.setPlaceId("fakePlaceID");
+        workmate2.setRestaurantName("Restaurant 1");
+        workmate2.setRestaurantAddress("123 Main St");
         workmate2.setRestaurantTypeOfFood("Chinese");
         workmates.add(workmate2);
 
@@ -121,5 +124,15 @@ public class FakeWorkmates {
         workmates.add(workmate10);
 
         return workmates;
+    }
+
+    public static MutableLiveData<List<Workmate>> workmatesLiveData(){
+        MutableLiveData<List<Workmate>> workmate = new MutableLiveData<List<Workmate>>();
+        workmate.postValue(workmates());
+        return workmate;
+    }
+
+    public static LiveData<Workmate> getUserData(){
+        return new MutableLiveData<>(workmates().get(0));
     }
 }

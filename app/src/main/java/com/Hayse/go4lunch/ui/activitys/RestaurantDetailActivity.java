@@ -61,7 +61,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     }
 
     private void initRestaurantDetailUI() {
-        viewModel.getRestaurantDetail().observe(this, restaurantInfo -> {
+        viewModel.getRestaurantLiveData().observe(this, restaurantInfo -> {
             Log.d(TAG, "initRestaurantDetailUI: restaurantInfo trigger");
             if (restaurantInfo != null) {
                 if (restaurantInfo.getPhotos().get(0) != null) {
@@ -170,7 +170,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(TAG, "onDestroy: remove observer");
         viewModel.getListWorkmateLiveData().removeObservers(this);
-        viewModel.getRestaurantDetail().removeObservers(this);
+        viewModel.getRestaurantLiveData().removeObservers(this);
         viewModel.getUserData().removeObservers(this);
         super.onDestroy();
     }

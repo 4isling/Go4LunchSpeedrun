@@ -78,7 +78,7 @@ public class FirebaseHelperTest {
         when(firebaseUser.getUid()).thenReturn(uid);
 
         // When
-        Workmate workmate = firebaseHelper.;
+        Workmate workmate = firebaseHelper.getFirestoreUserDataRT().getValue();
 
         // Then
         assertEquals(avatarUrl, workmate.getAvatarUrl());

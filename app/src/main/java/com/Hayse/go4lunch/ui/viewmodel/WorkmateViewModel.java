@@ -12,8 +12,8 @@ import java.util.List;
 public class WorkmateViewModel extends ViewModel {
     private final WorkmateRepository repository;
 
-    public WorkmateViewModel(){
-        repository = WorkmateRepository.getInstance();
+    public WorkmateViewModel(WorkmateRepository repository){
+        this.repository = repository;
     }
 
     public LiveData<List<Workmate>> getWorkmatesRt(){

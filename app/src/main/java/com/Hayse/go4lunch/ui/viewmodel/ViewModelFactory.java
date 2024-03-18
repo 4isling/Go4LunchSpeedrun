@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.services.firebase.FavRepository;
+import com.Hayse.go4lunch.services.firebase.FirebaseHelper;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
 import com.Hayse.go4lunch.services.location.LocationRepository;
 import com.Hayse.go4lunch.services.google_map.RetrofitService;
@@ -44,6 +45,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             application = MainApplication.getApplication();
             synchronized (ViewModelFactory.class) {
                 if (factory == null) {
+                    FirebaseHelper firebaseHelper = FirebaseHelper.getInstance();
                     factory = new ViewModelFactory(
                             new PermissionChecker(
                                     application
@@ -56,7 +58,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                             new NearBySearchRepository(
                                     RetrofitService.getGMapsApi()
                             ),
-                            new WorkmateRepository(),
+                            new WorkmateRepository(firebaseHelper),
                             new DetailRepository(
                                     RetrofitService.getGMapsApi()
                             ),
@@ -96,7 +98,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(WorkmateViewModel.class)) {
-            return (T) new WorkmateViewModel();
+            return (T) new WorkmateViewModel(workmateRepository);
         }
         if (modelClass.isAssignableFrom(HomeRestaurantSharedViewModel.class)) {
             return (T) new HomeRestaurantSharedViewModel(
