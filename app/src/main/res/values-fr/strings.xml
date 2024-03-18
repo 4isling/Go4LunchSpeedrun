@@ -81,4 +81,8 @@
     <string name="sort_by_distance">Trier par distance</string>
     <string name="sort_by_number_of_workers">Trier par nombre de collègues</string>
     <string name="sort_by_rating">Trier par note</string>
+    <string name="remember_to_come_at">" N'oubliez pas de venir à: "</string>
+    <string name="no_other_coworker_signal">" aucun collègue signalé"</string>
+    <string name="workmate_picture_place_holder">workmate picture place holder</string>
+    <string name="with">" avec: "</string>
 </resources>

@@ -83,4 +83,5 @@
     <string name="remember_to_come_at">" remember to come at: "</string>
     <string name="no_other_coworker_signal">" no other coworker signal"</string>
     <string name="workmate_picture_place_holder">workmate picture place holder</string>
+    <string name="with">" with: "</string>
 </resources>

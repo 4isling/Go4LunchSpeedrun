@@ -131,7 +131,7 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
             notificationContent.append(getString(R.string.no_other_coworker_signal));
         } else {
             String coworkersList = String.join(", ", coworkers);
-            notificationContent.append(" with: ");
+            notificationContent.append(getString(R.string.with));
             notificationContent.append(coworkersList);
         }
 
