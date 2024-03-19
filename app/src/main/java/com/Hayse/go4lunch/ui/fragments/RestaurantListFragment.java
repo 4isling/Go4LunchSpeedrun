@@ -83,8 +83,6 @@ public class RestaurantListFragment extends Fragment {
                             RestaurantListFragment.this.getContext(),
                             restaurant.getPlaceId()));
                 }
-                
-            
         );
     }
 

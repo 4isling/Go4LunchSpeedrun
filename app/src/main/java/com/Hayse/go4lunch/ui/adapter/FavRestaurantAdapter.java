@@ -16,7 +16,9 @@ import com.Hayse.go4lunch.domain.entites.FavRestaurant;
 
 public class FavRestaurantAdapter extends ListAdapter<FavRestaurant, FavRestaurantAdapter.ViewHolder> {
 
-    private OnFavRestaurantItemClickListener onFavRestaurantItemClickListener;
+    private static OnFavRestaurantItemClickListener onFavRestaurantItemClickListener;
+
+    private static OnDeleteBtnClickListener onDeleteBtnClickListener;
 
     public FavRestaurantAdapter() {
         super(new ListFavRestaurantItemCallback());
@@ -49,7 +51,11 @@ public class FavRestaurantAdapter extends ListAdapter<FavRestaurant, FavRestaura
     }
 
     public void setOnFavRestaurantItemClickListener(OnFavRestaurantItemClickListener onFavRestaurantItemClickListener) {
-        this.onFavRestaurantItemClickListener = onFavRestaurantItemClickListener;
+        FavRestaurantAdapter.onFavRestaurantItemClickListener = onFavRestaurantItemClickListener;
+
+    }
+    public void setOnDeleteBtnClickListener(OnDeleteBtnClickListener onDeleteBtnClickListener){
+        FavRestaurantAdapter.onDeleteBtnClickListener = onDeleteBtnClickListener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -77,7 +83,7 @@ public class FavRestaurantAdapter extends ListAdapter<FavRestaurant, FavRestaura
                     restaurantAddress.setText("");
                 }
                 deleteButton.setOnClickListener(v -> {
-
+                    onDeleteBtnClickListener.onFavRestaurantDelete(restaurant);
                 });
             }
         }
@@ -86,4 +92,9 @@ public class FavRestaurantAdapter extends ListAdapter<FavRestaurant, FavRestaura
     public interface OnFavRestaurantItemClickListener {
         void onFavRestaurantItemClick(FavRestaurant favRestaurant);
     }
+
+    public interface OnDeleteBtnClickListener{
+        void onFavRestaurantDelete(FavRestaurant favRestaurant);
+    }
+
 }

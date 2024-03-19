@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.Hayse.go4lunch.databinding.ActivityProfileBinding;
 import com.Hayse.go4lunch.ui.adapter.FavRestaurantAdapter;
+import com.Hayse.go4lunch.ui.fragments.RestaurantListFragment;
 import com.Hayse.go4lunch.ui.viewmodel.ProfileViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 
@@ -79,6 +80,11 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         adapter.setOnFavRestaurantItemClickListener(favRestaurant -> {
+            this.startActivity(RestaurantDetailActivity.navigate(
+                    getApplicationContext(),
+                    favRestaurant.getPlace_id()));
+        });
+        adapter.setOnDeleteBtnClickListener(favRestaurant -> {
             viewModel.removeFav(favRestaurant);
         });
     }
