@@ -56,6 +56,5 @@ public class WorkmateViewModelTest {
         verify(workmatesObserver, times(1)).onChanged(FakeWorkmates.workmates());
     }
 
-
     private final Observer<List<Workmate>> workmatesObserver = Mockito.mock(Observer.class);
 }

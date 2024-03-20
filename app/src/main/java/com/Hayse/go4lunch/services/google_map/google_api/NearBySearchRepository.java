@@ -28,7 +28,7 @@ public class NearBySearchRepository {
     private final GMapsApi gMapsApi;
     private final Map<Location, RestaurantResult> alreadyFetchedResponses = new HashMap<>();
     private final String API_KEY = MainApplication.getApplication().getApplicationContext().getResources().getString(R.string.MAPS_API_KEY);
-
+    MutableLiveData<List<Result>> restaurantMutableLiveData = new MutableLiveData<>();
     private final Map<String, RestaurantResult> cache = new HashMap<>(2000);
 
     public NearBySearchRepository(GMapsApi gMapsApi) {
@@ -37,7 +37,7 @@ public class NearBySearchRepository {
 
 
     public LiveData<List<Result>> getRestaurantLiveData(Location location) {
-        MutableLiveData<List<Result>> restaurantMutableLiveData = new MutableLiveData<>();
+
         if (location != null) {
             Log.d(TAG, "getRestaurantLiveData: location !=null");
             String sUserLocation = String.valueOf(location.getLatitude() + "," + location.getLongitude());

@@ -39,6 +39,10 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
 
     ////////////////////////////////////////////////////
     private final MutableLiveData<Place> placeAutocompleteSelected = new MutableLiveData<>(null);
+    private final LiveData<List<Workmate>> workmatesLiveData;
+    private final LiveData<Location> userLocationLiveData;
+    private final LiveData<List<Result>> nearbySearchListLiveData;
+
 
     @SuppressLint("MissingPermission")
     public HomeRestaurantSharedViewModel(
@@ -50,6 +54,9 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
         this.nearBySearchRepository = nearBySearchRepository;
         this.workmateRepository = workmateRepository;
         locationRepository.startLocationRequest();
+        workmatesLiveData = workmateRepository.getAllWorkmateRt();
+        userLocationLiveData = locationRepository.getLocationLiveData();
+        nearbySearchListLiveData = Transformations.switchMap(userLocationLiveData, nearBySearchRepository::getRestaurantLiveData);
         setViewState();
     }
 
@@ -59,9 +66,6 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     }
 
     public void setViewState() {
-        LiveData<List<Workmate>> workmatesLiveData = workmateRepository.getAllWorkmateRt();
-        LiveData<Location> userLocationLiveData = locationRepository.getLocationLiveData();
-        LiveData<List<Result>> nearbySearchListLiveData = Transformations.switchMap(locationRepository.getLocationLiveData(), nearBySearchRepository::getRestaurantLiveData);
 
         homeWrapperViewStateMediatorLiveData.addSource(nearbySearchListLiveData, resultList -> combine(
                 resultList,
@@ -80,7 +84,7 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
     }
 
     public LiveData<Location> getLocationLiveData() {
-        return locationRepository.getLocationLiveData();
+        return userLocationLiveData;
     }
 
     public LiveData<Workmate> getUserData() {
@@ -197,10 +201,6 @@ public class HomeRestaurantSharedViewModel extends ViewModel {
             HomeWrapperViewState updatedHomeWrapperViewState = new HomeWrapperViewState(sortedList, homeWrapperViewState.getLocation());
             homeWrapperViewStateMediatorLiveData.setValue(updatedHomeWrapperViewState);
         }
-    }
-
-    public boolean isUserLogged(){
-        return workmateRepository.isUserLogged();
     }
 
     public void sortByRestaurantRating() {
