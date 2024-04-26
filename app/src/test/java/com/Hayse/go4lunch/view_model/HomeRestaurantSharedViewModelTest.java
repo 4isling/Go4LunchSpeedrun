@@ -1,5 +1,6 @@
 package com.Hayse.go4lunch.view_model;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,44 +44,45 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class HomeRestaurantSharedViewModelTest {
-
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private static final double EXPECTED_LATITUDE =37.422026;
-    private static final double EXPECTED_LONGITUDE = -122.083979;
-    private final Application application = Mockito.mock(Application.class);
-    private final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-    private final NearBySearchRepository nearBySearchRepository = Mockito.mock(NearBySearchRepository.class);
-    private final WorkmateRepository workmateRepository = Mockito.mock(WorkmateRepository.class);
-    private final FirebaseHelper firebaseHelper = Mockito.mock(FirebaseHelper.class);
-    private final Location location = Mockito.mock(Location.class);
+    @Mock
+    private LocationRepository locationRepository;
+    @Mock
+    private NearBySearchRepository nearBySearchRepository;
+    @Mock
+    private WorkmateRepository workmateRepository;
+
     private HomeRestaurantSharedViewModel homeRestaurantSharedViewModel;
-    private final MutableLiveData<RestaurantResult> nearbySearchResult = new MutableLiveData<>();
-    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<Workmate>> workmateList = new MutableLiveData<>();
-    private final MutableLiveData<Workmate> user = new MutableLiveData<>();
+
+    private AutoCloseable closeable;
 
     @Before
     public void setup() {
-        Mockito.doReturn("Open").when(application).getString(R.string.is_open);
-        Mockito.doReturn("Closed").when(application).getString(R.string.is_close);
-        workmateList.setValue(FakeWorkmates.workmates());
-        Mockito.doReturn(EXPECTED_LATITUDE).when(location).getLatitude();
-        Mockito.doReturn(EXPECTED_LONGITUDE).when(location).getLongitude();
-        Mockito.doReturn(0F).when(location).distanceTo(any());
+        closeable = MockitoAnnotations.openMocks(this); // Initialize mocks and setup the auto-closeable
 
-        Mockito.doReturn(locationMutableLiveData).when(locationRepository).getLocationLiveData();
-        Mockito.doReturn(nearbySearchResult).when(nearBySearchRepository).getRestaurantLiveData(location);
-        Mockito.doReturn(workmateList).when(workmateRepository).getAllWorkmateRt();
+        // Setup the default returns for necessary LiveData objects
+        MutableLiveData<Location> locationLiveData = new MutableLiveData<>();
+        MutableLiveData<List<Workmate>> workmatesLiveData = new MutableLiveData<>();
+        MutableLiveData<List<Result>> nearbySearchLiveData = new MutableLiveData<>();
 
-        locationMutableLiveData.setValue(location);
+        locationLiveData.setValue(new Location("provider"));  // Set a default test Location
+        workmatesLiveData.setValue(new ArrayList<>());  // Set default empty list of Workmates
+        nearbySearchLiveData.setValue(new ArrayList<>());  // Set default empty list of Results
 
+        when(locationRepository.getLocationLiveData()).thenReturn(locationLiveData);
+        when(workmateRepository.getAllWorkmateRt()).thenReturn(workmatesLiveData);
+        when(nearBySearchRepository.getRestaurantLiveData(any(Location.class))).thenReturn(nearbySearchLiveData);
+
+        // Initialize ViewModel with mocked repositories
         homeRestaurantSharedViewModel = new HomeRestaurantSharedViewModel(locationRepository, nearBySearchRepository, workmateRepository);
     }
 
-
-
+    @After
+    public void releaseMocks() throws Exception {
+        closeable.close();  // Clean up the mocks
+    }
 
     @Test
     public void testGetLocationLiveData() {
@@ -90,6 +92,7 @@ public class HomeRestaurantSharedViewModelTest {
 
     @Test
     public void testGetRestaurant() {
+        Location location = new Location("provider");
         homeRestaurantSharedViewModel.getRestaurant(location);
         verify(nearBySearchRepository, times(1)).getRestaurantLiveData(location);
     }
@@ -101,19 +104,15 @@ public class HomeRestaurantSharedViewModelTest {
     }
 
     @Test
-    public void testGetUserData(){
-        // Given
-        Workmate expectedWorkmate = FakeWorkmates.getUserData().getValue();
-        when(workmateRepository.getRealTimeUserData()).thenReturn(user);
-        user.setValue(expectedWorkmate);
+    public void testGetUserData() {
+        Workmate expectedWorkmate = new Workmate(); // Create a fake workmate for the test
+        MutableLiveData<Workmate> userLiveData = new MutableLiveData<>();
+        userLiveData.setValue(expectedWorkmate);
 
-        // When
+        when(workmateRepository.getRealTimeUserData()).thenReturn(userLiveData);
+
         LiveData<Workmate> actualUserData = homeRestaurantSharedViewModel.getUserData();
-
-        // Then
-        assertNotNull(actualUserData);
         assertEquals(expectedWorkmate, actualUserData.getValue());
         verify(workmateRepository, times(1)).getRealTimeUserData();
     }
-
 }

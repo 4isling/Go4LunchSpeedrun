@@ -31,30 +31,27 @@ import java.util.List;
 public class WorkmateViewModelTest {
 
     @Rule
-    public final InstantTaskExecutorRule  mInstantTaskExecutorRule = new InstantTaskExecutorRule();
+    public final InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Mock
     private WorkmateRepository repository;
 
-    @Mock
-    private Observer<List<Workmate>> listWorkmates;
+    private WorkmateViewModel viewModel;
 
     @Mock
-    private WorkmateViewModel viewModel;
+    private Observer<List<Workmate>> workmatesObserver;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-        when(repository.getAllWorkmateRt()).thenReturn(FakeWorkmates.workmatesLiveData());
-        viewModel = new WorkmateViewModel(repository);;
+        LiveData<List<Workmate>> mockLiveData = FakeWorkmates.workmatesLiveData();
+        when(repository.getAllWorkmateRt()).thenReturn(mockLiveData);
+        viewModel = new WorkmateViewModel(repository);
     }
 
     @Test
     public void testGetWorkmates(){
         viewModel.getWorkmatesRt().observeForever(workmatesObserver);
-        verify(repository, times(1)).getAllWorkmateRt();
-        verify(workmatesObserver, times(1)).onChanged(FakeWorkmates.workmates());
+        verify(repository).getAllWorkmateRt();  // Ensure repository method is called
+        verify(workmatesObserver).onChanged(FakeWorkmates.workmates());  // Verify that the correct data is emitted
     }
-
-    private final Observer<List<Workmate>> workmatesObserver = Mockito.mock(Observer.class);
 }

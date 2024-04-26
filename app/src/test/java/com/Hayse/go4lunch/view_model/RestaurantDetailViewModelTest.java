@@ -1,5 +1,6 @@
 package com.Hayse.go4lunch.view_model;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,7 @@ import com.Hayse.go4lunch.services.google_map.google_api.DetailRepository;
 import com.Hayse.go4lunch.ui.viewmodel.RestaurantDetailViewModel;
 import com.Hayse.go4lunch.utils.DetailFakeResult;
 import com.Hayse.go4lunch.utils.FakeWorkmates;
+import com.Hayse.go4lunch.utils.LiveDataTestUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -40,74 +42,70 @@ public class RestaurantDetailViewModelTest {
 
     @Mock
     private DetailRepository detailRepository;
-
-
     @Mock
     private WorkmateRepository workmateRepository;
-
     @Mock
     private FavRepository favRepository;
-
 
     private RestaurantDetailViewModel viewModel;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
         viewModel = new RestaurantDetailViewModel(detailRepository, workmateRepository, favRepository);
-        DetailFakeResult detailFakeResult = new DetailFakeResult();
-        Result fakeResult = detailFakeResult.getFakeDetailResult();
-
         String placeId = "fakePlaceID";
-        viewModel.init(placeId);
+        Result fakeResult = new Result();
+        fakeResult.setName("Test Restaurant");
 
-        when(detailRepository.getDetail(placeId)).thenReturn(detailFakeResult.getFakeDetailResultLiveData());
+        MutableLiveData<Result> resultLiveData = new MutableLiveData<>(fakeResult);
+        when(detailRepository.getDetail(placeId)).thenReturn(resultLiveData);
+
+        viewModel.init(placeId);
     }
 
     @Test
-    public void testGetRestaurantDetail() {
-        Result result = new Result();
-        result.setName("Test Restaurant");
-        LiveData<Result> liveData = new MutableLiveData<>(result);
+    public void testGetRestaurantDetail() throws InterruptedException {
+        Result expected = new Result();
+        expected.setName("Test Restaurant");
+        MutableLiveData<Result> liveData = new MutableLiveData<>(expected);
         when(detailRepository.getDetail("fakePlaceID")).thenReturn(liveData);
 
         viewModel.init("fakePlaceID");
         LiveData<Result> resultLiveData = viewModel.getRestaurantLiveData();
 
-        assert resultLiveData.equals(liveData);
+        assertEquals(expected, LiveDataTestUtils.getValue(resultLiveData));
     }
 
     @Test
-    public void testGetListWorkmateLiveData() {
-        List<Workmate> workmates = Arrays.asList(new Workmate(), new Workmate());
-        LiveData<List<Workmate>> liveData = new MutableLiveData<>(workmates);
+    public void testGetListWorkmateLiveData() throws InterruptedException {
+        List<Workmate> expectedWorkmates = Arrays.asList(new Workmate(), new Workmate());
+        MutableLiveData<List<Workmate>> liveData = new MutableLiveData<>(expectedWorkmates);
         when(workmateRepository.getWorkmateByRestaurant("123")).thenReturn(liveData);
 
         viewModel.init("123");
         LiveData<List<Workmate>> workmateLiveData = viewModel.getListWorkmateLiveData();
 
-        assert workmateLiveData.equals(liveData);
+        assertEquals(expectedWorkmates, LiveDataTestUtils.getValue(workmateLiveData));
     }
 
     @Test
-    public void testGetUserData() {
-        Workmate workmate = new Workmate();
-        LiveData<Workmate> liveData = new MutableLiveData<>(workmate);
+    public void testGetUserData() throws InterruptedException {
+        Workmate expectedWorkmate = new Workmate();
+        MutableLiveData<Workmate> liveData = new MutableLiveData<>(expectedWorkmate);
         when(workmateRepository.getRealTimeUserData()).thenReturn(liveData);
 
         LiveData<Workmate> userData = viewModel.getUserData();
 
-        assert userData.equals(liveData);
+        assertEquals(expectedWorkmate, LiveDataTestUtils.getValue(userData));
     }
 
     @Test
-    public void testGetUserFavList() {
-        List<FavRestaurant> favRestaurants = Arrays.asList(new FavRestaurant(), new FavRestaurant());
-        LiveData<List<FavRestaurant>> liveData = new MutableLiveData<>(favRestaurants);
+    public void testGetUserFavList() throws InterruptedException {
+        List<FavRestaurant> expectedFavRestaurants = Arrays.asList(new FavRestaurant(), new FavRestaurant());
+        MutableLiveData<List<FavRestaurant>> liveData = new MutableLiveData<>(expectedFavRestaurants);
         when(favRepository.getFavList()).thenReturn(liveData);
 
         LiveData<List<FavRestaurant>> favList = viewModel.getUserFavList();
 
-        assert favList.equals(liveData);
+        assertEquals(expectedFavRestaurants, LiveDataTestUtils.getValue(favList));
     }
 }

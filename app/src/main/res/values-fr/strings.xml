@@ -85,4 +85,6 @@
     <string name="no_other_coworker_signal">" aucun collègue signalé"</string>
     <string name="workmate_picture_place_holder">workmate picture place holder</string>
     <string name="with">" avec: "</string>
+    <string name="sign_in_cancelled">Authentification annuler</string>
+    <string name="sign_in_failed">Echec de l\'authentification</string>
 </resources>

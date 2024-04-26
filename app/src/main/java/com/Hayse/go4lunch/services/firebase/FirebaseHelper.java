@@ -3,7 +3,10 @@ package com.Hayse.go4lunch.services.firebase;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.Hayse.go4lunch.domain.entites.FavRestaurant;
 import com.Hayse.go4lunch.domain.entites.Workmate;
@@ -102,24 +105,36 @@ public class FirebaseHelper {
         return workmates;
     }
 
-    public void setNewWorkmate() {
-        Log.d(TAG, "setNewWorkmate: ");
-        getUserDataOAuth();
-        Workmate uData = userInfo.getValue();
-        Log.d(TAG, "setNewWorkmate: uData" + uData);
-        Map<String, Object> workmate = new HashMap<>();
-        workmate.put("id", uData.getId());
-        workmate.put("avatarUrl", uData.getAvatarUrl());
-        workmate.put("name", uData.getName());
-        workmate.put("email", uData.getEmail());
-        workmate.put("placeId", "");
-        workmate.put("restaurantAddress", "");
-        workmate.put("restaurantName", "");
-        workmate.put("restaurantTypeOfFood", "");
-        workmateRef.document(uData.getId())
-                .set(workmate)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Document successfully written!: user:" + uData.getName() + " added"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+    public void setNewWorkmate(LifecycleOwner lifecycleOwner) {
+        Log.d(TAG, "setNewWorkmate: start");
+        getUserDataOAuth();  // This method will update userInfo
+
+        // Observe changes to userInfo
+        userInfo.observe(lifecycleOwner, new Observer<Workmate>() {
+            @Override
+            public void onChanged(Workmate uData) {
+                if (uData != null) {
+                    Log.d(TAG, "setNewWorkmate: uData " + uData);
+                    Map<String, Object> workmate = new HashMap<>();
+                    workmate.put("id", uData.getId());
+                    workmate.put("avatarUrl", uData.getAvatarUrl());
+                    workmate.put("name", uData.getName());
+                    workmate.put("email", uData.getEmail());
+                    workmate.put("placeId", "");
+                    workmate.put("restaurantAddress", "");
+                    workmate.put("restaurantName", "");
+                    workmate.put("restaurantTypeOfFood", "");
+
+                    FirebaseFirestore.getInstance().collection("workmates").document(uData.getId())
+                            .set(workmate)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Document successfully written!: user:" + uData.getName() + " added"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+
+                    // Important: Remove this observer once the data is consumed
+                    userInfo.removeObserver(this);
+                }
+            }
+        });
     }
 
 

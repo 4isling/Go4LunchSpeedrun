@@ -84,4 +84,6 @@
     <string name="no_other_coworker_signal">" no other coworker signal"</string>
     <string name="workmate_picture_place_holder">workmate picture place holder</string>
     <string name="with">" with: "</string>
+    <string name="sign_in_cancelled">Sign In Cancelled</string>
+    <string name="sign_in_failed">Sign In Failed</string>
 </resources>
