@@ -1,35 +1,7 @@
 package com.Hayse.go4lunch;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
-import android.app.Activity;
-
-import androidx.lifecycle.ViewModelProvider;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-
-
-import com.Hayse.go4lunch.services.firebase.FavRepository;
-import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
-import com.Hayse.go4lunch.ui.activitys.ProfileActivity;
-import com.Hayse.go4lunch.ui.viewmodel.ProfileViewModel;
-import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 
 /*

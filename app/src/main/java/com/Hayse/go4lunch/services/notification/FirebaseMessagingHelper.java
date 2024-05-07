@@ -17,7 +17,7 @@ import com.Hayse.go4lunch.MainApplication;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.domain.entites.Workmate;
 import com.Hayse.go4lunch.services.firebase.FirebaseHelper;
-import com.Hayse.go4lunch.ui.activitys.MainActivity;
+import com.Hayse.go4lunch.ui.activity.MainActivity;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -27,7 +27,6 @@ import androidx.work.WorkManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class FirebaseMessagingHelper extends FirebaseMessagingService {
 
@@ -47,10 +46,8 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
-        // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             String notificationBody = remoteMessage.getNotification().getBody();
@@ -60,17 +57,10 @@ public class FirebaseMessagingHelper extends FirebaseMessagingService {
         }
     }
 
-    // [START on_new_token]
     @Override
     public void onNewToken(String token) {
         Log.d(TAG, "Refreshed token: " + token);
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // FCM registration token to your app server.
-        //sendRegistrationToServer(token);
     }
-    // [END on_new_token]
 
     /**
      * Schedule async work using WorkManager.

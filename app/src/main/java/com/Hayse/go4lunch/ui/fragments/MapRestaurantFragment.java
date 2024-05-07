@@ -23,14 +23,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentMapBinding;
 import com.Hayse.go4lunch.services.permission_checker.PermissionChecker;
-import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
+import com.Hayse.go4lunch.ui.activity.RestaurantDetailActivity;
 import com.Hayse.go4lunch.ui.view_state.HomeViewState;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -39,7 +38,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 

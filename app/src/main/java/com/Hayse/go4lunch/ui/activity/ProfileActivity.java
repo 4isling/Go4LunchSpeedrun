@@ -1,4 +1,4 @@
-package com.Hayse.go4lunch.ui.activitys;
+package com.Hayse.go4lunch.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.Hayse.go4lunch.databinding.ActivityProfileBinding;
 import com.Hayse.go4lunch.ui.adapter.FavRestaurantAdapter;
-import com.Hayse.go4lunch.ui.fragments.RestaurantListFragment;
 import com.Hayse.go4lunch.ui.viewmodel.ProfileViewModel;
 import com.Hayse.go4lunch.ui.viewmodel.ViewModelFactory;
 

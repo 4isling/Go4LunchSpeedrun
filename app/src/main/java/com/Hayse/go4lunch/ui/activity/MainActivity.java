@@ -1,4 +1,4 @@
-package com.Hayse.go4lunch.ui.activitys;
+package com.Hayse.go4lunch.ui.activity;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -10,7 +10,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -92,11 +91,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Place place = Autocomplete.getPlaceFromIntent(rIntent);
                         homeRestaurantSharedViewModel.onPredictionClick(place);
                         homeRestaurantSharedViewModel.onPredictionClick(null);
-                        Log.i(TAG, "Place: ${place.getName()}, ${place.getId()}");
                     }
                 } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
                     // The user canceled the operation.
-                    Log.i(TAG, "User canceled autocomplete");
                 }
             });
 
@@ -161,14 +158,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (requestCode == 1) {
             if (PermissionUtils.isPermissionGranted(permissions, grantResults,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Permission granted, proceed with location-based functionality
                 homeRestaurantSharedViewModel.startLocationRequest();
                 recreate();
             } else {
-                // Permission denied, display a dialog explaining the rationale for the permission
                 PermissionUtils.PermissionDeniedDialog.newInstance(true).show(
                         getSupportFragmentManager(), "dialog");
-                // Add error handling here
             }
         }
     }
@@ -177,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d(TAG, "isServicesOK: checking google services version");
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MainActivity.this);
         if (available == ConnectionResult.SUCCESS) {
-            //user can make map requests
             Log.d(TAG, "isServicesOK: Google Play services is working");
 
             return true;
@@ -382,7 +375,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if (id == R.id.your_lunch) {
             homeRestaurantSharedViewModel.getUserData().observe(this, userData -> {
-                Log.d(TAG, "onNavigationItemSelected: observer trigger");
                 if (userData.getPlaceId() != null && !userData.getPlaceId().equals("")) {
                     this.startActivity(RestaurantDetailActivity.navigate(getApplicationContext(), userData.getPlaceId()));
                 } else {

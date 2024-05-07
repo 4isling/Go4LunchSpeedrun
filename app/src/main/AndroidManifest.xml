@@ -26,9 +26,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
-
         <!---Notification FCM-->
-
         <service
             android:name=".services.notification.FirebaseMessagingHelper"
             android:exported="false">
@@ -57,12 +55,12 @@
 
 
         <activity
-            android:name=".ui.activitys.MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
 
         <activity
-            android:name=".ui.activitys.SignInActivity"
+            android:name=".ui.activity.SignInActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
@@ -72,18 +70,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activitys.RestaurantDetailActivity"
+            android:name=".ui.activity.RestaurantDetailActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
 
         <activity
-            android:name=".ui.activitys.ProfileActivity"
-            android:parentActivityName=".ui.activitys.SettingActivity"
+            android:name=".ui.activity.ProfileActivity"
+            android:parentActivityName=".ui.activity.SettingActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
 
 
         <activity
-            android:name=".ui.activitys.SettingActivity"
+            android:name=".ui.activity.SettingActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
     </application>

@@ -1,7 +1,6 @@
 package com.Hayse.go4lunch.view_model;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -16,18 +15,13 @@ import com.Hayse.go4lunch.services.firebase.FavRepository;
 import com.Hayse.go4lunch.services.firebase.WorkmateRepository;
 import com.Hayse.go4lunch.services.google_map.google_api.DetailRepository;
 import com.Hayse.go4lunch.ui.viewmodel.RestaurantDetailViewModel;
-import com.Hayse.go4lunch.utils.DetailFakeResult;
-import com.Hayse.go4lunch.utils.FakeWorkmates;
 import com.Hayse.go4lunch.utils.LiveDataTestUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.Hayse.go4lunch.ui.activitys;
+package com.Hayse.go4lunch.ui.activity;
 
 
 import android.app.AlertDialog;

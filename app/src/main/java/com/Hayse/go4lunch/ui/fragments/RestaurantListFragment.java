@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.Hayse.go4lunch.R;
 import com.Hayse.go4lunch.databinding.FragmentRestaurantBinding;
-import com.Hayse.go4lunch.ui.activitys.RestaurantDetailActivity;
+import com.Hayse.go4lunch.ui.activity.RestaurantDetailActivity;
 import com.Hayse.go4lunch.ui.adapter.RestaurantItemByViewStateAdapter;
 import com.Hayse.go4lunch.ui.view_state.HomeViewState;
 import com.Hayse.go4lunch.ui.viewmodel.HomeRestaurantSharedViewModel;
